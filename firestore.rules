@@ -1,0 +1,105 @@
+rules_version = '2';
+
+// ============================================================
+// NurMakon — Firestore Security Rules
+// Deploy: Firebase Console → Firestore Database → Rules → Publish
+// Yoki CLI: firebase deploy --only firestore:rules
+// ============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---- Helper functions ----
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+    // Basic listing payload validation
+    function validListing() {
+      let d = request.resource.data;
+      return d.price is number && d.price >= 0
+        && d.region is string && d.region.size() > 0
+        && d.district is string && d.district.size() > 0
+        && d.dealType in ['sale', 'rent']
+        && d.status in ['active', 'archived', 'sold'];
+    }
+
+    // ---- Users ----
+    // Har bir foydalanuvchi faqat o'z hujjatini o'qiy/yozadi.
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if false;
+
+      // Sevimlilar: faqat egasiga tegishli.
+      match /favorites/{favId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // ---- Listings ----
+    // Barcha (mehmonlar ham) faol e'lonlarni o'qiy oladi.
+    // Faqat muallif yaratadi/tahrirlaydi/o'chiradi.
+    match /listings/{listingId} {
+      allow read: if true;
+
+      allow create: if isSignedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && validListing();
+
+      // Muallif to'liq tahrirlashi mumkin.
+      // Boshqalar faqat 'views' hisoblagichini +1 oshira oladi.
+      allow update: if
+        (isOwner(resource.data.ownerUid) && validListing())
+        || (
+          isSignedIn()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views'])
+          && request.resource.data.views == resource.data.views + 1
+        );
+
+      allow delete: if isOwner(resource.data.ownerUid);
+    }
+
+    // ---- Agents ----
+    match /agents/{agentId} {
+      allow read: if true;
+      allow create, update: if isOwner(agentId);
+      // 'verified' maydonini foydalanuvchi o'zi o'zgartira olmaydi.
+      allow update: if isOwner(agentId)
+        && request.resource.data.verified == resource.data.verified;
+      allow delete: if isOwner(agentId);
+    }
+
+    // ---- Chats ----
+    // Faqat suhbat ishtirokchilari kira oladi.
+    match /chats/{chatId} {
+      allow read: if isSignedIn() && request.auth.uid in resource.data.participants;
+      allow create: if isSignedIn()
+        && request.auth.uid in request.resource.data.participants
+        && request.resource.data.participants.size() == 2;
+      allow update: if isSignedIn() && request.auth.uid in resource.data.participants;
+      allow delete: if false;
+
+      // Xabarlar: faqat ishtirokchilar o'qiydi; yuboruvchi o'zi yozadi.
+      match /messages/{messageId} {
+        allow read: if isSignedIn()
+          && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
+        allow create: if isSignedIn()
+          && request.resource.data.senderUid == request.auth.uid
+          && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
+        allow update, delete: if false;
+      }
+    }
+
+    // ---- Contact logs (analitika) ----
+    // Faqat kirgan foydalanuvchi o'z nomidan yozadi; hech kim o'qiy olmaydi.
+    match /contactLogs/{logId} {
+      allow create: if isSignedIn()
+        && request.resource.data.viewerUid == request.auth.uid;
+      allow read, update, delete: if false;
+    }
+  }
+}
