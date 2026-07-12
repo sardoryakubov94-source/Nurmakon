@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>NurMakon — Uy-joy topish, sotish, ijaraga berish</title>
 <meta name="description" content="NurMakon — O'zbekistonda uy-joy sotib olish, sotish va ijaraga berishning oson, ishonchli va zamonaviy platformasi.">
-<meta name="theme-color" content="#0c1d44">
+<meta name="theme-color" content="#0d1117">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
@@ -49,15 +49,13 @@
     --grad-teal:linear-gradient(180deg, #3fb89a 0%, var(--teal) 55%, var(--teal-2) 100%);
     --nav-h:76px;
     --safe-b:env(safe-area-inset-bottom, 0px);
-    /* To'q ko'k fon + ko'k naqsh (tepasi yorqin, pasti xira - to'liq pastgacha) */
-    --net:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%235aa6ff' stroke-opacity='0.20' stroke-width='1'%3E%3Crect x='10' y='10' width='60' height='60'/%3E%3Crect x='10' y='10' width='60' height='60' transform='rotate(45 40 40)'/%3E%3Ccircle cx='40' cy='40' r='14'/%3E%3C/g%3E%3C/svg%3E");
+    /* Eski to'q fon (rangi o'zgarmaydi) + faqat naqsh chiziqlari ko'k */
+    --net:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%235aa6ff' stroke-opacity='0.22' stroke-width='1'%3E%3Crect x='10' y='10' width='60' height='60'/%3E%3Crect x='10' y='10' width='60' height='60' transform='rotate(45 40 40)'/%3E%3Ccircle cx='40' cy='40' r='14'/%3E%3C/g%3E%3C/svg%3E");
     --app-bg:
-      radial-gradient(1160px 600px at 15% -8%, rgba(96,166,255,0.30), transparent 56%),
-      radial-gradient(960px 560px at 110% 2%, rgba(146,116,255,0.20), transparent 54%),
-      linear-gradient(to top, rgba(7,12,30,0.62), transparent 38%),
+      radial-gradient(1200px 600px at 50% -10%, var(--gold-soft), transparent 60%),
       var(--net) 0 0 / 80px 80px repeat,
-      linear-gradient(161deg, #11295f 0%, #0d1f47 34%, #0b1838 66%, #0a1533 100%);
-    --bar-bg:rgba(11,26,60,0.68);
+      var(--ink);
+    --bar-bg:rgba(13,17,23,0.82);
   }
   /* ===== Light theme ===== */
   html[data-theme="light"]{
@@ -77,11 +75,10 @@
     --shadow-2:0 2px 8px rgba(20,30,45,0.1), 0 18px 44px -18px rgba(20,30,45,0.28);
     --net:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%233a74d8' stroke-opacity='0.12' stroke-width='1'%3E%3Crect x='10' y='10' width='60' height='60'/%3E%3Crect x='10' y='10' width='60' height='60' transform='rotate(45 40 40)'/%3E%3Ccircle cx='40' cy='40' r='14'/%3E%3C/g%3E%3C/svg%3E");
     --app-bg:
-      radial-gradient(1000px 580px at 14% -6%, rgba(96,156,255,0.20), transparent 58%),
-      radial-gradient(860px 580px at 110% 6%, rgba(150,120,255,0.14), transparent 55%),
+      radial-gradient(1200px 600px at 50% -10%, var(--gold-soft), transparent 60%),
       var(--net) 0 0 / 80px 80px repeat,
-      linear-gradient(160deg, #dfe8fb 0%, #e7ecf6 50%, #eef1f8 100%);
-    --bar-bg:rgba(223,232,251,0.72);
+      var(--ink);
+    --bar-bg:rgba(238,241,245,0.85);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
@@ -310,7 +307,7 @@
   .hero-banner::before{                    /* 3D yorqin nur (glow) */
     content:"";position:absolute;left:50%;top:-30px;transform:translateX(-50%);
     width:340px;height:200px;pointer-events:none;
-    background:radial-gradient(closest-side, rgba(120,175,255,0.28), transparent 72%);
+    background:radial-gradient(closest-side, rgba(240,168,60,0.20), transparent 72%);
     filter:blur(6px);
   }
   .hero-banner > *{position:relative;z-index:1;}
@@ -1565,7 +1562,7 @@ function applyTheme(theme){
   $('themeBtn').textContent = theme === 'light' ? '☀️' : '🌙';
   $('themeBtn').title = theme === 'light' ? 'Yorug\'' : 'Qorong\'i';
   const meta = document.querySelector('meta[name="theme-color"]');
-  if(meta) meta.content = theme === 'light' ? '#dfe8fb' : '#0c1d44';
+  if(meta) meta.content = theme === 'light' ? '#eef1f5' : '#0d1117';
 }
 $('themeBtn').addEventListener('click', ()=>{
   const cur = document.documentElement.getAttribute('data-theme');
