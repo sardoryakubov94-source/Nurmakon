@@ -515,6 +515,18 @@
   /* Reklama (promote) tugmalari — mening e'lonlarim */
   .promo-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
   .promo-actions .btn{width:auto;flex:1 1 auto;padding:8px 10px;font-size:12px;}
+  /* Reyting yulduzlari */
+  .stars{color:#f0a83c;letter-spacing:1px;font-size:15px;}
+  .stars .dim{color:var(--line);}
+  .star-picker{display:flex;justify-content:center;gap:8px;margin:10px 0 14px;}
+  .star-picker .star{background:none;border:none;font-size:34px;line-height:1;color:var(--line);cursor:pointer;transition:transform .12s ease;padding:0;}
+  .star-picker .star.on{color:#f0a83c;}
+  .star-picker .star:active{transform:scale(1.2);}
+  .review-item{padding:11px 0;border-bottom:1px solid var(--line-soft);}
+  .review-item:last-child{border-bottom:none;}
+  .review-item .rv-top{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .review-item .rv-name{font-weight:600;font-size:13.5px;}
+  .review-item .rv-text{font-size:13px;color:var(--text-dim);margin-top:4px;line-height:1.4;}
   .badge-solid-sale{background:rgba(226,86,74,0.9);color:#fff;}
   .badge-solid-rent{background:rgba(160,140,255,0.9);color:#fff;}
 
@@ -944,6 +956,24 @@
   </div>
 </div>
 
+<!-- ===================== RATE BROKER SHEET ===================== -->
+<div class="modal-overlay" id="rateSheet">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <div class="modal-head"><h2 data-i18n="rateTitle">Maklerni baholang</h2>
+      <button class="modal-close" id="rateCloseX" type="button">✕</button></div>
+    <div class="star-picker" id="starPicker">
+      <button type="button" class="star" data-v="1">★</button>
+      <button type="button" class="star" data-v="2">★</button>
+      <button type="button" class="star" data-v="3">★</button>
+      <button type="button" class="star" data-v="4">★</button>
+      <button type="button" class="star" data-v="5">★</button>
+    </div>
+    <textarea id="rateComment" rows="3" data-i18n-placeholder="rateCommentPh" placeholder="Izoh (ixtiyoriy)..."></textarea>
+    <button class="btn btn-primary" id="rateSubmitBtn" style="margin-top:12px;"><span class="btn-label" data-i18n="rateSubmit">Yuborish</span></button>
+  </div>
+</div>
+
 <!-- ===================== TOP BAR ===================== -->
 <div class="topbar" id="topbar">
   <div class="topbar-left" id="topbarLeft">
@@ -1341,6 +1371,7 @@
     <div class="card">
       <h3 style="margin:0 0 6px;font-size:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><span data-i18n="agentPanelTitle">Makler paneli</span> <span class="badge" id="agentStatusBadge"></span></h3>
       <p class="center-note" style="text-align:left;margin:0;" id="agentPanelStatusText"></p>
+      <button class="btn btn-outline btn-sm" id="viewMyProfileBtn" style="margin-top:10px;width:auto;"><span class="btn-label" data-i18n="viewMyProfileBtn">⭐ Ochiq profilim va reytingim</span></button>
     </div>
     <div class="card" id="brokerWalletCard">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
@@ -1434,6 +1465,22 @@
   </div>
   <div class="card">
     <p class="center-note" style="text-align:left;margin:0;" data-i18n="topupPayNote">Hozircha to'lov admin tomonidan qo'lda tasdiqlanadi. Payme/Click keyingi bosqichda ulanadi.</p>
+  </div>
+</div>
+
+<!-- ===================== BROKER (MAKLER) PUBLIC PROFILE SCREEN ===================== -->
+<div class="screen" id="screen-broker">
+  <div class="screen-head">
+    <button class="back-btn" id="brokerBackBtn" type="button">‹</button>
+    <h2 class="section-title" style="margin:0;" data-i18n="brokerProfileTitle">Makler profili</h2>
+  </div>
+  <div class="card" id="brokerProfileCard"></div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+      <h3 style="margin:0;font-size:16px;">💬 <span data-i18n="reviewsTitle">Sharhlar</span></h3>
+      <button class="btn btn-primary btn-sm" id="rateBrokerBtn" style="width:auto;"><span class="btn-label" data-i18n="rateBtn">⭐ Baholash</span></button>
+    </div>
+    <div id="brokerReviews" style="margin-top:12px;"></div>
   </div>
 </div>
 
@@ -1634,6 +1681,7 @@ const I18N = {
     topupTitle:"Balansni to'ldirish", topupSub:"Lead kreditini sotib oling yoki premium obunaga o'ting.", topupBuyBtn:"So'rov yuborish", topupSent:"So'rov yuborildi! Admin tasdiqlagach balans yangilanadi.", topupPremiumTitle:"Premium obuna", topupPremiumDesc:"Cheksiz lead qabul qilish + so'rovlarda ustuvor ko'rsatish.", topupPremiumBtn:"Premiumga o'tish", topupPayNote:"Hozircha to'lov admin tomonidan qo'lda tasdiqlanadi. Payme/Click keyingi bosqichda ulanadi.",
     admTopupsTitle:"To'lov so'rovlari", admTopupsSub:"Maklerlarning balans to'ldirish so'rovlari.", admNoTopups:"To'lov so'rovlari yo'q", admTopupApprove:"✓ Tasdiqlash", admTopupApproved:"To'lov tasdiqlandi — balans yangilandi",
     postPromoLabel:"E'lon turi", tierStandard:"Oddiy", tierTop:"TOP", tierVip:"VIP", tierStandardCost:"1-si bepul", postUrgentLabel:"⚡ Shoshilinch belgisi (+2 kredit)", postPromoInfo:"Birinchi {free} ta e'lon bepul, keyingisi {extra} kredit.", urgentBadge:"Shoshilinch", promoteBtn:"Reklama", promoteTitle:"E'lonni reklama qilish", promoteBalance:"Balans: {n} kredit", promoteNote:"Reklama darhol yoqiladi; balansdan kredit yechiladi. Kredit yetmasa avval balansni to'ldiring.", promoBump:"Ko'tarish (tepaga)", promoteDone:"Reklama yoqildi!", promoSkippedLowCredit:"Kredit yetmadi — oddiy e'lon sifatida joylandi.", needCreditToPost:"Kredit yetarli emas. Balansni to'ldiring.", listingPostedPaid:"E'lon joylandi! {n} kredit yechildi.",
+    brokerProfileTitle:"Makler profili", reviewsTitle:"Sharhlar", reviewsCount:"baho", dealsLabel:"bitimlar", noReviews:"Hozircha sharhlar yo'q", brokerNotFound:"Makler topilmadi", viewBrokerBtn:"Makler profili →", viewMyProfileBtn:"⭐ Ochiq profilim va reytingim", rateBtn:"⭐ Baholash", rateTitle:"Maklerni baholang", rateCommentPh:"Izoh (ixtiyoriy)...", rateSubmit:"Yuborish", rateSelf:"O'zingizni baholay olmaysiz", rateChoose:"Iltimos, yulduz tanlang", rateThanks:"Bahoyingiz uchun rahmat!",
     googleSignIn:"Google orqali davom etish", or:"yoki",
     tabLogin:"Kirish", tabRegister:"Ro'yxatdan o'tish",
     email:"Email", password:"Parol", forgotPassword:"Parolni unutdingizmi?",
@@ -1739,6 +1787,7 @@ const I18N = {
     topupTitle:"Пополнить баланс", topupSub:"Купите кредиты для лидов или перейдите на премиум.", topupBuyBtn:"Отправить запрос", topupSent:"Запрос отправлен! Баланс обновится после подтверждения администратором.", topupPremiumTitle:"Премиум-подписка", topupPremiumDesc:"Безлимитный приём лидов + приоритет в запросах.", topupPremiumBtn:"Перейти на премиум", topupPayNote:"Пока оплата подтверждается администратором вручную. Payme/Click подключим на следующем этапе.",
     admTopupsTitle:"Запросы на оплату", admTopupsSub:"Запросы риелторов на пополнение баланса.", admNoTopups:"Нет запросов на оплату", admTopupApprove:"✓ Подтвердить", admTopupApproved:"Оплата подтверждена — баланс обновлён",
     postPromoLabel:"Тип объявления", tierStandard:"Обычное", tierTop:"ТОП", tierVip:"VIP", tierStandardCost:"1-е бесплатно", postUrgentLabel:"⚡ Метка «Срочно» (+2 кредита)", postPromoInfo:"Первые {free} объявл. бесплатно, следующее — {extra} кредит.", urgentBadge:"Срочно", promoteBtn:"Продвижение", promoteTitle:"Продвижение объявления", promoteBalance:"Баланс: {n} кредитов", promoteNote:"Продвижение включается сразу; кредиты списываются с баланса. Если не хватает — сначала пополните.", promoBump:"Поднять (вверх)", promoteDone:"Продвижение включено!", promoSkippedLowCredit:"Не хватило кредитов — размещено как обычное.", needCreditToPost:"Недостаточно кредитов. Пополните баланс.", listingPostedPaid:"Объявление размещено! Списано {n} кредитов.",
+    brokerProfileTitle:"Профиль риелтора", reviewsTitle:"Отзывы", reviewsCount:"оценок", dealsLabel:"сделки", noReviews:"Пока нет отзывов", brokerNotFound:"Риелтор не найден", viewBrokerBtn:"Профиль риелтора →", viewMyProfileBtn:"⭐ Мой профиль и рейтинг", rateBtn:"⭐ Оценить", rateTitle:"Оцените риелтора", rateCommentPh:"Комментарий (необязательно)...", rateSubmit:"Отправить", rateSelf:"Нельзя оценить самого себя", rateChoose:"Пожалуйста, выберите звёзды", rateThanks:"Спасибо за оценку!",
     googleSignIn:"Продолжить через Google", or:"или",
     tabLogin:"Вход", tabRegister:"Регистрация",
     email:"Email", password:"Пароль", forgotPassword:"Забыли пароль?",
@@ -1844,6 +1893,7 @@ const I18N = {
     topupTitle:"Top up balance", topupSub:"Buy lead credits or upgrade to Premium.", topupBuyBtn:"Send request", topupSent:"Request sent! Balance updates after admin approval.", topupPremiumTitle:"Premium subscription", topupPremiumDesc:"Unlimited lead accepts + priority in requests.", topupPremiumBtn:"Go Premium", topupPayNote:"For now payments are approved manually by admin. Payme/Click will be connected next.",
     admTopupsTitle:"Payment requests", admTopupsSub:"Brokers' balance top-up requests.", admNoTopups:"No payment requests", admTopupApprove:"✓ Approve", admTopupApproved:"Payment approved — balance updated",
     postPromoLabel:"Listing type", tierStandard:"Standard", tierTop:"TOP", tierVip:"VIP", tierStandardCost:"1st free", postUrgentLabel:"⚡ Urgent badge (+2 credits)", postPromoInfo:"First {free} listing(s) free, next one {extra} credit.", urgentBadge:"Urgent", promoteBtn:"Promote", promoteTitle:"Promote listing", promoteBalance:"Balance: {n} credits", promoteNote:"Promotion activates instantly; credits are deducted. If not enough, top up first.", promoBump:"Bump (to top)", promoteDone:"Promotion activated!", promoSkippedLowCredit:"Not enough credits — posted as standard.", needCreditToPost:"Not enough credits. Please top up.", listingPostedPaid:"Listing posted! {n} credits deducted.",
+    brokerProfileTitle:"Broker profile", reviewsTitle:"Reviews", reviewsCount:"ratings", dealsLabel:"deals", noReviews:"No reviews yet", brokerNotFound:"Broker not found", viewBrokerBtn:"Broker profile →", viewMyProfileBtn:"⭐ My public profile & rating", rateBtn:"⭐ Rate", rateTitle:"Rate the broker", rateCommentPh:"Comment (optional)...", rateSubmit:"Submit", rateSelf:"You can't rate yourself", rateChoose:"Please pick stars", rateThanks:"Thanks for your rating!",
     googleSignIn:"Continue with Google", or:"or",
     tabLogin:"Log in", tabRegister:"Sign up",
     email:"Email", password:"Password", forgotPassword:"Forgot password?",
@@ -2608,6 +2658,7 @@ async function openDetail(l){
       <div class="avatar">${l.ownerType==='agent'?'👔':'🔑'}</div>
       <div class="oinfo"><h4>${l.ownerType==='agent'?t('ownerAgent'):t('ownerOwner')}</h4>
         <p>${l.ownerType==='agent'?t('agentContact'):t('ownerContact')}${l.ownerType!=='agent' ? ' · ✅ '+t('noCommission') : ''} · 👁 ${l.views||0} ${t('views')}</p></div>
+      ${l.ownerType==='agent' ? `<button class="btn btn-outline btn-sm" id="viewBrokerBtn" style="width:auto;margin-left:auto;flex-shrink:0;"><span class="btn-label">${t('viewBrokerBtn')}</span></button>` : ''}
     </div>
     ${(typeof l.lat==='number' && typeof l.lng==='number') ? `
       <div class="detail-section-title">${t('detailLocation')}</div>
@@ -2646,6 +2697,8 @@ async function openDetail(l){
     $('detailShareBtn').addEventListener('click', ()=>shareListing(l));
     $('detailMsgBtn').addEventListener('click', ()=>startChatFromListing(l));
   }
+  const vbBtn = $('viewBrokerBtn');
+  if(vbBtn) vbBtn.addEventListener('click', ()=>{ closeSheet('detailModal'); openBrokerProfile(l.ownerUid); });
 
   // Render detail map (if coordinates present)
   if(typeof l.lat==='number' && typeof l.lng==='number' && window.L){
@@ -2855,6 +2908,7 @@ $('topupPremiumBtn').addEventListener('click', e=>sendTopup({ premium:true, amou
 /* ============ MAKLER (BROKER) SCREEN ============ */
 $('openAgentBtn').addEventListener('click', ()=>{ showScreen('agent'); refreshAgentScreen(); });
 $('agentBackBtn').addEventListener('click', ()=>{ showScreen('profile'); refreshProfileScreen(); });
+$('viewMyProfileBtn').addEventListener('click', ()=>{ if(currentUser) openBrokerProfile(currentUser.uid); });
 
 function refreshAgentScreen(){
   if(!currentUser){ requireLogin('profile'); return; }
@@ -3009,6 +3063,102 @@ async function promoteListing(type, cost, btn){
   }catch(err){ toast(t('error')+err.message, 'error'); }
   finally{ setLoading(btn, false); }
 }
+
+/* ============ MAKLER REYTINGI / OCHIQ PROFIL (ishonch tizimi) ============ */
+let brokerReturn = 'feed';
+let currentBrokerUid = null;
+let rateStars = 0;
+
+function renderStars(avg){
+  const full = Math.round(avg||0);
+  let s=''; for(let i=1;i<=5;i++){ s += `<span class="${i<=full?'':'dim'}">★</span>`; }
+  return `<span class="stars">${s}</span>`;
+}
+
+async function openBrokerProfile(agentUid){
+  if(!agentUid) return;
+  const cur = document.querySelector('.screen.active');
+  if(cur && cur.id && cur.id!=='screen-broker') brokerReturn = cur.id.replace('screen-','');
+  currentBrokerUid = agentUid;
+  showScreen('broker');
+  const card = $('brokerProfileCard'); card.innerHTML = `<div class="center-note">${t('loading')}</div>`;
+  $('brokerReviews').innerHTML = '';
+  try{
+    const agentRef = db.collection('agents').doc(agentUid);
+    const [aDoc, revSnap] = await Promise.all([
+      agentRef.get(),
+      agentRef.collection('reviews').orderBy('createdAt','desc').limit(50).get()
+    ]);
+    if(!aDoc.exists){ card.innerHTML = `<div class="center-note">${t('brokerNotFound')}</div>`; $('rateBrokerBtn').style.display='none'; return; }
+    const a = aDoc.data();
+    const cnt = a.ratingCount||0; const avg = cnt ? (a.ratingSum||0)/cnt : 0;
+    const verified = a.verified===true;
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div class="avatar" style="font-size:26px;">👔</div>
+        <div style="min-width:0;">
+          <div style="font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${esc(a.name||t('ownerAgent'))} ${verified?`<span class="badge badge-verified">✓ ${t('verified')}</span>`:''}</div>
+          <div style="margin-top:4px;">${renderStars(avg)} <span style="font-size:13px;color:var(--text-dim);">${avg.toFixed(1)} · ${cnt} ${t('reviewsCount')}</span></div>
+        </div>
+      </div>
+      <div class="stat-grid" style="margin-top:14px;grid-template-columns:repeat(2,1fr);">
+        <div class="stat-box"><b>${a.dealsCount||0}</b><small>${t('dealsLabel')}</small></div>
+        <div class="stat-box"><b>${esc(a.district||'—')}</b><small>${t('agentDistrictLabel')}</small></div>
+      </div>
+      ${a.phone ? `<button class="btn btn-secondary" id="brokerCallBtn" style="margin-top:14px;"><span class="btn-label">📞 ${t('contactBtn')}</span></button>` : ''}`;
+    const cb = $('brokerCallBtn');
+    if(cb) cb.addEventListener('click', ()=>{ contactPhone=a.phone||''; $('contactPhoneDisplay').textContent=contactPhone; openSheet('contactSheet'); });
+    const rbox = $('brokerReviews');
+    if(revSnap.empty){ rbox.innerHTML = `<div class="center-note">${t('noReviews')}</div>`; }
+    else{
+      rbox.innerHTML = '';
+      revSnap.forEach(d=>{ const r=d.data(); const el=document.createElement('div'); el.className='review-item';
+        el.innerHTML = `<div class="rv-top"><span class="rv-name">${esc(r.reviewerName||'—')}</span>${renderStars(r.stars||0)}</div>${r.comment?`<div class="rv-text">${esc(r.comment)}</div>`:''}`;
+        rbox.appendChild(el);
+      });
+    }
+    // O'zini baholay olmaydi
+    $('rateBrokerBtn').style.display = (currentUser && currentUser.uid===agentUid) ? 'none' : '';
+  }catch(err){ card.innerHTML = `<div class="center-note">${t('error')}${esc(err.message)}</div>`; }
+}
+
+function paintStars(){ document.querySelectorAll('#starPicker .star').forEach(s=>s.classList.toggle('on', Number(s.dataset.v)<=rateStars)); }
+document.querySelectorAll('#starPicker .star').forEach(s=>s.addEventListener('click', ()=>{ rateStars=Number(s.dataset.v); paintStars(); }));
+function openRateSheet(){
+  if(!currentUser){ requireLogin('feed'); return; }
+  rateStars = 0; $('rateComment').value=''; paintStars();
+  openSheet('rateSheet');
+}
+async function submitRating(btn){
+  if(!currentUser || !currentBrokerUid) return;
+  if(currentBrokerUid === currentUser.uid){ toast(t('rateSelf'),'error'); return; }
+  if(rateStars < 1){ toast(t('rateChoose'),'error'); return; }
+  setLoading(btn, true);
+  try{
+    const agentRef = db.collection('agents').doc(currentBrokerUid);
+    const revRef = agentRef.collection('reviews').doc(currentUser.uid);
+    const stars = rateStars; const comment = $('rateComment').value.trim();
+    await db.runTransaction(async (tx)=>{
+      const aDoc = await tx.get(agentRef);
+      const rDoc = await tx.get(revRef);
+      if(!aDoc.exists) throw new Error('gone');
+      const a = aDoc.data();
+      let sum = a.ratingSum||0, cnt = a.ratingCount||0;
+      if(rDoc.exists){ sum -= (rDoc.data().stars||0); } else { cnt += 1; }
+      sum += stars;
+      tx.set(revRef, { stars, comment, reviewerUid: currentUser.uid, reviewerName: (currentUser.email||'user').split('@')[0], createdAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge:true });
+      tx.update(agentRef, { ratingSum: sum, ratingCount: cnt });
+    });
+    toast(t('rateThanks'), 'success');
+    closeSheet('rateSheet');
+    openBrokerProfile(currentBrokerUid);
+  }catch(err){ toast(t('error')+err.message, 'error'); }
+  finally{ setLoading(btn, false); }
+}
+$('brokerBackBtn').addEventListener('click', ()=>{ showScreen(brokerReturn||'feed'); });
+$('rateBrokerBtn').addEventListener('click', openRateSheet);
+$('rateCloseX').addEventListener('click', ()=>closeSheet('rateSheet'));
+$('rateSubmitBtn').addEventListener('click', e=>submitRating(e.currentTarget));
 
 /* ============ SUPPORT (yordam + ishonch telefoni) ============ */
 let hotlineNumber = '';
@@ -3761,6 +3911,8 @@ async function acceptRequest(id, btn){
       if(!premium){ tx.update(uref, { credits: credits - LEAD_COST }); charged = true; }
     });
     if(charged && userDoc && typeof userDoc.credits==='number'){ userDoc.credits -= LEAD_COST; renderBrokerWallet(); }
+    // Bitimlar hisoblagichini oshiramiz (ochiq profilda ko'rinadi)
+    db.collection('agents').doc(currentUser.uid).update({ dealsCount: firebase.firestore.FieldValue.increment(1) }).catch(()=>{});
     toast(t('reqAcceptedToast'), 'success');
     loadAgentRequests();
   }catch(err){
