@@ -400,7 +400,11 @@
   .mode-opt.active .mo-tx b{color:var(--gold);}
   /* Bitta izoh paneli — box bosilganda parda ochilgandek yangilanadi */
   .mode-hint{font-size:12px;color:#ffffff;font-weight:600;text-align:center;margin:0 0 12px;line-height:1.45;letter-spacing:-0.01em;
-    background:linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.05) 45%, rgba(51,161,132,0.22) 100%);border:1px solid rgba(255,255,255,0.15);border-radius:11px;padding:9px 13px;overflow:hidden;}
+    background:linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.05) 45%, rgba(69,183,152,0.20) 100%);border:1px solid rgba(255,255,255,0.15);border-radius:11px;padding:9px 13px;overflow:hidden;transition:background .4s ease;}
+  /* makler yordami tanlansa: kulrang -> yashil (hozirgidek). yashil tomoni biroz ochroq va sal xira */
+  .mode-hint.m-assist{background:linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.05) 45%, rgba(69,183,152,0.20) 100%);}
+  /* mustaqil tanlansa: qarama-qarshi yo'nalish — yashil -> kulrang */
+  .mode-hint.m-indep{background:linear-gradient(315deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.05) 45%, rgba(69,183,152,0.20) 100%);}
   .mode-hint b{color:#ffffff;font-weight:700;}
   .mode-hint.reveal{animation:hintReveal .34s cubic-bezier(.2,.7,.2,1);}
   @keyframes hintReveal{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
@@ -2209,6 +2213,8 @@ function syncModeUI(){
   const hint = $('modeHint');
   if(hint){
     hint.innerHTML = (currentMode==='assisted') ? t('modeHintAssist') : t('modeHintIndep');
+    hint.classList.toggle('m-assist', currentMode==='assisted');
+    hint.classList.toggle('m-indep', currentMode!=='assisted');
     hint.classList.remove('reveal'); void hint.offsetWidth; hint.classList.add('reveal');
   }
   const cta = $('brokerCta'); if(cta) cta.classList.toggle('hidden', currentMode!=='assisted');
