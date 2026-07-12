@@ -4,583 +4,1920 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>NurMakon — Uy-joy topish, sotish, ijaraga berish</title>
-<meta
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
-import { getFirestore, collection, addDoc, query, where, getDocs, doc, deleteDoc, setDoc, getDoc, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+<meta name="theme-color" content="#12181f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d1117;
+    --ink-2:#11161d;
+    --surface:#171d26;
+    --surface-2:#1f2731;
+    --surface-3:#252f3b;
+    --line:#2a3441;
+    --line-soft:#1e2731;
+    --text:#f4f1ea;
+    --text-dim:#94a3b8;
+    --text-faint:#5b6b80;
+    --gold:#f0a83c;
+    --gold-2:#d68a1f;
+    --gold-soft:rgba(240,168,60,0.14);
+    --teal:#33a184;
+    --teal-2:#1f7a63;
+    --teal-soft:rgba(51,161,132,0.14);
+    --danger:#e2564a;
+    --radius:16px;
+    --radius-sm:11px;
+    --shadow-1:0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    --shadow-2:0 2px 8px rgba(0,0,0,0.35), 0 16px 40px -16px rgba(0,0,0,0.6);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(240,168,60,0.06), transparent 60%),
+      url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmMGE4M2MiIHN0cm9rZS1vcGFjaXR5PSIwLjA3IiBzdHJva2Utd2lkdGg9IjEiPjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIi8+PHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQwIDQwKSIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iNDAiIHI9IjE0Ii8+PC9nPjwvc3ZnPg==') 0 0/80px 80px repeat,
+      var(--ink);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    padding-bottom:82px;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.brand{font-family:'Fraunces',serif;letter-spacing:-0.01em;}
+  a{color:inherit;}
+  button{font-family:inherit;}
+  input,select,textarea{font-family:inherit;}
 
+  /* ===== Top bar ===== */
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 18px;
+    background:rgba(13,17,23,0.85);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .brand{font-size:21px;font-weight:700;color:var(--text);letter-spacing:-0.01em;}
+  .brand span{color:var(--gold);}
+  .topbar-left{display:flex;align-items:center;gap:10px;}
+  .icon-btn{
+    background:var(--surface-2);border:1px solid var(--line);color:var(--text);
+    font-size:17px;width:38px;height:38px;border-radius:11px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:transform .12s ease, background .15s ease;
+  }
+  .icon-btn:active{transform:scale(0.92);background:var(--surface-3);}
+
+  /* ===== Screens ===== */
+  .screen{display:none;padding:18px 16px;max-width:560px;margin:0 auto;animation:fadeIn .25s ease;}
+  .screen.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  /* ===== Cards ===== */
+  .card{
+    background:linear-gradient(180deg, var(--surface) 0%, var(--surface) 100%);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:14px;
+    box-shadow:var(--shadow-1);
+  }
+
+  /* ===== Buttons ===== */
+  .btn{
+    display:block;width:100%;
+    padding:15px 18px;
+    border-radius:13px;
+    border:none;
+    font-size:15px;font-weight:600;
+    cursor:pointer;text-align:center;
+    letter-spacing:-0.01em;
+    transition:transform .12s ease, filter .15s ease, box-shadow .15s ease;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{
+    background:linear-gradient(180deg, #f5b656 0%, var(--gold) 55%, var(--gold-2) 100%);
+    color:#241505;
+    box-shadow:0 4px 14px -4px rgba(240,168,60,0.5);
+  }
+  .btn-primary:active{filter:brightness(0.95);}
+  .btn-secondary{
+    background:linear-gradient(180deg, #3fb89a 0%, var(--teal) 55%, var(--teal-2) 100%);
+    color:#eafff9;
+    box-shadow:0 4px 14px -4px rgba(51,161,132,0.5);
+  }
+  .btn-outline{background:var(--surface-2);color:var(--text);border:1px solid var(--line);}
+  .btn-outline:active{background:var(--surface-3);}
+  .btn-danger{background:var(--danger);color:#fff;}
+  .btn[disabled]{opacity:0.45;pointer-events:none;box-shadow:none;}
+  .btn-row{display:flex;gap:10px;}
+  .btn-row .btn{flex:1;}
+
+  /* ===== Forms ===== */
+  label{display:block;font-size:12.5px;font-weight:600;color:var(--text-dim);margin:16px 0 7px;text-transform:uppercase;letter-spacing:0.04em;}
+  input[type=text],input[type=tel],input[type=number],input[type=password],select,textarea{
+    width:100%;
+    background:var(--surface-2);
+    border:1.5px solid var(--line);
+    color:var(--text);
+    border-radius:var(--radius-sm);
+    padding:15px 16px;
+    font-size:16px;
+    font-weight:500;
+    outline:none;
+    transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  textarea{resize:vertical;min-height:90px;font-weight:400;}
+  input:focus,select:focus,textarea:focus{
+    border-color:var(--gold);
+    background:var(--surface-3);
+    box-shadow:0 0 0 4px var(--gold-soft);
+  }
+  input::placeholder,textarea::placeholder{color:var(--text-faint);font-weight:400;}
+  .field-row{display:flex;gap:10px;}
+  .field-row > div{flex:1;}
+  .checkbox-row{display:flex;gap:11px;align-items:flex-start;margin:16px 0;}
+  .checkbox-row input{width:21px;height:21px;flex-shrink:0;margin-top:2px;accent-color:var(--gold);}
+  .checkbox-row label{margin:0;font-size:13px;color:var(--text-dim);line-height:1.55;text-transform:none;font-weight:400;letter-spacing:normal;}
+
+  /* ===== Bottom nav ===== */
+  .bottomnav{
+    position:fixed;bottom:0;left:0;right:0;z-index:20;
+    display:flex;
+    background:rgba(23,29,38,0.92);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    border-top:1px solid var(--line-soft);
+    padding:10px 10px max(10px, env(safe-area-inset-bottom));
+    gap:6px;
+  }
+  .nav-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+    background:none;border:none;color:var(--text-faint);font-size:11px;font-weight:600;
+    padding:7px 4px;cursor:pointer;border-radius:12px;
+    transition:color .15s ease, background .15s ease;
+  }
+  .nav-item.active{color:var(--gold);background:var(--gold-soft);}
+  .nav-item .ic{font-size:19px;}
+  .nav-item-center{position:relative;}
+  .nav-item-center .ic{
+    width:40px;height:40px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg, #f5b656 0%, var(--gold) 55%, var(--gold-2) 100%);
+    color:#241505;font-size:19px;
+    margin-top:-20px;
+    box-shadow:0 6px 16px -4px rgba(212,164,74,0.55);
+  }
+  .nav-item-center span{margin-top:-2px;}
+  .nav-item-center.active{background:none;color:var(--gold);}
+
+  /* ===== Guest lock card (browse without login) ===== */
+  .lock-card{
+    display:flex;align-items:center;gap:14px;
+    background:var(--surface-2);border:1px solid var(--line);
+    border-radius:16px;padding:16px;margin-top:14px;
+    cursor:pointer;transition:transform .12s ease, border-color .15s ease;
+  }
+  .lock-card:active{transform:scale(0.98);}
+  .lock-card:hover{border-color:var(--gold-2);}
+  .lock-card .lock-ic{
+    width:46px;height:46px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg, #f5b656 0%, var(--gold) 55%, var(--gold-2) 100%);
+    color:#241505;font-size:20px;
+  }
+  .lock-card .lock-txt{flex:1;}
+  .lock-card .lock-txt h3{margin:0 0 3px;font-size:16px;}
+  .lock-card .lock-txt p{margin:0;font-size:13px;color:var(--text-dim);}
+  .lock-card .lock-chevron{color:var(--text-faint);font-size:20px;}
+  .lock-empty{text-align:center;padding:60px 20px;color:var(--text-dim);}
+  .lock-empty .ic{font-size:38px;margin-bottom:10px;}
+
+  /* ===== Topbar guest login button ===== */
+  .topbar-login-btn{
+    display:flex;align-items:center;gap:6px;
+    background:linear-gradient(180deg, #f5b656 0%, var(--gold) 55%, var(--gold-2) 100%);
+    color:#241505;border:none;border-radius:11px;
+    font-size:13px;font-weight:700;
+    padding:9px 14px;cursor:pointer;
+  }
+  .topbar-login-btn:active{transform:scale(0.96);}
+
+  /* ===== Favorite heart on listing card ===== */
+  .fav-btn{
+    position:absolute;top:10px;right:10px;z-index:2;
+    width:34px;height:34px;border-radius:50%;
+    background:rgba(13,17,23,0.55);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,0.14);
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;cursor:pointer;color:rgba(244,241,234,0.85);
+    transition:transform .12s ease, background .15s ease;
+  }
+  .fav-btn:active{transform:scale(0.88);}
+  .fav-btn.active{color:#ff5f6d;background:rgba(13,17,23,0.7);}
+  .listing{position:relative;}
+
+  /* ===== Auth screen close button (guest can dismiss) ===== */
+  .auth-close-btn{
+    position:absolute;top:14px;right:14px;z-index:50;
+    width:36px;height:36px;border-radius:50%;
+    background:rgba(13,17,23,0.5);border:1px solid rgba(255,255,255,0.14);
+    color:var(--text);font-size:16px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+  }
+
+  /* ===== Listing card ===== */
+  .listing{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    margin-bottom:16px;
+    box-shadow:var(--shadow-1);
+    transition:transform .15s ease;
+  }
+  .listing img{width:100%;height:200px;object-fit:cover;display:block;background:var(--surface-2);}
+  .listing-body{padding:16px;}
+  .listing-price{font-size:21px;font-weight:700;color:var(--gold);letter-spacing:-0.02em;font-family:'Fraunces',serif;}
+  .listing-meta{font-size:13.5px;color:var(--text-dim);margin-top:5px;line-height:1.5;}
+  .badge{
+    display:inline-block;font-size:11px;font-weight:700;
+    padding:4px 10px;border-radius:20px;margin-right:6px;
+    letter-spacing:0.01em;
+  }
+  .badge-owner{background:var(--teal-soft);color:#7fe3c6;}
+  .badge-agent{background:var(--gold-soft);color:#f8c877;}
+  .badge-rent{background:rgba(160,140,255,0.14);color:#c3b3ff;}
+  .badge-sale{background:rgba(226,86,74,0.14);color:#ff9b8f;}
+
+  /* ===== Modal ===== */
+  .modal-overlay{
+    position:fixed;inset:0;z-index:50;
+    background:rgba(6,8,11,0.88);
+    backdrop-filter:blur(4px);
+    display:none;align-items:flex-end;justify-content:center;
+  }
+  .modal-overlay.active{display:flex;}
+  .modal{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-bottom:none;
+    border-radius:22px 22px 0 0;
+    padding:22px 18px 26px;
+    width:100%;max-width:560px;
+    max-height:88vh;overflow-y:auto;
+    box-shadow:var(--shadow-2);
+    animation:slideUp .25s ease;
+  }
+  @keyframes slideUp{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .modal h2{margin:0 0 12px;font-size:20px;}
+  .terms-text{
+    font-size:13px;color:var(--text-dim);line-height:1.65;
+    max-height:340px;overflow-y:auto;
+    background:var(--surface-2);border:1px solid var(--line-soft);border-radius:var(--radius-sm);padding:15px;margin:12px 0;
+  }
+  .terms-text h4{color:var(--text);font-size:13.5px;margin:16px 0 6px;}
+  .terms-text h4:first-child{margin-top:0;}
+  .terms-text p{margin:0 0 11px;}
+  .terms-text strong{color:var(--text);}
+  .terms-link{background:none;border:none;padding:0;color:var(--gold);text-decoration:underline;font-weight:700;cursor:pointer;font-size:inherit;font-family:inherit;}
+
+  /* ===== Choice cards ===== */
+  .choice-card{
+    display:flex;align-items:center;gap:15px;
+    background:var(--surface);border:1.5px solid var(--line);
+    border-radius:var(--radius);padding:17px;margin-bottom:12px;cursor:pointer;
+    box-shadow:var(--shadow-1);
+    transition:border-color .15s ease, transform .12s ease;
+  }
+  .choice-card:active{transform:scale(0.98);}
+  .choice-card.selected{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft), var(--shadow-1);}
+  .choice-card .ic{
+    font-size:24px;width:48px;height:48px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--surface-2);border-radius:13px;
+  }
+  .choice-card h3{margin:0;font-size:15.5px;font-weight:700;}
+  .choice-card p{margin:4px 0 0;font-size:13px;color:var(--text-dim);line-height:1.4;}
+
+  .empty-state{text-align:center;padding:50px 20px;color:var(--text-faint);}
+  .empty-state .ic{font-size:38px;margin-bottom:12px;opacity:0.6;}
+
+  .filter-bar{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;}
+  .filter-chip{
+    flex-shrink:0;padding:10px 16px;border-radius:20px;
+    background:var(--surface-2);border:1px solid var(--line);
+    font-size:13px;font-weight:600;color:var(--text-dim);cursor:pointer;white-space:nowrap;
+    transition:all .15s ease;
+  }
+  .filter-chip.active{
+    background:linear-gradient(180deg, #f5b656, var(--gold-2));
+    color:#241505;border-color:transparent;
+    box-shadow:0 4px 12px -4px rgba(240,168,60,0.5);
+  }
+
+  .hidden{display:none !important;}
+  .center-note{text-align:center;color:var(--text-faint);font-size:13px;margin-top:12px;line-height:1.5;}
+  .toast{
+    position:fixed;bottom:96px;left:50%;transform:translateX(-50%);
+    background:var(--surface-3);border:1px solid var(--line);
+    padding:12px 20px;border-radius:14px;font-size:13.5px;font-weight:500;
+    box-shadow:var(--shadow-2);
+    z-index:60;display:none;max-width:88%;text-align:center;
+  }
+  /* ===== Hero (auth screen) ===== */
+  .hero-logo{font-size:38px;letter-spacing:-0.02em;text-shadow:0 2px 14px rgba(0,0,0,0.7);}
+  .hero-sub{
+    color:var(--text);
+    font-family:'Space Grotesk',system-ui,sans-serif;
+    font-weight:500;
+    font-size:16px;
+    letter-spacing:-0.02em;
+    white-space:nowrap;
+    margin-top:10px;
+    opacity:0.92;
+  }
+
+  /* ===== Auth card (OLX-style login/register) ===== */
+  .auth-social-btn{
+    display:flex;align-items:center;justify-content:center;gap:11px;
+    width:100%;padding:14px 16px;border-radius:13px;
+    border:1.5px solid var(--line);background:var(--surface-2);color:var(--text);
+    font-weight:600;font-size:14.5px;cursor:pointer;margin-bottom:10px;
+    transition:background .15s ease, transform .12s ease, border-color .15s ease;
+  }
+  .auth-social-btn:active{transform:scale(0.97);background:var(--surface-3);}
+  .auth-social-btn:last-of-type{margin-bottom:0;}
+  .auth-social-btn svg{width:20px;height:20px;flex-shrink:0;}
+
+  .auth-divider{display:flex;align-items:center;gap:12px;margin:20px 0 16px;color:var(--text-faint);font-size:12px;text-transform:uppercase;letter-spacing:0.06em;}
+  .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--line);}
+
+  .auth-tabs{display:flex;gap:0;}
+  .auth-tab{
+    flex:1;background:none;border:none;padding:8px 4px 14px;
+    font-size:15px;font-weight:700;color:var(--text-faint);cursor:pointer;
+    transition:color .15s ease;
+  }
+  .auth-tab.active{color:var(--text);}
+  .auth-tab-track{position:relative;height:2px;background:var(--line-soft);border-radius:2px;margin-bottom:18px;overflow:hidden;}
+  .auth-tab-indicator{
+    position:absolute;top:0;left:0;width:50%;height:100%;
+    background:linear-gradient(90deg, var(--gold), var(--gold-2));
+    border-radius:2px;transition:transform .25s ease;
+  }
+  .auth-tab-indicator.pos-register{transform:translateX(100%);}
+  .auth-pane{display:none;}
+  .auth-pane.active{display:block;}
+
+  /* ===== Hero banner (custom brand illustration, no stock photo) ===== */
+  .hero-banner{
+    position:relative;
+    overflow:hidden;
+    margin:0 -16px 0;
+    min-height:300px;
+    background:
+      radial-gradient(900px 480px at 50% -15%, rgba(240,168,60,0.22), transparent 62%),
+      linear-gradient(165deg, #1c2530 0%, #141b24 55%, var(--ink) 100%);
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:28px 20px 54px;
+    text-align:center;
+  }
+  .hero-banner::before{
+    content:"";
+    position:absolute;inset:0;
+    background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmMGE4M2MiIHN0cm9rZS1vcGFjaXR5PSIwLjEwIiBzdHJva2Utd2lkdGg9IjEiPjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIi8+PHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQwIDQwKSIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iNDAiIHI9IjE0Ii8+PC9nPjwvc3ZnPg==');
+    background-size:80px 80px;
+    opacity:0.7;
+  }
+  .hero-banner::after{
+    content:"";
+    position:absolute;
+    left:50%;bottom:-4%;
+    transform:translateX(-50%);
+    width:78%;max-width:380px;
+    aspect-ratio:600/320;
+    background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MDAgMzIwIj4KICA8bGluZSB4MT0iMzAiIHkxPSIzMDAiIHgyPSI1NzAiIHkyPSIzMDAiIHN0cm9rZT0iI2YwYTgzYyIgc3Ryb2tlLW9wYWNpdHk9IjAuMzUiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPHJlY3QgeD0iMTIwIiB5PSIxNjAiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNDAiIGZpbGw9IiMxMTE2MWQiIHN0cm9rZT0iI2YwYTgzYyIgc3Ryb2tlLW9wYWNpdHk9IjAuOCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSIxMjgiIGN5PSIxNTUiIHI9IjEwIiBmaWxsPSIjZjBhODNjIiBmaWxsLW9wYWNpdHk9IjAuODUiLz4KICA8bGluZSB4MT0iMTI4IiB5MT0iMTQ1IiB4Mj0iMTI4IiB5Mj0iMTI0IiBzdHJva2U9IiNmMGE4M2MiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2Utb3BhY2l0eT0iMC44NSIvPgogIDxjaXJjbGUgY3g9IjEyOCIgY3k9IjEyMiIgcj0iMi41IiBmaWxsPSIjZjBhODNjIi8+CgogIDxyZWN0IHg9IjQ2NCIgeT0iMTYwIiB3aWR0aD0iMTYiIGhlaWdodD0iMTQwIiBmaWxsPSIjMTExNjFkIiBzdHJva2U9IiNmMGE4M2MiIHN0cm9rZS1vcGFjaXR5PSIwLjgiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPGNpcmNsZSBjeD0iNDcyIiBjeT0iMTU1IiByPSIxMCIgZmlsbD0iI2YwYTgzYyIgZmlsbC1vcGFjaXR5PSIwLjg1Ii8+CiAgPGxpbmUgeDE9IjQ3MiIgeTE9IjE0NSIgeDI9IjQ3MiIgeTI9IjEyNCIgc3Ryb2tlPSIjZjBhODNjIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLW9wYWNpdHk9IjAuODUiLz4KICA8Y2lyY2xlIGN4PSI0NzIiIGN5PSIxMjIiIHI9IjIuNSIgZmlsbD0iI2YwYTgzYyIvPgoKICA8cGF0aCBkPSJNMjMwLDMwMCBMMjMwLDIwNSBDMjMwLDE1MCAyNjAsOTUgMzAwLDkwIEMzNDAsOTUgMzcwLDE1MCAzNzAsMjA1IEwzNzAsMzAwIFoiIGZpbGw9IiMxNzFkMjYiIHN0cm9rZT0iI2YwYTgzYyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2Utb3BhY2l0eT0iMC45Ii8+CiAgPHBhdGggZD0iTTI0NCwzMDAgTDI0NCwyMDggQzI0NCwxNjAgMjY4LDExMCAzMDAsMTA2IEMzMzIsMTEwIDM1NiwxNjAgMzU2LDIwOCBMMzU2LDMwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjBhODNjIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLW9wYWNpdHk9IjAuNiIvPgoKICA8ZyBzdHJva2U9IiNmMGE4M2MiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1vcGFjaXR5PSIwLjg1Ij4KICAgIDxsaW5lIHgxPSIzMDAiIHkxPSIyMTEiIHgyPSIzMDAiIHkyPSIxOTEiLz4KICAgIDxsaW5lIHgxPSIzMTEiIHkxPSIyMTQiIHgyPSIzMTkiIHkyPSIxOTciLz4KICAgIDxsaW5lIHgxPSIzMTkiIHkxPSIyMjUiIHgyPSIzMzYiIHkyPSIyMTciLz4KICAgIDxsaW5lIHgxPSIzMjIiIHkxPSIyMzgiIHgyPSIzNDEiIHkyPSIyMzgiLz4KICAgIDxsaW5lIHgxPSIzMTkiIHkxPSIyNTEiIHgyPSIzMzYiIHkyPSIyNTkiLz4KICAgIDxsaW5lIHgxPSIzMTEiIHkxPSIyNjIiIHgyPSIzMTkiIHkyPSIyNzkiLz4KICAgIDxsaW5lIHgxPSIzMDAiIHkxPSIyNjUiIHgyPSIzMDAiIHkyPSIyODUiLz4KICAgIDxsaW5lIHgxPSIyODkiIHkxPSIyNjIiIHgyPSIyODEiIHkyPSIyNzkiLz4KICAgIDxsaW5lIHgxPSIyODEiIHkxPSIyNTEiIHgyPSIyNjQiIHkyPSIyNTkiLz4KICAgIDxsaW5lIHgxPSIyNzgiIHkxPSIyMzgiIHgyPSIyNTkiIHkyPSIyMzgiLz4KICAgIDxsaW5lIHgxPSIyODEiIHkxPSIyMjUiIHgyPSIyNjQiIHkyPSIyMTciLz4KICAgIDxsaW5lIHgxPSIyODkiIHkxPSIyMTQiIHgyPSIyODEiIHkyPSIxOTciLz4KICA8L2c+CiAgPGNpcmNsZSBjeD0iMzAwIiBjeT0iMjM4IiByPSI5IiBmaWxsPSIjZjBhODNjIi8+Cjwvc3ZnPgo=');
+    background-size:contain;background-repeat:no-repeat;background-position:bottom center;
+    opacity:0.95;
+    filter:drop-shadow(0 -8px 20px rgba(240,168,60,0.10));
+    pointer-events:none;
+  }
+  .hero-banner > *{position:relative;z-index:1;}
+  .hero-banner-auth{
+    min-height:210px;
+    padding-bottom:16px;
+  }
+  .hero-banner-auth::after{
+    width:64%;max-width:300px;
+    bottom:-1%;
+    opacity:0.9;
+  }
+  .hero-banner-auth .brand{font-size:32px;}
+  .hero-banner-auth .hero-sub{margin-top:7px;font-size:15px;}
+  .hero-banner .brand{font-size:36px;text-shadow:0 2px 14px rgba(0,0,0,0.7);}
+  .hero-banner .hero-sub{
+    color:rgba(244,241,234,0.94);
+    font-size:16px;
+    margin-top:9px;
+    text-shadow:0 2px 10px rgba(0,0,0,0.55);
+  }
+  .hero-banner-top{
+    position:absolute;top:0;left:0;right:0;
+    padding:16px 18px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+
+  /* ===== Auth screen: dim custom illustration instead of flat black ===== */
+  #screen-auth{
+    position:relative;
+    min-height:100vh;
+    overflow:hidden;
+    background:var(--ink);
+  }
+  #screen-auth::before{
+    content:"";
+    position:absolute;
+    top:-30%;left:-18%;right:-18%;bottom:-6%;
+    background:
+      linear-gradient(180deg, rgba(13,17,23,0.15) 0%, rgba(13,17,23,0.45) 32%, rgba(13,17,23,0.82) 62%, var(--ink) 88%),
+      radial-gradient(700px 500px at 50% 6%, rgba(240,168,60,0.24), transparent 65%),
+      url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmMGE4M2MiIHN0cm9rZS1vcGFjaXR5PSIwLjEwIiBzdHJva2Utd2lkdGg9IjEiPjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIi8+PHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQwIDQwKSIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iNDAiIHI9IjE0Ii8+PC9nPjwvc3ZnPg==') top center/80px 80px repeat,
+      linear-gradient(165deg, #1c2530 0%, #141b24 55%, var(--ink) 100%);
+    transform:scale(0.72);
+    transform-origin:center top;
+    z-index:0;
+  }
+  #screen-auth > *{
+    position:relative;
+    z-index:1;
+  }
+  #screen-auth .hero-banner-auth{
+    background:none;
+  }
+  #screen-auth .hero-banner-auth::after{
+    width:64%;max-width:300px;
+    bottom:-1%;
+    opacity:0.9;
+  }
+  #screen-auth .card.search-float{
+    background:rgba(23,29,38,0.82);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+  }
+
+  .search-float{
+    position:relative;
+    margin:-40px 0 18px;
+    z-index:5;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:16px;
+    box-shadow:var(--shadow-2);
+  }
+  .deal-toggle{display:flex;gap:6px;background:var(--surface-2);border-radius:13px;padding:4px;margin-bottom:12px;}
+  #phoneCard{
+    margin-top:10px;
+    padding:12px;
+    border:1.5px solid #2a4a7c;
+    box-shadow:0 1px 2px rgba(0,0,0,0.3), 0 8px 28px -12px rgba(42,74,124,0.45);
+  }
+  #phoneCard .auth-social-btn{padding:9px 14px;font-size:13px;margin-bottom:6px;}
+  #phoneCard .auth-social-btn svg{width:17px;height:17px;}
+  #phoneCard .auth-divider{margin:10px 0 8px;font-size:10.5px;}
+  #phoneCard .auth-tab{padding:3px 4px 7px;font-size:13.5px;}
+  #phoneCard .auth-tab-track{margin-bottom:8px;}
+  #phoneCard label{margin:6px 0 4px;font-size:11px;}
+  #phoneCard input[type=text],#phoneCard input[type=password]{padding:9px 14px;font-size:14.5px;}
+  #phoneCard .checkbox-row{margin:8px 0;}
+  #phoneCard .btn{padding:10px 16px;font-size:13.5px;}
+  #phoneCard .center-note{margin-top:4px;font-size:11px;}
+  .deal-toggle .filter-chip{
+    flex:1;text-align:center;background:transparent;border:none;margin:0;
+  }
+  .deal-toggle .filter-chip.active{background:linear-gradient(180deg, #f5b656, var(--gold-2));}
+  .search-row{display:flex;gap:8px;}
+  .search-row input{flex:1;}
+  .search-row .btn{width:auto;padding:14px 18px;flex-shrink:0;}
+
+  /* ===== Language switcher (floats over the background, no bar) ===== */
+  .langbar{
+    position:absolute;top:14px;left:14px;z-index:45;
+    display:flex;align-items:center;
+    pointer-events:none;
+  }
+  .lang-toggle{
+    display:flex;align-items:center;gap:1px;
+    background:rgba(13,17,23,0.55);
+    border:1px solid rgba(255,255,255,0.14);
+    border-radius:20px;
+    padding:3px;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    pointer-events:auto;
+  }
+  .lang-pill{
+    display:flex;align-items:center;gap:2px;
+    background:transparent;border:none;color:rgba(244,241,234,0.75);
+    font-size:10px;font-weight:700;letter-spacing:-0.01em;
+    padding:4px 7px;border-radius:14px;
+    cursor:pointer;white-space:nowrap;
+    transition:background .15s ease, color .15s ease, transform .12s ease;
+  }
+  .lang-pill:active{transform:scale(0.94);}
+  .lang-pill span{font-size:10.5px;line-height:1;}
+  .lang-pill.active{
+    background:linear-gradient(180deg, #f5b656 0%, var(--gold-2) 100%);
+    color:#241505;
+  }
+  .lang-toggle:not(.expanded) .lang-pill:not(.active){
+    display:none;
+  }
+  .lang-toggle:not(.expanded) .lang-pill.active::after{
+    content:"▾";
+    font-size:9px;
+    margin-left:2px;
+    opacity:0.8;
+  }
+  .langbar.inline{
+    position:static;top:auto;left:auto;
+    margin-right:10px;
+  }
+
+  /* ===== Currency switcher (sits right next to the language switcher) ===== */
+  .currency-toggle{
+    display:flex;align-items:center;gap:1px;
+    background:rgba(13,17,23,0.55);
+    border:1px solid rgba(255,255,255,0.14);
+    border-radius:20px;
+    padding:3px;
+    margin-left:6px;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    pointer-events:auto;
+  }
+  .currency-pill{
+    background:transparent;border:none;color:rgba(244,241,234,0.75);
+    font-size:10.5px;font-weight:700;letter-spacing:-0.01em;
+    padding:4px 9px;border-radius:14px;
+    cursor:pointer;white-space:nowrap;
+    transition:background .15s ease, color .15s ease, transform .12s ease;
+  }
+  .currency-pill:active{transform:scale(0.94);}
+  .currency-pill.active{
+    background:linear-gradient(180deg, #f5b656 0%, var(--gold-2) 100%);
+    color:#241505;
+  }
+  .price-secondary{
+    font-size:12.5px;font-weight:500;color:var(--text-dim);
+    font-family:'Inter',system-ui,sans-serif;margin-left:6px;
+  }
+</style>
+</head>
+<body>
+
+
+<div class="modal-overlay" id="termsModal">
+  <div class="modal">
+    <h2>Foydalanish shartnomasi</h2>
+    <div class="terms-text" id="termsTextContent">
+      <h4>1. Umumiy qoidalar</h4>
+      <p>Ushbu Foydalanish shartnomasi (keyingi o'rinlarda — "Shartnoma") NurMakon platformasidan (keyingi o'rinlarda — "Platforma") foydalanish tartibini belgilaydi. Platformadan foydalanish orqali foydalanuvchi ushbu Shartnoma shartlariga to'liq rozilik bildiradi.</p>
+
+      <h4>2. Platformaning maqomi</h4>
+      <p>NurMakon — ko'chmas mulk bo'yicha e'lonlarni joylash va qidirish uchun texnik vosita (aggregator) hisoblanadi. Platforma e'londa ko'rsatilgan mulkka nisbatan huquqqa ega emas, uning holati, hujjatlari yoki tavsifi to'g'riligiga kafolat bermaydi va tomonlar o'rtasidagi bitimning tarafi emas.</p>
+
+      <h4>3. Foydalanuvchi turlari va majburiyatlari</h4>
+      <p>Platformada uch turdagi foydalanuvchi ishtirok etishi mumkin: mulk egasi (mustaqil e'lon joylovchi), rielторlik xizmati ko'rsatuvchi makler va mulk qidiruvchi foydalanuvchi. Har bir foydalanuvchi o'z maqomini (mulk egasi yoki makler) e'lon joylashda to'g'ri ko'rsatishi shart. Noto'g'ri ma'lumot bergan foydalanuvchining e'loni ogohlantirishsiz o'chirilishi mumkin.</p>
+
+      <h4>4. Hisob yaratish va xavfsizlik</h4>
+      <p>Foydalanuvchi ro'yxatdan o'tishda kiritgan ma'lumotlar (email, telefon raqami) haqiqiy va o'ziga tegishli bo'lishi lozim. Hisob paroli maxfiy saqlanishi va uchinchi shaxslarga berilmasligi kerak. Hisob orqali amalga oshirilgan barcha harakatlar uchun javobgarlik hisob egasiga yuklanadi.</p>
+
+      <h4>5. Tomonlar o'rtasidagi bitim va to'lovlar</h4>
+      <p>Mulk egasi/makler va xaridor/ijarachi o'rtasidagi barcha kelishuvlar, jumladan narx, komissiya miqdori va to'lov shartlari — faqat tomonlarning o'zaro kelishuviga asoslanadi. Platforma bunday kelishuvlarga aralashmaydi, ularni tasdiqlamaydi va bajarilishiga kafolat bermaydi.</p>
+
+      <h4>6. Mustaqil qidiruv himoyasi</h4>
+      <p>Agar foydalanuvchi ro'yxatdan o'tishda yoki keyinchalik "mustaqil qidiraman" rejimini tanlagan bo'lsa, tizim uning ushbu tanlovini va e'lonlarga birinchi murojaat qilgan vaqtini qayd etib boradi.</p>
+
+      <h4>7. Taqiqlangan harakatlar</h4>
+      <p>Foydalanuvchilarga quyidagilar taqiqlanadi: yolg'on yoki chalg'ituvchi e'lon joylash, boshqa foydalanuvchining shaxsiy ma'lumotlaridan ruxsatsiz foydalanish, Platformani firibgarlik yoki noqonuniy maqsadlarda ishlatish, boshqa foydalanuvchilarni bezovta qilish yoki ularga tazyiq o'tkazish.</p>
+
+      <h4>8. Shaxsiy ma'lumotlar</h4>
+      <p>Foydalanuvchi tomonidan kiritilgan email va telefon raqami faqat hisobga kirish, bog'lanish va xizmat sifatini yaxshilash maqsadida ishlatiladi. Bu ma'lumotlar uchinchi shaxslarga sotilmaydi yoki tijorat maqsadida berilmaydi.</p>
+
+      <h4>9. Javobgarlikni cheklash</h4>
+      <p>Platforma e'lonlar mazmuni, mulk holati yoki foydalanuvchilar o'rtasidagi kelishuvlar natijasida yuzaga kelishi mumkin bo'lgan har qanday moliyaviy yoki boshqa zarar uchun javobgar emas.</p>
+
+      <h4>10. Shartnomaga o'zgartirish kiritish</h4>
+      <p>Ushbu Shartnoma amaldagi qonunchilikka muvofiq yangilanib turishi mumkin. O'zgarishlar Platformada e'lon qilingan kundan boshlab kuchga kiradi.</p>
+
+      <h4>11. Bog'lanish</h4>
+      <p>Shartnoma yuzasidan savollar bo'yicha foydalanuvchi Platforma orqali qo'llab-quvvatlash xizmatiga murojaat qilishi mumkin.</p>
+    </div>
+    <div class="checkbox-row" style="margin-top:4px;">
+      <input type="checkbox" id="termsModalCheck">
+      <label for="termsModalCheck">Men ushbu Foydalanish shartnomasini o'qidim va roziman</label>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-outline" id="downloadTermsPdfBtn">📄 PDF sifatida saqlash</button>
+      <button class="btn btn-primary" id="closeTermsModalBtn">Yopish</button>
+    </div>
+  </div>
+</div>
+
+<div class="topbar" id="topbar">
+  <div class="topbar-left" id="topbarLeft">
+    <div class="langbar inline" id="langbar">
+      <div class="lang-toggle" id="langToggle">
+        <button class="lang-pill" data-lang="uz" type="button">O'zb<span>🇺🇿</span></button>
+        <button class="lang-pill" data-lang="ru" type="button">Rus<span>🇷🇺</span></button>
+        <button class="lang-pill" data-lang="en" type="button">Eng<span>🇬🇧</span></button>
+      </div>
+      <div class="currency-toggle" id="currencyToggle">
+        <button class="currency-pill active" data-cur="uzs" type="button">so'm</button>
+        <button class="currency-pill" data-cur="usd" type="button">$</button>
+      </div>
+    </div>
+  </div>
+  <button class="topbar-login-btn" id="topbarLoginBtn" data-i18n="navLogin">Kirish</button>
+  <button class="icon-btn" id="logoutBtn" title="Chiqish" style="display:none;">⎋</button>
+</div>
+
+
+<!-- ===================== AUTH SCREEN ===================== -->
+<div class="screen" id="screen-auth" style="padding-top:0;">
+  <button class="auth-close-btn" id="authCloseBtn" type="button">✕</button>
+  <div class="hero-banner hero-banner-auth">
+    <div class="brand hero-logo">Nur<span>Makon</span></div>
+    <p class="hero-sub" data-i18n="heroSub">Uy-joy izlashning oson va ishonchli yo'li</p>
+  </div>
+
+  <div class="card search-float" id="phoneCard">
+
+    <button class="auth-social-btn" id="googleSignInBtn">
+      <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+      <span data-i18n="googleSignIn">Google orqali davom etish</span>
+    </button>
+
+    <div class="auth-divider" data-i18n="or">yoki</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="authTabLogin" data-tab="login" data-i18n="tabLogin">Kirish</button>
+      <button class="auth-tab" id="authTabRegister" data-tab="register" data-i18n="tabRegister">Ro'yxatdan o'tish</button>
+    </div>
+    <div class="auth-tab-track"><div class="auth-tab-indicator" id="authTabIndicator"></div></div>
+
+    <div class="auth-pane active" id="authPaneLogin">
+      <label data-i18n="email">Email</label>
+      <input type="text" id="emailInput">
+      <label data-i18n="password">Parol</label>
+      <input type="password" id="passwordInput">
+      <button class="btn btn-outline" id="forgotPasswordBtn" style="margin-top:14px;" data-i18n="forgotPassword">Parolni unutdingizmi?</button>
+      <button class="btn btn-primary" id="loginBtn" style="margin-top:14px;" data-i18n="tabLogin">Kirish</button>
+    </div>
+
+    <div class="auth-pane" id="authPaneRegister">
+      <label data-i18n="email">Email</label>
+      <input type="text" id="emailInputReg">
+      <label data-i18n="password">Parol</label>
+      <input type="password" id="passwordInputReg">
+      <p class="center-note" style="text-align:left;margin-top:10px;" data-i18n="passwordHint">Parol kamida 6 ta belgidan iborat bo'lishi kerak.</p>
+      <div class="checkbox-row" style="margin-top:18px;">
+        <input type="checkbox" id="termsCheck">
+        <label for="termsCheck" id="termsLabel" data-i18n-html="termsLabel">Men <button type="button" class="terms-link" id="viewTermsLink">Foydalanish shartnomasi</button> bilan tanishdim va roziman, shuningdek ma'lumotlarimning NurMakon tomonidan qayta ishlanishiga rozilik bildiraman.</label>
+      </div>
+      <button class="btn btn-secondary" id="registerBtn" style="margin-top:6px;" data-i18n="tabRegister">Ro'yxatdan o'tish</button>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ===================== ONBOARDING: BROKER CHOICE ===================== -->
+<div class="screen" id="screen-onboarding">
+  <h2 style="margin-top:20px;" data-i18n="onboardingTitle">Makler xizmatidan foydalanasizmi?</h2>
+  <p class="center-note" style="text-align:left;margin-bottom:20px;" data-i18n="onboardingSub">Bu tanlovga qarab, sizga mos takliflar ko'rsatiladi. Keyinroq o'zgartirish mumkin.</p>
+
+  <div class="choice-card" data-choice="assisted">
+    <div class="ic">🤝</div>
+    <div>
+      <h3 data-i18n="choiceAssistedTitle">Ha, makler yordam bersin</h3>
+      <p data-i18n="choiceAssistedSub">So'rovingizni qoldirasiz, mos makler siz bilan bog'lanadi</p>
+    </div>
+  </div>
+  <div class="choice-card" data-choice="independent">
+    <div class="ic">🔍</div>
+    <div>
+      <h3 data-i18n="choiceIndependentTitle">Yo'q, o'zim qidiraman</h3>
+      <p data-i18n="choiceIndependentSub">Barcha e'lonlarni mustaqil ko'rasiz, egasi bilan to'g'ridan-to'g'ri bog'lanasiz</p>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" id="onboardingContinueBtn" style="margin-top:10px;" disabled data-i18n="continueBtn">Davom etish</button>
+</div>
+
+<!-- ===================== FEED / SEARCH SCREEN ===================== -->
+<div class="screen active" id="screen-feed" style="padding-top:0;">
+  <div class="hero-banner">
+    <div class="brand">Nur<span>Makon</span></div>
+    <p class="hero-sub" data-i18n="heroSub">Uy-joy izlashning oson va ishonchli yo'li</p>
+  </div>
+  <div class="search-float">
+    <div class="deal-toggle">
+      <div class="filter-chip active" data-filter="all" data-i18n="filterAll">Hammasi</div>
+      <div class="filter-chip" data-filter="sale" data-i18n="filterSale">Sotiladi</div>
+      <div class="filter-chip" data-filter="rent" data-i18n="filterRent">Ijaraga</div>
+    </div>
+    <div class="search-row">
+      <input type="text" id="districtFilter" placeholder="Hudud yoki tuman..." data-i18n-placeholder="districtPlaceholder">
+      <button class="btn btn-primary" id="searchGoBtn" data-i18n="searchBtn">Qidirish</button>
+    </div>
+  </div>
+  <div id="listingsContainer">
+    <div class="empty-state"><div class="ic">🏠</div><span data-i18n="loading">Yuklanmoqda...</span></div>
+  </div>
+</div>
+
+
+<!-- ===================== POST LISTING SCREEN ===================== -->
+<div class="screen" id="screen-post">
+  <h2 style="margin-top:10px;" data-i18n="postTitle">Yangi e'lon</h2>
+
+  <label data-i18n="postWho">Kim joylayapti?</label>
+  <select id="postOwnerType">
+    <option value="owner" data-i18n="postWhoOwner">Mulk egasiman (mustaqil)</option>
+    <option value="agent" data-i18n="postWhoAgent">Makler sifatida joylayapman</option>
+  </select>
+
+  <label data-i18n="postDealTypeLabel">Bitim turi</label>
+  <select id="postDealType">
+    <option value="sale" data-i18n="filterSale">Sotiladi</option>
+    <option value="rent" data-i18n="postDealRent">Ijaraga beriladi</option>
+  </select>
+
+  <label data-i18n="postPropertyTypeLabel">Mulk turi</label>
+  <select id="postPropertyType">
+    <option value="apartment" data-i18n="propApartment">Kvartira</option>
+    <option value="house" data-i18n="propHouse">Hovli uy</option>
+    <option value="commercial" data-i18n="propCommercial">Tijorat obyekti</option>
+    <option value="land" data-i18n="propLand">Yer uchastkasi</option>
+  </select>
+
+  <div class="field-row">
+    <div>
+      <label data-i18n="postRegionLabel">Viloyat</label>
+      <input type="text" id="postRegion" placeholder="Andijon">
+    </div>
+    <div>
+      <label data-i18n="postDistrictLabel">Tuman/mahalla</label>
+      <input type="text" id="postDistrict" placeholder="Shahar markazi">
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div>
+      <label data-i18n="postPriceLabel">Narx (so'm)</label>
+      <input type="number" id="postPrice" placeholder="250000000">
+    </div>
+    <div>
+      <label data-i18n="postAreaLabel">Maydon (m²)</label>
+      <input type="number" id="postArea" placeholder="65">
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div>
+      <label data-i18n="postRoomsLabel">Xonalar soni</label>
+      <input type="number" id="postRooms" placeholder="3">
+    </div>
+    <div>
+      <label data-i18n="postFloorLabel">Qavat</label>
+      <input type="text" id="postFloor" placeholder="4/9">
+    </div>
+  </div>
+
+  <label data-i18n="postDescLabel">Tavsif</label>
+  <textarea id="postDescription" placeholder="Uy haqida qisqacha ma'lumot..." data-i18n-placeholder="postDescPlaceholder"></textarea>
+
+  <label data-i18n="postPhoneLabel">Bog'lanish uchun telefon</label>
+  <input type="tel" id="postPhone" placeholder="+998 90 123 45 67">
+
+  <label data-i18n="postPhotosLabel">Rasmlar (bir nechtasini tanlash mumkin)</label>
+  <input type="file" id="postPhotos" accept="image/*" multiple>
+  <div id="photoPreview" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"></div>
+
+  <button class="btn btn-primary" id="submitListingBtn" style="margin-top:18px;" data-i18n="postSubmitBtn">E'lonni joylash</button>
+  <p class="center-note" id="postStatus"></p>
+</div>
+
+<!-- ===================== PROFILE SCREEN ===================== -->
+<div class="screen" id="screen-profile">
+  <h2 style="margin-top:10px;" data-i18n="profileTitle">Profil</h2>
+
+  <div class="lock-card" id="profileLoggedOut">
+    <div class="lock-ic">👤</div>
+    <div class="lock-txt">
+      <h3 data-i18n="lockLoginTitle">Tizimga kirish</h3>
+      <p data-i18n="lockLoginSub">To'liq versiya uchun tizimga kiring</p>
+    </div>
+    <div class="lock-chevron">›</div>
+  </div>
+
+  <div id="profileLoggedIn" class="hidden">
+    <div class="card">
+      <div id="profileEmail" style="font-size:16px;font-weight:600;"></div>
+      <div class="center-note" style="text-align:left;margin-top:4px;" id="profileMode"></div>
+      <button class="btn btn-outline" id="changeModeBtn" style="margin-top:14px;" data-i18n="changeModeBtn">Rejimni o'zgartirish</button>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 4px;" data-i18n="phoneCardTitle">Telefon raqami</h3>
+      <p class="center-note" style="text-align:left;margin-bottom:10px;" data-i18n="phoneCardSub">Bu raqam e'lonlaringizda bog'lanish uchun ko'rsatiladi.</p>
+      <input type="tel" id="profilePhoneInput" placeholder="+998 90 123 45 67">
+      <button class="btn btn-secondary" id="savePhoneBtn" style="margin-top:12px;" data-i18n="saveBtn">Saqlash</button>
+    </div>
+
+    <div class="card" id="agentRegisterCard">
+      <h3 style="margin:0 0 4px;" data-i18n="agentRegisterTitle">Makler sifatida ro'yxatdan o'tish</h3>
+      <p class="center-note" style="text-align:left;margin-bottom:14px;" data-i18n="agentRegisterSub">Ism va ish hududingizni kiriting — darhol ishlay boshlaysiz.</p>
+      <label data-i18n="agentNameLabel">Ism-familiya</label>
+      <input type="text" id="agentName" placeholder="Ism Familiya">
+      <label data-i18n="agentDistrictLabel">Asosiy ish hududi</label>
+      <input type="text" id="agentDistrict" placeholder="Andijon shahri">
+      <button class="btn btn-secondary" id="agentRegisterBtn" style="margin-top:14px;" data-i18n="agentRegisterTitle">Makler sifatida ro'yxatdan o'tish</button>
+    </div>
+
+    <div class="card hidden" id="agentPanelCard">
+      <h3 style="margin:0 0 10px;" data-i18n="agentPanelTitle">Makler paneli</h3>
+      <p class="center-note" style="text-align:left;" data-i18n="agentPanelSub">Siz tasdiqlangan makler sifatida ro'yxatdasiz. Mijozlar so'rovlari va o'z e'lonlaringiz shu yerda ko'rinadi.</p>
+      <div id="myListingsSummary" style="margin-top:10px;"></div>
+    </div>
+
+    <button class="btn btn-outline" id="profileLogoutBtn" style="margin-top:6px;" data-i18n="logoutBtnLabel">Tizimdan chiqish</button>
+  </div>
+</div>
+
+<!-- ===================== FAVORITES SCREEN ===================== -->
+<div class="screen" id="screen-favorites">
+  <h2 style="margin-top:10px;" data-i18n="navFavorites">Sevimli</h2>
+
+  <div class="lock-card" id="favoritesLoggedOut">
+    <div class="lock-ic">♡</div>
+    <div class="lock-txt">
+      <h3 data-i18n="lockFavTitle">Sevimlilarni ko'rish uchun kiring</h3>
+      <p data-i18n="lockFavSub">Yoqqan e'lonlarni saqlab qo'yish uchun tizimga kiring</p>
+    </div>
+    <div class="lock-chevron">›</div>
+  </div>
+
+  <div id="favoritesContainer" class="hidden"></div>
+</div>
+
+<!-- ===================== BOTTOM NAV ===================== -->
+<div class="bottomnav" id="bottomnav">
+  <button class="nav-item active" data-screen="feed"><div class="ic">🏠</div><span data-i18n="navSearch">Qidirish</span></button>
+  <button class="nav-item" data-screen="favorites"><div class="ic">♡</div><span data-i18n="navFavorites">Sevimli</span></button>
+  <button class="nav-item nav-item-center" data-screen="post"><div class="ic">➕</div><span data-i18n="navPost">E'lon berish</span></button>
+  <button class="nav-item" data-screen="profile"><div class="ic">👤</div><span data-i18n="navProfile">Profil</span></button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+/* ============ TERMS MODAL ============ */
+const termsModal = document.getElementById('termsModal');
+const termsCheckMain = document.getElementById('termsCheck');
+const termsModalCheck = document.getElementById('termsModalCheck');
+
+document.addEventListener('click', (e)=>{
+  if(e.target && e.target.id === 'viewTermsLink'){
+    termsModalCheck.checked = termsCheckMain.checked;
+    termsModal.classList.add('active');
+  }
+});
+document.getElementById('closeTermsModalBtn').addEventListener('click', ()=>{
+  termsCheckMain.checked = termsModalCheck.checked;
+  termsModal.classList.remove('active');
+});
+
+document.getElementById('downloadTermsPdfBtn').addEventListener('click', ()=>{
+  try{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 48;
+    const maxWidth = pageWidth - margin * 2;
+    let y = 60;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text('NurMakon — Foydalanish shartnomasi', margin, y);
+    y += 28;
+
+    const blocks = document.querySelectorAll('#termsTextContent h4, #termsTextContent p');
+    doc.setFontSize(11);
+    blocks.forEach(el=>{
+      const isHeading = el.tagName === 'H4';
+      doc.setFont('helvetica', isHeading ? 'bold' : 'normal');
+      const text = el.textContent.trim();
+      const lines = doc.splitTextToSize(text, maxWidth);
+      const lineHeight = 15;
+      if(y + lines.length * lineHeight > 780){
+        doc.addPage();
+        y = 60;
+      }
+      if(isHeading) y += 6;
+      doc.text(lines, margin, y);
+      y += lines.length * lineHeight + (isHeading ? 2 : 6);
+    });
+
+    doc.save('NurMakon-Foydalanish-Shartnomasi.pdf');
+  }catch(err){
+    console.error(err);
+    toast('PDF yaratishda xatolik: ' + err.message);
+  }
+});
+
+/* ============ FIREBASE CONFIG ============ */
 const firebaseConfig = {
-  apiKey: "AIzaSyBLkenVhh-R1BM6g9JGIdSUKWLG0qWz2Zw",
-  authDomain: "nurmakon-6b9c0.firebaseapp.com",
-  projectId: "nurmakon-6b9c0",
-  storageBucket: "nurmakon-6b9c0.firebasestorage.app",
-  messagingSenderId: "994003754856",
-  appId: "1:994003754856:web:a3f8c4cc57db4c4e7c3d9a"
+  apiKey: "AIzaSyA3l0hY4edwZFMBI5vHDWUwcjK4iRQ4zbo",
+  authDomain: "nurmakon-da877.firebaseapp.com",
+  projectId: "nurmakon-da877",
+  storageBucket: "nurmakon-da877.firebasestorage.app",
+  messagingSenderId: "875556957543",
+  appId: "1:875556957543:web:a421eacf895e4b0d9493c2"
 };
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const IMGBB_API_KEY = "b5bb6961331116f8bf76874c4bfa1fdf";
 
+/* ============ STATE ============ */
 let currentUser = null;
-let currentLang = localStorage.getItem('lang') || 'uz';
-let currentCurrency = localStorage.getItem('currency') || 'UZS';
-const exchangeRate = 12800;
+let userDoc = null;
+let selectedPhotos = [];
 
-const i18n = {
+/* ============ I18N (UZ / RU / EN) ============ */
+const LANG_NAMES = { uz: "O'zbek", ru: "Русский", en: "English" };
+const I18N = {
   uz: {
-    authSubtitle: "🏡 Orzularingizdagi uyni toping yoki o'z mulkingizni sotib bering",
-    googleBtnText: "Google orqali kirish",
-    facebookBtnText: "Facebook orqali kirish",
-    authDivider: "yoki",
+    heroSub: "Uy-joy izlashning oson va ishonchli yo'li",
+    googleSignIn: "Google orqali davom etish",
+    or: "yoki",
     tabLogin: "Kirish",
     tabRegister: "Ro'yxatdan o'tish",
-    lblPhoneLogin: "Telefon raqami:",
-    lblPasswordLogin: "Parol:",
-    btnLogin: "Kirish",
-    noteRegisterPrompt: "Akkauntingiz yo'qmi? Ro'yxatdan o'ting",
-    lblPhoneRegister: "Telefon raqami:",
-    lblPasswordRegister: "Parol:",
-    lblTermsCheckbox: "Shartlar va qoidalarga roziman",
-    btnRegister: "Ro'yxatdan o'tish",
-    noteLoginPrompt: "Akkauntingiz bormi? Kiring",
-    onboardingSubtitle: "🌟 Professional ko'chmas mulk bozoriga xush kelibsiz!",
-    onboardingTitle: "Sizning rolingizni tanlang:",
-    roleOwnerTitle: "Mulk egasi",
-    roleOwnerDesc: "O'z mulkingizni ijaraga bering yoki soting",
-    roleAgentTitle: "Agent",
-    roleAgentDesc: "Mijozlaringiz uchun uylar toping",
-    roleSeekerTitle: "Qidirayotgan",
-    roleSeekerDesc: "O'zingizga mos uy qidiring",
-    btnContinue: "Davom etish",
-    searchInput: "🔍 Joylashuvni kiriting…",
+    email: "Email",
+    password: "Parol",
+    forgotPassword: "Parolni unutdingizmi?",
+    passwordHint: "Parol kamida 6 ta belgidan iborat bo'lishi kerak.",
+    termsLabel: "Men <button type=\"button\" class=\"terms-link\" id=\"viewTermsLink\">Foydalanish shartnomasi</button> bilan tanishdim va roziman, shuningdek ma'lumotlarimning NurMakon tomonidan qayta ishlanishiga rozilik bildiraman.",
+    onboardingTitle: "Makler xizmatidan foydalanasizmi?",
+    onboardingSub: "Bu tanlovga qarab, sizga mos takliflar ko'rsatiladi. Keyinroq o'zgartirish mumkin.",
+    choiceAssistedTitle: "Ha, makler yordam bersin",
+    choiceAssistedSub: "So'rovingizni qoldirasiz, mos makler siz bilan bog'lanadi",
+    choiceIndependentTitle: "Yo'q, o'zim qidiraman",
+    choiceIndependentSub: "Barcha e'lonlarni mustaqil ko'rasiz, egasi bilan to'g'ridan-to'g'ri bog'lanasiz",
+    continueBtn: "Davom etish",
+    filterAll: "Hammasi",
+    filterSale: "Sotiladi",
+    filterRent: "Ijaraga",
+    districtPlaceholder: "Hudud yoki tuman...",
     searchBtn: "Qidirish",
-    dealRent: "Ijara",
-    dealSale: "Sotish",
-    filterAll: "Barchasi",
-    filterApartment: "Kvartira",
-    filterHouse: "Uy",
-    filterLand: "Yer",
-    filterCommercial: "Tijorat",
-    emptyText: "Hozircha hech narsa yo'q",
-    favTitle: "Sevimlilar",
-    favEmptyText: "Sevimli e'lonlar yo'q",
-    postTitle: "E'lon berish",
-    postSubtitle: "O'z mulkingizni ijaraga bering yoki soting",
-    lblPostType: "Tur:",
-    optApartment: "Kvartira",
-    optHouse: "Uy",
-    optLand: "Yer",
-    optCommercial: "Tijorat",
-    lblPostDeal: "Bitim turi:",
-    optRent: "Ijara",
-    optSale: "Sotish",
-    lblPostTitle: "Sarlavha:",
-    lblPostRooms: "Xonalar:",
-    lblPostArea: "Maydon (m²):",
-    lblPostPrice: "Narx:",
-    lblPostDistrict: "Tuman:",
-    lblPostDesc: "Tavsif:",
-    lblPostPhone: "Telefon:",
-    btnPublish: "E'lon berish",
-    postGuestText: "E'lon berish uchun tizimga kiring",
-    btnPostLogin: "Kirish",
-    profileName: "Foydalanuvchi",
-    profileRole: "Qidirayotgan",
-    myListingsTitle: "Mening e'lonlarim",
-    myListingsEmptyText: "Sizning e'lonlaringiz yo'q",
-    btnLogout: "Chiqish",
-    profileGuestText: "Profilingizni ko'rish uchun tizimga kiring",
-    btnProfileLogin: "Kirish",
-    navHome: "Bosh sahifa",
-    navFav: "Sevimlilar",
-    navPost: "E'lon",
+    loading: "Yuklanmoqda...",
+    noListings: "Hozircha e'lon topilmadi",
+    loadError: "Yuklashda xatolik: ",
+    postTitle: "Yangi e'lon",
+    postWho: "Kim joylayapti?",
+    postWhoOwner: "Mulk egasiman (mustaqil)",
+    postWhoAgent: "Makler sifatida joylayapman",
+    postDealTypeLabel: "Bitim turi",
+    postDealRent: "Ijaraga beriladi",
+    postPropertyTypeLabel: "Mulk turi",
+    propApartment: "Kvartira",
+    propHouse: "Hovli uy",
+    propCommercial: "Tijorat obyekti",
+    propLand: "Yer uchastkasi",
+    postRegionLabel: "Viloyat",
+    postDistrictLabel: "Tuman/mahalla",
+    postPriceLabel: "Narx (so'm)",
+    postAreaLabel: "Maydon (m²)",
+    postRoomsLabel: "Xonalar soni",
+    postFloorLabel: "Qavat",
+    postDescLabel: "Tavsif",
+    postDescPlaceholder: "Uy haqida qisqacha ma'lumot...",
+    postPhoneLabel: "Bog'lanish uchun telefon",
+    postPhotosLabel: "Rasmlar (bir nechtasini tanlash mumkin)",
+    postSubmitBtn: "E'lonni joylash",
+    profileTitle: "Profil",
+    changeModeBtn: "Rejimni o'zgartirish",
+    phoneCardTitle: "Telefon raqami",
+    phoneCardSub: "Bu raqam e'lonlaringizda bog'lanish uchun ko'rsatiladi.",
+    saveBtn: "Saqlash",
+    agentRegisterTitle: "Makler sifatida ro'yxatdan o'tish",
+    agentRegisterSub: "Ism va ish hududingizni kiriting — darhol ishlay boshlaysiz.",
+    agentNameLabel: "Ism-familiya",
+    agentDistrictLabel: "Asosiy ish hududi",
+    agentPanelTitle: "Makler paneli",
+    agentPanelSub: "Siz tasdiqlangan makler sifatida ro'yxatdasiz. Mijozlar so'rovlari va o'z e'lonlaringiz shu yerda ko'rinadi.",
+    navSearch: "Qidirish",
+    navPost: "E'lon berish",
     navProfile: "Profil",
-    termsModalTitle: "Shartlar va qoidalar",
-    termsModalContent: `
-      <h3>1. Umumiy qoidalar</h3>
-      <p>NurMakon platformasidan foydalanish orqali siz ushbu shartlarga rozilik bildirasiz.</p>
-      <h3>2. Foydalanuvchi majburiyatlari</h3>
-      <p>Siz to'g'ri ma'lumotlar berishingiz va qonunlarga rioya qilishingiz shart.</p>
-      <h3>3. Maxfiylik</h3>
-      <p>Sizning ma'lumotlaringiz himoyalangan va uchinchi shaxslarga uzatilmaydi.</p>
-      <h3>4. Mas'uliyat</h3>
-      <p>Platform bitimlar uchun vositachi bo'lib, yakuniy mas'uliyat foydalanuvchilarda.</p>
-    `,
-    termsModalClose: "Yopish",
-    toastLoginSuccess: "✓ Tizimga muvaffaqiyatli kirdingiz!",
-    toastRegisterSuccess: "✓ Ro'yxatdan o'tdingiz!",
-    toastLogoutSuccess: "👋 Tizimdan chiqdingiz",
-    toastPostSuccess: "✓ E'lon muvaffaqiyatli joylandi!",
-    toastDeleteSuccess: "🗑️ E'lon o'chirildi",
-    toastError: "✗ Xatolik yuz berdi",
-    toastFillFields: "⚠️ Barcha maydonlarni to'ldiring",
-    toastAcceptTerms: "⚠️ Shartlarga rozi bo'ling",
-    month: "/oy",
-    perMonth: "/oy",
-    rooms: "xona",
-    room: "xona"
+    navFavorites: "Sevimli",
+    navLogin: "Kirish",
+    lockLoginTitle: "Tizimga kirish",
+    lockLoginSub: "To'liq versiya uchun tizimga kiring",
+    lockFavTitle: "Sevimlilarni ko'rish uchun kiring",
+    lockFavSub: "Yoqqan e'lonlarni saqlab qo'yish uchun tizimga kiring",
+    favEmpty: "Hozircha sevimli e'lonlar yo'q",
+    needLoginToast: "Bu amal uchun avval tizimga kiring",
+    logoutBtnLabel: "Tizimdan chiqish",
+    dealSale: "Sotiladi",
+    dealRent: "Ijaraga",
+    ownerAgent: "Makler",
+    ownerOwner: "Mulk egasi",
+    roomsSuffix: " xona",
+    contactBtn: "📞 Bog'lanish",
+    modeAssisted: "Rejim: Makler yordamida",
+    modeIndependent: "Rejim: Mustaqil qidiruv",
+    activeListingsSuffix: " ta faol e'lon",
+    error: "Xatolik: "
   },
   ru: {
-    authSubtitle: "🏡 Найдите дом своей мечты или продайте свою недвижимость",
-    googleBtnText: "Войти через Google",
-    facebookBtnText: "Войти через Facebook",
-    authDivider: "или",
+    heroSub: "Простой и надёжный способ найти жильё",
+    googleSignIn: "Продолжить через Google",
+    or: "или",
     tabLogin: "Вход",
     tabRegister: "Регистрация",
-    lblPhoneLogin: "Номер телефона:",
-    lblPasswordLogin: "Пароль:",
-    btnLogin: "Войти",
-    noteRegisterPrompt: "Нет аккаунта? Зарегистрируйтесь",
-    lblPhoneRegister: "Номер телефона:",
-    lblPasswordRegister: "Пароль:",
-    lblTermsCheckbox: "Согласен с условиями и правилами",
-    btnRegister: "Зарегистрироваться",
-    noteLoginPrompt: "Есть аккаунт? Войдите",
-    onboardingSubtitle: "🌟 Добро пожаловать на профессиональный рынок недвижимости!",
-    onboardingTitle: "Выберите вашу роль:",
-    roleOwnerTitle: "Владелец",
-    roleOwnerDesc: "Сдайте или продайте свою недвижимость",
-    roleAgentTitle: "Агент",
-    roleAgentDesc: "Найдите дома для ваших клиентов",
-    roleSeekerTitle: "Ищущий",
-    roleSeekerDesc: "Найдите подходящий дом для себя",
-    btnContinue: "Продолжить",
-    searchInput: "🔍 Введите местоположение…",
-    searchBtn: "Поиск",
-    dealRent: "Аренда",
-    dealSale: "Продажа",
+    email: "Email",
+    password: "Пароль",
+    forgotPassword: "Забыли пароль?",
+    passwordHint: "Пароль должен содержать не менее 6 символов.",
+    termsLabel: "Я ознакомлен(а) с <button type=\"button\" class=\"terms-link\" id=\"viewTermsLink\">Пользовательским соглашением</button> и согласен(на) с обработкой моих данных компанией NurMakon.",
+    onboardingTitle: "Пользуетесь услугами риелтора?",
+    onboardingSub: "В зависимости от выбора вам будут показаны подходящие предложения. Позже можно изменить.",
+    choiceAssistedTitle: "Да, пусть риелтор поможет",
+    choiceAssistedSub: "Оставьте заявку, и подходящий риелтор свяжется с вами",
+    choiceIndependentTitle: "Нет, буду искать сам(а)",
+    choiceIndependentSub: "Вы увидите все объявления и свяжетесь напрямую с владельцем",
+    continueBtn: "Продолжить",
     filterAll: "Все",
-    filterApartment: "Квартира",
-    filterHouse: "Дом",
-    filterLand: "Земля",
-    filterCommercial: "Коммерция",
-    emptyText: "Пока ничего нет",
-    favTitle: "Избранное",
-    favEmptyText: "Нет избранных объявлений",
-    postTitle: "Подать объявление",
-    postSubtitle: "Сдайте или продайте свою недвижимость",
-    lblPostType: "Тип:",
-    optApartment: "Квартира",
-    optHouse: "Дом",
-    optLand: "Земля",
-    optCommercial: "Коммерция",
-    lblPostDeal: "Тип сделки:",
-    optRent: "Аренда",
-    optSale: "Продажа",
-    lblPostTitle: "Заголовок:",
-    lblPostRooms: "Комнат:",
-    lblPostArea: "Площадь (м²):",
-    lblPostPrice: "Цена:",
-    lblPostDistrict: "Район:",
-    lblPostDesc: "Описание:",
-    lblPostPhone: "Телефон:",
-    btnPublish: "Опубликовать",
-    postGuestText: "Войдите, чтобы подать объявление",
-    btnPostLogin: "Войти",
-    profileName: "Пользователь",
-    profileRole: "Ищущий",
-    myListingsTitle: "Мои объявления",
-    myListingsEmptyText: "У вас нет объявлений",
-    btnLogout: "Выйти",
-    profileGuestText: "Войдите, чтобы увидеть профиль",
-    btnProfileLogin: "Войти",
-    navHome: "Главная",
-    navFav: "Избранное",
-    navPost: "Объявление",
+    filterSale: "Продажа",
+    filterRent: "Аренда",
+    districtPlaceholder: "Район или массив...",
+    searchBtn: "Поиск",
+    loading: "Загрузка...",
+    noListings: "Объявлений пока не найдено",
+    loadError: "Ошибка загрузки: ",
+    postTitle: "Новое объявление",
+    postWho: "Кто размещает?",
+    postWhoOwner: "Я собственник (самостоятельно)",
+    postWhoAgent: "Размещаю как риелтор",
+    postDealTypeLabel: "Тип сделки",
+    postDealRent: "Сдаётся в аренду",
+    postPropertyTypeLabel: "Тип недвижимости",
+    propApartment: "Квартира",
+    propHouse: "Дом",
+    propCommercial: "Коммерческий объект",
+    propLand: "Земельный участок",
+    postRegionLabel: "Область",
+    postDistrictLabel: "Район/махалля",
+    postPriceLabel: "Цена (сум)",
+    postAreaLabel: "Площадь (м²)",
+    postRoomsLabel: "Количество комнат",
+    postFloorLabel: "Этаж",
+    postDescLabel: "Описание",
+    postDescPlaceholder: "Краткая информация о жилье...",
+    postPhoneLabel: "Телефон для связи",
+    postPhotosLabel: "Фотографии (можно выбрать несколько)",
+    postSubmitBtn: "Опубликовать объявление",
+    profileTitle: "Профиль",
+    changeModeBtn: "Изменить режим",
+    phoneCardTitle: "Номер телефона",
+    phoneCardSub: "Этот номер будет показан для связи в ваших объявлениях.",
+    saveBtn: "Сохранить",
+    agentRegisterTitle: "Регистрация в качестве риелтора",
+    agentRegisterSub: "Укажите имя и рабочий район — и сразу начнёте работать.",
+    agentNameLabel: "Имя и фамилия",
+    agentDistrictLabel: "Основной рабочий район",
+    agentPanelTitle: "Панель риелтора",
+    agentPanelSub: "Вы зарегистрированы как подтверждённый риелтор. Здесь будут отображаться запросы клиентов и ваши объявления.",
+    navSearch: "Поиск",
+    navPost: "Разместить",
     navProfile: "Профиль",
-    termsModalTitle: "Условия и правила",
-    termsModalContent: `
-      <h3>1. Общие правила</h3>
-      <p>Используя платформу NurMakon, вы соглашаетесь с этими условиями.</p>
-      <h3>2. Обязанности пользователя</h3>
-      <p>Вы должны предоставлять правдивую информацию и соблюдать законы.</p>
-      <h3>3. Конфиденциальность</h3>
-      <p>Ваши данные защищены и не передаются третьим лицам.</p>
-      <h3>4. Ответственность</h3>
-      <p>Платформа является посредником, финальная ответственность на пользователях.</p>
-    `,
-    termsModalClose: "Закрыть",
-    toastLoginSuccess: "✓ Вы успешно вошли!",
-    toastRegisterSuccess: "✓ Регистрация прошла успешно!",
-    toastLogoutSuccess: "👋 Вы вышли из системы",
-    toastPostSuccess: "✓ Объявление успешно размещено!",
-    toastDeleteSuccess: "🗑️ Объявление удалено",
-    toastError: "✗ Произошла ошибка",
-    toastFillFields: "⚠️ Заполните все поля",
-    toastAcceptTerms: "⚠️ Примите условия",
-    month: "/мес",
-    perMonth: "/мес",
-    rooms: "комн.",
-    room: "комн."
+    navFavorites: "Избранное",
+    navLogin: "Войти",
+    lockLoginTitle: "Войти в аккаунт",
+    lockLoginSub: "Войдите, чтобы получить полный доступ",
+    lockFavTitle: "Войдите, чтобы видеть избранное",
+    lockFavSub: "Войдите, чтобы сохранять понравившиеся объявления",
+    favEmpty: "Пока нет избранных объявлений",
+    needLoginToast: "Для этого действия сначала войдите в аккаунт",
+    logoutBtnLabel: "Выйти из аккаунта",
+    dealSale: "Продажа",
+    dealRent: "Аренда",
+    ownerAgent: "Риелтор",
+    ownerOwner: "Собственник",
+    roomsSuffix: " комн.",
+    contactBtn: "📞 Связаться",
+    modeAssisted: "Режим: с помощью риелтора",
+    modeIndependent: "Режим: самостоятельный поиск",
+    activeListingsSuffix: " активных объявлений",
+    error: "Ошибка: "
   },
   en: {
-    authSubtitle: "🏡 Find your dream home or sell your property",
-    googleBtnText: "Continue with Google",
-    facebookBtnText: "Continue with Facebook",
-    authDivider: "or",
-    tabLogin: "Sign In",
-    tabRegister: "Sign Up",
-    lblPhoneLogin: "Phone number:",
-    lblPasswordLogin: "Password:",
-    btnLogin: "Sign In",
-    noteRegisterPrompt: "Don't have an account? Sign up",
-    lblPhoneRegister: "Phone number:",
-    lblPasswordRegister: "Password:",
-    lblTermsCheckbox: "I agree to the terms and conditions",
-    btnRegister: "Sign Up",
-    noteLoginPrompt: "Have an account? Sign in",
-    onboardingSubtitle: "🌟 Welcome to the professional real estate market!",
-    onboardingTitle: "Choose your role:",
-    roleOwnerTitle: "Owner",
-    roleOwnerDesc: "Rent or sell your property",
-    roleAgentTitle: "Agent",
-    roleAgentDesc: "Find homes for your clients",
-    roleSeekerTitle: "Seeker",
-    roleSeekerDesc: "Find a suitable home for yourself",
-    btnContinue: "Continue",
-    searchInput: "🔍 Enter location…",
-    searchBtn: "Search",
-    dealRent: "Rent",
-    dealSale: "Sale",
+    heroSub: "The easy and trusted way to find a home",
+    googleSignIn: "Continue with Google",
+    or: "or",
+    tabLogin: "Log in",
+    tabRegister: "Sign up",
+    email: "Email",
+    password: "Password",
+    forgotPassword: "Forgot password?",
+    passwordHint: "Password must be at least 6 characters long.",
+    termsLabel: "I have read and agree to the <button type=\"button\" class=\"terms-link\" id=\"viewTermsLink\">Terms of Use</button>, and I consent to my data being processed by NurMakon.",
+    onboardingTitle: "Would you like to use a broker's service?",
+    onboardingSub: "Based on your choice, we'll show you matching offers. You can change this later.",
+    choiceAssistedTitle: "Yes, let a broker help",
+    choiceAssistedSub: "Leave your request and a matching broker will contact you",
+    choiceIndependentTitle: "No, I'll search myself",
+    choiceIndependentSub: "You'll see all listings and contact owners directly",
+    continueBtn: "Continue",
     filterAll: "All",
-    filterApartment: "Apartment",
-    filterHouse: "House",
-    filterLand: "Land",
-    filterCommercial: "Commercial",
-    emptyText: "Nothing here yet",
-    favTitle: "Favorites",
-    favEmptyText: "No favorite listings",
-    postTitle: "Post a Listing",
-    postSubtitle: "Rent or sell your property",
-    lblPostType: "Type:",
-    optApartment: "Apartment",
-    optHouse: "House",
-    optLand: "Land",
-    optCommercial: "Commercial",
-    lblPostDeal: "Deal type:",
-    optRent: "Rent",
-    optSale: "Sale",
-    lblPostTitle: "Title:",
-    lblPostRooms: "Rooms:",
-    lblPostArea: "Area (m²):",
-    lblPostPrice: "Price:",
-    lblPostDistrict: "District:",
-    lblPostDesc: "Description:",
-    lblPostPhone: "Phone:",
-    btnPublish: "Publish",
-    postGuestText: "Sign in to post a listing",
-    btnPostLogin: "Sign In",
-    profileName: "User",
-    profileRole: "Seeker",
-    myListingsTitle: "My Listings",
-    myListingsEmptyText: "You have no listings",
-    btnLogout: "Sign Out",
-    profileGuestText: "Sign in to view your profile",
-    btnProfileLogin: "Sign In",
-    navHome: "Home",
-    navFav: "Favorites",
-    navPost: "Post",
+    filterSale: "For sale",
+    filterRent: "For rent",
+    districtPlaceholder: "Area or district...",
+    searchBtn: "Search",
+    loading: "Loading...",
+    noListings: "No listings found yet",
+    loadError: "Loading error: ",
+    postTitle: "New listing",
+    postWho: "Who is posting?",
+    postWhoOwner: "I'm the owner (independent)",
+    postWhoAgent: "Posting as a broker",
+    postDealTypeLabel: "Deal type",
+    postDealRent: "For rent",
+    postPropertyTypeLabel: "Property type",
+    propApartment: "Apartment",
+    propHouse: "House",
+    propCommercial: "Commercial property",
+    propLand: "Land plot",
+    postRegionLabel: "Region",
+    postDistrictLabel: "District/neighborhood",
+    postPriceLabel: "Price (UZS)",
+    postAreaLabel: "Area (m²)",
+    postRoomsLabel: "Number of rooms",
+    postFloorLabel: "Floor",
+    postDescLabel: "Description",
+    postDescPlaceholder: "Brief information about the property...",
+    postPhoneLabel: "Contact phone",
+    postPhotosLabel: "Photos (multiple selection allowed)",
+    postSubmitBtn: "Publish listing",
+    profileTitle: "Profile",
+    changeModeBtn: "Change mode",
+    phoneCardTitle: "Phone number",
+    phoneCardSub: "This number will be shown for contact on your listings.",
+    saveBtn: "Save",
+    agentRegisterTitle: "Register as a broker",
+    agentRegisterSub: "Enter your name and work area — start right away.",
+    agentNameLabel: "Full name",
+    agentDistrictLabel: "Main work area",
+    agentPanelTitle: "Broker panel",
+    agentPanelSub: "You're registered as a verified broker. Client requests and your listings will appear here.",
+    navSearch: "Search",
+    navPost: "Post listing",
     navProfile: "Profile",
-    termsModalTitle: "Terms and Conditions",
-    termsModalContent: `
-      <h3>1. General Rules</h3>
-      <p>By using NurMakon platform, you agree to these terms.</p>
-      <h3>2. User Obligations</h3>
-      <p>You must provide truthful information and comply with laws.</p>
-      <h3>3. Privacy</h3>
-      <p>Your data is protected and not shared with third parties.</p>
-      <h3>4. Liability</h3>
-      <p>The platform acts as an intermediary, final responsibility lies with users.</p>
-    `,
-    termsModalClose: "Close",
-    toastLoginSuccess: "✓ Signed in successfully!",
-    toastRegisterSuccess: "✓ Signed up successfully!",
-    toastLogoutSuccess: "👋 Signed out",
-    toastPostSuccess: "✓ Listing posted successfully!",
-    toastDeleteSuccess: "🗑️ Listing deleted",
-    toastError: "✗ An error occurred",
-    toastFillFields: "⚠️ Fill all fields",
-    toastAcceptTerms: "⚠️ Accept the terms",
-    month: "/mo",
-    perMonth: "/mo",
-    rooms: "rooms",
-    room: "room"
+    navFavorites: "Favorites",
+    navLogin: "Log in",
+    lockLoginTitle: "Log in to your account",
+    lockLoginSub: "Log in to unlock the full experience",
+    lockFavTitle: "Log in to see favorites",
+    lockFavSub: "Log in to save listings you like",
+    favEmpty: "No favorite listings yet",
+    needLoginToast: "Please log in first to do this",
+    logoutBtnLabel: "Log out",
+    dealSale: "For sale",
+    dealRent: "For rent",
+    ownerAgent: "Broker",
+    ownerOwner: "Owner",
+    roomsSuffix: " rooms",
+    contactBtn: "📞 Contact",
+    modeAssisted: "Mode: With broker's help",
+    modeIndependent: "Mode: Independent search",
+    activeListingsSuffix: " active listings",
+    error: "Error: "
   }
 };
 
-function t(key) {
-  return i18n[currentLang][key] || key;
+let currentLang = localStorage.getItem('nm_lang') || 'uz';
+let currentCurrency = localStorage.getItem('nm_currency') || 'uzs';
+const UZS_PER_USD = 12000;
+
+function t(key){
+  return (I18N[currentLang] && I18N[currentLang][key]) || I18N.uz[key] || key;
 }
 
-function updateI18n() {
-  document.querySelectorAll('[id^="authSubtitle"]').forEach(el => el.textContent = t('authSubtitle'));
-  document.getElementById('googleBtnText').textContent = t('googleBtnText');
-  document.getElementById('facebookBtnText').textContent = t('facebookBtnText');
-  document.getElementById('authDivider').textContent = t('authDivider');
-  document.getElementById('tabLogin').textContent = t('tabLogin');
-  document.getElementById('tabRegister').textContent = t('tabRegister');
-  document.getElementById('lblPhoneLogin').textContent = t('lblPhoneLogin');
-  document.getElementById('lblPasswordLogin').textContent = t('lblPasswordLogin');
-  document.getElementById('btnLogin').textContent = t('btnLogin');
-  document.getElementById('noteRegisterPrompt').textContent = t('noteRegisterPrompt');
-  document.getElementById('lblPhoneRegister').textContent = t('lblPhoneRegister');
-  document.getElementById('lblPasswordRegister').textContent = t('lblPasswordRegister');
-  document.getElementById('lblTermsCheckbox').textContent = t('lblTermsCheckbox');
-  document.getElementById('btnRegister').textContent = t('btnRegister');
-  document.getElementById('noteLoginPrompt').textContent = t('noteLoginPrompt');
-  document.getElementById('onboardingSubtitle').textContent = t('onboardingSubtitle');
-  document.getElementById('onboardingTitle').textContent = t('onboardingTitle');
-  document.getElementById('roleOwnerTitle').textContent = t('roleOwnerTitle');
-  document.getElementById('roleOwnerDesc').textContent = t('roleOwnerDesc');
-  document.getElementById('roleAgentTitle').textContent = t('roleAgentTitle');
-  document.getElementById('roleAgentDesc').textContent = t('roleAgentDesc');
-  document.getElementById('roleSeekerTitle').textContent = t('roleSeekerTitle');
-  document.getElementById('roleSeekerDesc').textContent = t('roleSeekerDesc');
-  document.getElementById('btnContinue').textContent = t('btnContinue');
-  document.getElementById('searchInput').placeholder = t('searchInput');
-  document.getElementById('searchBtn').textContent = t('searchBtn');
-  document.getElementById('dealRent').textContent = t('dealRent');
-  document.getElementById('dealSale').textContent = t('dealSale');
-  document.getElementById('filterAll').textContent = t('filterAll');
-  document.getElementById('filterApartment').textContent = t('filterApartment');
-  document.getElementById('filterHouse').textContent = t('filterHouse');
-  document.getElementById('filterLand').textContent = t('filterLand');
-  document.getElementById('filterCommercial').textContent = t('filterCommercial');
-  document.getElementById('emptyText').textContent = t('emptyText');
-  document.getElementById('favTitle').textContent = t('favTitle');
-  document.getElementById('favEmptyText').textContent = t('favEmptyText');
-  document.getElementById('postTitle').textContent = t('postTitle');
-  document.getElementById('postSubtitle').textContent = t('postSubtitle');
-  document.getElementById('lblPostType').textContent = t('lblPostType');
-  document.getElementById('optApartment').textContent = t('optApartment');
-  document.getElementById('optHouse').textContent = t('optHouse');
-  document.getElementById('optLand').textContent = t('optLand');
-  document.getElementById('optCommercial').textContent = t('optCommercial');
-  document.getElementById('lblPostDeal').textContent = t('lblPostDeal');
-  document.getElementById('optRent').textContent = t('optRent');
-  document.getElementById('optSale').textContent = t('optSale');
-  document.getElementById('lblPostTitle').textContent = t('lblPostTitle');
-  document.getElementById('lblPostRooms').textContent = t('lblPostRooms');
-  document.getElementById('lblPostArea').textContent = t('lblPostArea');
-  document.getElementById('lblPostPrice').textContent = t('lblPostPrice');
-  document.getElementById('lblPostDistrict').textContent = t('lblPostDistrict');
-  document.getElementById('lblPostDesc').textContent = t('lblPostDesc');
-  document.getElementById('lblPostPhone').textContent = t('lblPostPhone');
-  document.getElementById('btnPublish').textContent = t('btnPublish');
-  document.getElementById('postGuestText').textContent = t('postGuestText');
-  document.getElementById('btnPostLogin').textContent = t('btnPostLogin');
-  document.getElementById('myListingsTitle').textContent = t('myListingsTitle');
-  document.getElementById('myListingsEmptyText').textContent = t('myListingsEmptyText');
-  document.getElementById('btnLogout').textContent = t('btnLogout');
-  document.getElementById('profileGuestText').textContent = t('profileGuestText');
-  document.getElementById('btnProfileLogin').textContent = t('btnProfileLogin');
-  document.getElementById('navHome').textContent = t('navHome');
-  document.getElementById('navFav').textContent = t('navFav');
-  document.getElementById('navPost').textContent = t('navPost');
-  document.getElementById('navProfile').textContent = t('navProfile');
-  document.getElementById('termsModalTitle').textContent = t('termsModalTitle');
-  document.getElementById('termsModalContent').innerHTML = t('termsModalContent');
-  document.getElementById('termsModalClose').textContent = t('termsModalClose');
-  document.querySelectorAll('.lang-pill').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === currentLang);
+function applyLanguage(lang){
+  currentLang = LANG_NAMES[lang] ? lang : 'uz';
+  localStorage.setItem('nm_lang', currentLang);
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll('.lang-pill').forEach(pill=>{
+    pill.classList.toggle('active', pill.dataset.lang === currentLang);
   });
-}
-
-function showScreen(screenId) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(`screen-${screenId}`).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const navBtn = document.querySelector(`.nav-item[data-screen="${screenId}"]`);
-  if (navBtn) navBtn.classList.add('active');
-  if (screenId === 'feed') loadListings();
-  if (screenId === 'favorites') loadFavorites();
-  if (screenId === 'profile') loadProfile();
-  if (screenId === 'post') {
-    if (currentUser) {
-      document.getElementById('postFormAuth').classList.remove('hidden');
-      document.getElementById('postFormGuest').classList.add('hidden');
-    } else {
-      document.getElementById('postFormAuth').classList.add('hidden');
-      document.getElementById('postFormGuest').classList.remove('hidden');
-    }
-  }
-}
-
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
-}
-
-function formatPrice(price) {
-  if (currentCurrency === 'USD') {
-    const usd = Math.round(price / exchangeRate);
-    return `$${usd.toLocaleString()}`;
-  }
-  return `${price.toLocaleString()} so'm`;
-}
-
-document.querySelectorAll('.lang-pill').forEach(btn => {
-  btn.addEventListener('click', () => {
-    currentLang = btn.dataset.lang;
-    localStorage.setItem('lang', currentLang);
-    updateI18n();
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+    el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{
+    el.innerHTML = t(el.dataset.i18nHtml);
+  });
+  if(document.getElementById('screen-feed').classList.contains('active')){
     loadListings();
-    loadFavorites();
+  }
+  if(document.getElementById('screen-profile').classList.contains('active')){
+    refreshProfileScreen();
+  }
+  if(document.getElementById('screen-favorites').classList.contains('active')){
+    refreshFavoritesScreen();
+  }
+}
+
+/* ============ LANGUAGE SWITCHER UI ============ */
+const langToggle = document.getElementById('langToggle');
+document.querySelectorAll('.lang-pill').forEach(pill=>{
+  pill.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    if(!langToggle.classList.contains('expanded')){
+      langToggle.classList.add('expanded');
+      return;
+    }
+    applyLanguage(pill.dataset.lang);
+    langToggle.classList.remove('expanded');
   });
 });
-
-document.getElementById('currencyBtn').addEventListener('click', () => {
-  currentCurrency = currentCurrency === 'UZS' ? 'USD' : 'UZS';
-  localStorage.setItem('currency', currentCurrency);
-  showToast(currentCurrency === 'USD' ? '💱 USD' : '💱 UZS (so\'m)');
-  loadListings();
-  loadFavorites();
+document.addEventListener('click', (e)=>{
+  if(!langToggle.contains(e.target)) langToggle.classList.remove('expanded');
 });
+applyLanguage(currentLang);
 
-document.getElementById('currencyBtn2').addEventListener('click', () => {
-  currentCurrency = currentCurrency === 'UZS' ? 'USD' : 'UZS';
-  localStorage.setItem('currency', currentCurrency);
-  showToast(currentCurrency === 'USD' ? '💱 USD' : '💱 UZS (so\'m)');
-  loadListings();
-  loadFavorites();
+/* ============ CURRENCY SWITCHER UI ============ */
+document.querySelectorAll('.currency-pill').forEach(pill=>{
+  pill.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    setCurrency(pill.dataset.cur);
+  });
 });
+function setCurrency(cur){
+  currentCurrency = cur;
+  localStorage.setItem('nm_currency', cur);
+  document.querySelectorAll('.currency-pill').forEach(p=>{
+    p.classList.toggle('active', p.dataset.cur === cur);
+  });
+  if(document.getElementById('screen-feed').classList.contains('active')){
+    loadListings();
+  }
+  if(document.getElementById('screen-favorites').classList.contains('active')){
+    refreshFavoritesScreen();
+  }
+}
+setCurrency(currentCurrency);
 
-document.querySelectorAll('.auth-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    const pane = tab.dataset.pane;
-    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+function dockLangbar(inline){
+  const bar = document.getElementById('langbar');
+  const topbarLeft = document.getElementById('topbarLeft');
+  const body = document.body;
+  if(inline){
+    bar.classList.add('inline');
+    topbarLeft.insertBefore(bar, topbarLeft.firstChild);
+  } else {
+    bar.classList.remove('inline');
+    body.insertBefore(bar, body.firstChild);
+  }
+}
+
+/* ============ HELPERS ============ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    n.classList.toggle('active', n.dataset.screen===id);
+  });
+  const isAuth = (id === 'auth');
+  document.getElementById('topbar').style.display = isAuth ? 'none' : 'flex';
+  document.getElementById('bottomnav').style.display = isAuth ? 'none' : 'flex';
+  dockLangbar(!isAuth);
+  window.scrollTo(0,0);
+}
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(()=>{ el.style.display='none'; }, 2500);
+}
+function fmtUZS(n){
+  const suffix = currentLang === 'ru' ? ' сум' : (currentLang === 'en' ? ' UZS' : " so'm");
+  return Number(n).toLocaleString('ru-RU') + suffix;
+}
+function fmtUSD(n){
+  const usd = Number(n) / UZS_PER_USD;
+  const rounded = usd >= 100 ? Math.round(usd) : Math.round(usd * 100) / 100;
+  return '$' + rounded.toLocaleString('en-US');
+}
+function fmtPrice(n){
+  return currentCurrency === 'usd' ? fmtUSD(n) : fmtUZS(n);
+}
+function fmtPriceSecondary(n){
+  return currentCurrency === 'usd' ? fmtUZS(n) : fmtUSD(n);
+}
+
+/* ============ TERMS CHECKBOX (register pane) ============ */
+const termsCheck = document.getElementById('termsCheck');
+
+/* ============ EMAIL + PASSWORD AUTH ============ */
+function isValidEmail(str){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str);
+}
+
+/* ============ AUTH TABS (Kirish / Ro'yxatdan o'tish) ============ */
+document.querySelectorAll('.auth-tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    const isLogin = tab.dataset.tab === 'login';
+    document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
     tab.classList.add('active');
-    document.querySelectorAll('.auth-pane').forEach(p => p.classList.remove('active'));
-    document.getElementById(`pane${pane.charAt(0).toUpperCase() + pane.slice(1)}`).classList.add('active');
-    const indicator = document.getElementById('tabIndicator');
-    indicator.style.left = pane === 'login' ? '0' : '50%';
+    document.getElementById('authPaneLogin').classList.toggle('active', isLogin);
+    document.getElementById('authPaneRegister').classList.toggle('active', !isLogin);
+    document.getElementById('authTabIndicator').classList.toggle('pos-register', !isLogin);
   });
 });
 
-document.getElementById('termsCheckbox').addEventListener('change', e => {
-  document.getElementById('btnRegister').disabled = !e.target.checked;
-});
-
-document.getElementById('lblTermsCheckbox').addEventListener('click', e => {
-  e.preventDefault();
-  document.getElementById('termsModal').style.display = 'flex';
-});
-
-document.getElementById('termsModalClose').addEventListener('click', () => {
-  document.getElementById('termsModal').style.display = 'none';
-});
-
-document.getElementById('btnLogin').addEventListener('click', async () => {
-  const phone = document.getElementById('phoneLogin').value.trim();
-  const password = document.getElementById('passwordLogin').value.trim();
-  if (!phone || !password) return showToast(t('toastFillFields'));
-  try {
-    await signInWithEmailAndPassword(auth, `${phone}@nurmakon.uz`, password);
-    showToast(t('toastLoginSuccess'));
-  } catch (err) {
-    showToast(t('toastError'));
-  }
-});
-
-document.getElementById('btnRegister').addEventListener('click', async () => {
-  const phone = document.getElementById('phoneRegister').value.trim();
-  const password = document.getElementById('passwordRegister').value.trim();
-  const terms = document.getElementById('termsCheckbox').checked;
-  if (!phone || !password) return showToast(t('toastFillFields'));
-  if (!terms) return showToast(t('toastAcceptTerms'));
-  try {
-    const cred = await createUserWithEmailAndPassword(auth, `${phone}@nurmakon.uz`, password);
-    await setDoc(doc(db, 'users', cred.user.uid), {
-      phone,
-      role: 'seeker',
-      createdAt: serverTimestamp()
-    });
-    showToast(t('toastRegisterSuccess'));
-  } catch (err) {
-    showToast(t('toastError'));
-  }
-});
-
-document.getElementById('googleBtn').addEventListener('click', async () => {
-  const provider = new GoogleAuthProvider();
-  try {
-    const cred = await signInWithPopup(auth, provider);
-    const userDoc = await getDoc(doc(db, 'users', cred.user.uid));
-    if (!userDoc.exists()) {
-      await setDoc(doc(db, 'users', cred.user.uid), {
-        phone: cred.user.phoneNumber || '',
-        role: 'seeker',
-        createdAt: serverTimestamp()
-      });
+/* ============ GOOGLE SIGN-IN ============ */
+document.getElementById('googleSignInBtn').addEventListener('click', async ()=>{
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try{
+    await auth.signInWithPopup(provider);
+  }catch(err){
+    console.error(err);
+    if(err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment'){
+      try{
+        await auth.signInWithRedirect(provider);
+      }catch(err2){
+        console.error(err2);
+        handleSocialAuthError(err2, 'Google');
+      }
+    }else if(err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request'){
+      // Foydalanuvchi o'zi yopgan
+    }else{
+      handleSocialAuthError(err, 'Google');
     }
-    showToast(t('toastLoginSuccess'));
-  } catch (err) {
-    showToast(t('toastError'));
   }
 });
 
-document.getElementById('facebookBtn').addEventListener('click', async () => {
-  const provider = new FacebookAuthProvider();
-  try {
-    const cred = await signInWithPopup(auth, provider);
-    const userDoc = await getDoc(doc(db, 'users', cred.user.uid));
-    if (!userDoc.exists()) {
-      await setDoc(doc(db, 'users', cred.user.uid), {
-        phone: cred.user.phoneNumber || '',
-        role: 'seeker',
-        createdAt: serverTimestamp()
-      });
+function handleSocialAuthError(err, providerName){
+  if(err.code === 'auth/operation-not-supported-in-this-environment'){
+    toast('Bu brauzerda ishlamaydi. Havolani nusxalab, Chrome (yoki Safari) ilovasida oching.');
+  }else if(err.code === 'auth/operation-not-allowed'){
+    toast(providerName + ' orqali kirish hozircha faollashtirilmagan.');
+  }else{
+    toast(providerName + ' orqali kirishda xatolik: ' + err.message);
+  }
+}
+
+auth.getRedirectResult().catch((err)=>{
+  if(err && err.code){
+    console.error(err);
+    handleSocialAuthError(err, 'Ijtimoiy tarmoq');
+  }
+});
+
+document.getElementById('registerBtn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('registerBtn');
+  const email = document.getElementById('emailInputReg').value.trim();
+  const password = document.getElementById('passwordInputReg').value;
+  if(!isValidEmail(email)){ toast('Email to\'g\'ri formatda kiriting'); return; }
+  if(password.length < 6){ toast('Parol kamida 6 ta belgidan iborat bo\'lsin'); return; }
+  if(!termsCheck.checked){ toast('Davom etish uchun foydalanish shartnomasiga rozilik bildiring'); return; }
+
+  btn.disabled = true;
+  try{
+    await auth.createUserWithEmailAndPassword(email, password);
+  }catch(err){
+    console.error(err);
+    if(err.code === 'auth/email-already-in-use'){
+      toast('Bu email allaqachon ro\'yxatdan o\'tgan. "Kirish" tugmasini bosing.');
+    }else{
+      toast('Xatolik: ' + err.message);
     }
-    showToast(t('toastLoginSuccess'));
-  } catch (err) {
-    showToast(t('toastError'));
+  }finally{
+    btn.disabled = false;
   }
 });
 
-document.querySelectorAll('.choice-card').forEach(card => {
-  card.addEventListener('click', () => {
-    document.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    document.getElementById('btnContinue').disabled = false;
-  });
+document.getElementById('loginBtn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('loginBtn');
+  const email = document.getElementById('emailInput').value.trim();
+  const password = document.getElementById('passwordInput').value;
+  if(!isValidEmail(email)){ toast('Email to\'g\'ri formatda kiriting'); return; }
+  if(!password){ toast('Parolni kiriting'); return; }
+
+  btn.disabled = true;
+  try{
+    await auth.signInWithEmailAndPassword(email, password);
+  }catch(err){
+    console.error(err);
+    toast('Email yoki parol noto\'g\'ri.');
+  }finally{
+    btn.disabled = false;
+  }
 });
 
-document.getElementById('btnContinue').addEventListener('click', async () => {
-  const selected = document.querySelector('.choice-card.selected');
-  if (!selected || !currentUser) return;
-  const role = selected.dataset.role;
-  await updateDoc(doc(db, 'users', currentUser.uid), { role });
-  showScreen('feed');
+document.getElementById('forgotPasswordBtn').addEventListener('click', async ()=>{
+  const email = document.getElementById('emailInput').value.trim();
+  if(!isValidEmail(email)){ toast('Avval email manzilingizni kiriting'); return; }
+  try{
+    await auth.sendPasswordResetEmail(email);
+    toast('Tiklash havolasi ' + email + ' manziliga yuborildi');
+  }catch(err){
+    console.error(err);
+    toast('Xatolik: ' + err.message);
+  }
 });
 
-onAuthStateChanged(auth, async (user) => {
-  currentUser = user;
-  if (user) {
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
-    if (!userDoc.exists() || !userDoc.data().role) {
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+  auth.signOut();
+});
+
+/* ============ AUTH STATE ============ */
+let pendingAuthTarget = 'feed';
+
+auth.onAuthStateChanged(async (user)=>{
+  if(user){
+    currentUser = user;
+    document.getElementById('logoutBtn').style.display = 'block';
+    document.getElementById('topbarLoginBtn').style.display = 'none';
+    const userRef = db.collection('users').doc(user.uid);
+    const snap = await userRef.get();
+    if(!snap.exists){
+      await userRef.set({
+        phone: '',
+        email: user.email,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        mode: null,
+        isAgent: false
+      });
+      userDoc = { phone: '', email: user.email, mode: null, isAgent: false };
       showScreen('onboarding');
     } else {
-      showScreen('feed');
+      userDoc = snap.data();
+      if(!userDoc.mode){
+        showScreen('onboarding');
+      } else {
+        showScreen(pendingAuthTarget || 'feed');
+        pendingAuthTarget = 'feed';
+      }
     }
+    await loadFavoriteIds();
+    refreshProfileScreen();
+    refreshFavoritesScreen();
+    if(document.getElementById('screen-feed').classList.contains('active')) loadListings();
   } else {
-    showScreen('feed');
+    currentUser = null;
+    userDoc = null;
+    favoriteIds.clear();
+    document.getElementById('logoutBtn').style.display = 'none';
+    document.getElementById('topbarLoginBtn').style.display = 'flex';
+    refreshProfileScreen();
+    refreshFavoritesScreen();
+    if(document.getElementById('screen-feed').classList.contains('active')) loadListings();
   }
 });
 
-document.getElementById('authCloseBtn').addEventListener('click', () => {
-  showScreen('feed');
+/* ============ ONBOARDING ============ */
+let onboardingChoice = null;
+document.querySelectorAll('.choice-card').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    document.querySelectorAll('.choice-card').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+    onboardingChoice = card.dataset.choice;
+    document.getElementById('onboardingContinueBtn').disabled = false;
+  });
+});
+document.getElementById('onboardingContinueBtn').addEventListener('click', async ()=>{
+  if(!onboardingChoice || !currentUser) return;
+  await db.collection('users').doc(currentUser.uid).update({ mode: onboardingChoice });
+  userDoc.mode = onboardingChoice;
+  showScreen(pendingAuthTarget || 'feed');
+  pendingAuthTarget = 'feed';
+  loadListings();
+  refreshProfileScreen();
 });
 
-document.querySelectorAll('.nav-item').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const screen = btn.dataset.screen;
-    if (screen === 'profile' && !currentUser) {
-      showScreen('auth');
-    } else if (screen === 'post' && !currentUser) {
-      showScreen('auth');
-    } else {
-      showScreen(
+/* ============ GUEST GATING (browse freely, login only where needed) ============ */
+function requireLogin(targetScreen){
+  pendingAuthTarget = targetScreen || 'feed';
+  showScreen('auth');
+}
+document.getElementById('topbarLoginBtn').addEventListener('click', ()=> requireLogin('feed'));
+document.getElementById('authCloseBtn').addEventListener('click', ()=> showScreen(pendingAuthTarget || 'feed'));
+document.getElementById('profileLoggedOut').addEventListener('click', ()=> requireLogin('profile'));
+document.getElementById('favoritesLoggedOut').addEventListener('click', ()=> requireLogin('favorites'));
+document.getElementById('profileLogoutBtn').addEventListener('click', ()=> auth.signOut());
+
+
+/* ============ BOTTOM NAV ============ */
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    const target = item.dataset.screen;
+    if(target === 'post' && !currentUser){
+      toast(t('needLoginToast'));
+      requireLogin('post');
+      return;
+    }
+    showScreen(target);
+    if(target === 'feed') loadListings();
+    if(target === 'profile') refreshProfileScreen();
+    if(target === 'favorites') refreshFavoritesScreen();
+  });
+});
+
+/* ============ IMGBB UPLOAD ============ */
+document.getElementById('postPhotos').addEventListener('change', (e)=>{
+  selectedPhotos = Array.from(e.target.files).slice(0,6);
+  const preview = document.getElementById('photoPreview');
+  preview.innerHTML = '';
+  selectedPhotos.forEach(file=>{
+    const url = URL.createObjectURL(file);
+    const img = document.createElement('img');
+    img.src = url;
+    img.style.cssText = 'width:64px;height:64px;object-fit:cover;border-radius:8px;';
+    preview.appendChild(img);
+  });
+});
+
+async function uploadPhotosToImgbb(files){
+  const urls = [];
+  for(const file of files){
+    const formData = new FormData();
+    formData.append('image', file);
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+    if(data.success){
+      urls.push(data.data.url);
+    }
+  }
+  return urls;
+}
+
+/* ============ POST LISTING ============ */
+document.getElementById('submitListingBtn').addEventListener('click', async ()=>{
+  if(!currentUser){ toast('Avval tizimga kiring'); return; }
+  const statusEl = document.getElementById('postStatus');
+  const btn = document.getElementById('submitListingBtn');
+
+  const region = document.getElementById('postRegion').value.trim();
+  const district = document.getElementById('postDistrict').value.trim();
+  const price = document.getElementById('postPrice').value;
+  const phone = document.getElementById('postPhone').value.trim();
+
+  if(!region || !district || !price || !phone){
+    toast('Barcha majburiy maydonlarni to\'ldiring');
+    return;
+  }
+
+  btn.disabled = true;
+  statusEl.textContent = 'Rasmlar yuklanmoqda...';
+
+  try{
+    let photoUrls = [];
+    if(selectedPhotos.length > 0){
+      photoUrls = await uploadPhotosToImgbb(selectedPhotos);
+    }
+
+    statusEl.textContent = 'E\'lon saqlanmoqda...';
+
+    await db.collection('listings').add({
+      ownerUid: currentUser.uid,
+      ownerType: document.getElementById('postOwnerType').value,
+      dealType: document.getElementById('postDealType').value,
+      propertyType: document.getElementById('postPropertyType').value,
+      region: region,
+      district: district,
+      price: Number(price),
+      area: Number(document.getElementById('postArea').value) || null,
+      rooms: Number(document.getElementById('postRooms').value) || null,
+      floor: document.getElementById('postFloor').value.trim() || null,
+      description: document.getElementById('postDescription').value.trim(),
+      phone: phone,
+      photos: photoUrls,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      status: 'active'
+    });
+
+    statusEl.textContent = '';
+    toast('E\'lon muvaffaqiyatli joylandi!');
+    document.querySelectorAll('#screen-post input, #screen-post textarea').forEach(el=>el.value='');
+    document.getElementById('photoPreview').innerHTML = '';
+    selectedPhotos = [];
+    showScreen('feed');
+    loadListings();
+  }catch(err){
+    console.error(err);
+    statusEl.textContent = 'Xatolik yuz berdi: ' + err.message;
+  }finally{
+    btn.disabled = false;
+  }
+});
+
+/* ============ FEED / LISTINGS ============ */
+let currentDealFilter = 'all';
+
+document.querySelectorAll('.filter-chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    currentDealFilter = chip.dataset.filter;
+    loadListings();
+  });
+});
+
+document.getElementById('districtFilter').addEventListener('input', debounce(loadListings, 400));
+document.getElementById('searchGoBtn').addEventListener('click', loadListings);
+
+function debounce(fn, delay){
+  let timer;
+  return (...args)=>{
+    clearTimeout(timer);
+    timer = setTimeout(()=>fn(...args), delay);
+  };
+}
+
+async function loadListings(){
+  const container = document.getElementById('listingsContainer');
+  container.innerHTML = `<div class="empty-state"><div class="ic">🏠</div>${t('loading')}</div>`;
+
+  try{
+    let query = db.collection('listings').where('status','==','active').orderBy('createdAt','desc').limit(50);
+    const snap = await query.get();
+    let listings = [];
+    snap.forEach(doc=> listings.push({ id: doc.id, ...doc.data() }));
+
+    if(currentDealFilter !== 'all'){
+      listings = listings.filter(l => l.dealType === currentDealFilter);
+    }
+    const districtQuery = document.getElementById('districtFilter').value.trim().toLowerCase();
+    if(districtQuery){
+      listings = listings.filter(l =>
+        (l.district||'').toLowerCase().includes(districtQuery) ||
+        (l.region||'').toLowerCase().includes(districtQuery)
+      );
+    }
+
+    if(listings.length === 0){
+      container.innerHTML = `<div class="empty-state"><div class="ic">🏠</div>${t('noListings')}</div>`;
+      return;
+    }
+
+    container.innerHTML = '';
+    listings.forEach(l=>{
+      container.appendChild(renderListingCard(l));
+    });
+  }catch(err){
+    console.error(err);
+    container.innerHTML = `<div class="empty-state"><div class="ic">⚠️</div>${t('loadError')}${err.message}</div>`;
+  }
+}
+
+function renderListingCard(l){
+  const div = document.createElement('div');
+  div.className = 'listing';
+  const photo = (l.photos && l.photos[0]) ? l.photos[0] : '';
+  const dealLabel = l.dealType === 'sale' ? t('dealSale') : t('dealRent');
+  const ownerLabel = l.ownerType === 'agent' ? t('ownerAgent') : t('ownerOwner');
+  const isFav = favoriteIds.has(l.id);
+
+  div.innerHTML = `
+    <button class="fav-btn ${isFav?'active':''}" data-id="${l.id}">${isFav ? '♥' : '♡'}</button>
+    ${photo ? `<img src="${photo}" alt="">` : ''}
+    <div class="listing-body">
+      <span class="badge ${l.dealType==='sale'?'badge-sale':'badge-rent'}">${dealLabel}</span>
+      <span class="badge ${l.ownerType==='agent'?'badge-agent':'badge-owner'}">${ownerLabel}</span>
+      <div class="listing-price" style="margin-top:8px;">${fmtPrice(l.price)}<span class="price-secondary">≈ ${fmtPriceSecondary(l.price)}</span></div>
+      <div class="listing-meta">${l.region}, ${l.district} ${l.area?('· '+l.area+' m²'):''} ${l.rooms?('· '+l.rooms+t('roomsSuffix')):''}</div>
+      <div class="listing-meta" style="margin-top:6px;">${(l.description||'').slice(0,90)}</div>
+      <button class="btn btn-secondary contact-btn" style="margin-top:12px;" data-phone="${l.phone}" data-id="${l.id}">${t('contactBtn')}</button>
+    </div>
+  `;
+  div.querySelector('.contact-btn').addEventListener('click', (e)=>{
+    logContact(l.id);
+    window.location.href = 'tel:' + e.target.dataset.phone;
+  });
+  div.querySelector('.fav-btn').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    toggleFavorite(l, e.currentTarget);
+  });
+  return div;
+}
+
+/* ============ FAVORITES ============ */
+let favoriteIds = new Set();
+
+async function loadFavoriteIds(){
+  favoriteIds.clear();
+  if(!currentUser) return;
+  try{
+    const snap = await db.collection('users').doc(currentUser.uid).collection('favorites').get();
+    snap.forEach(doc=> favoriteIds.add(doc.id));
+  }catch(err){ console.error(err); }
+}
+
+async function toggleFavorite(listing, btnEl){
+  if(!currentUser){
+    toast(t('needLoginToast'));
+    requireLogin('favorites');
+    return;
+  }
+  const ref = db.collection('users').doc(currentUser.uid).collection('favorites').doc(listing.id);
+  const nowFav = !favoriteIds.has(listing.id);
+  try{
+    if(nowFav){
+      favoriteIds.add(listing.id);
+      await ref.set({
+        listingId: listing.id,
+        savedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }else{
+      favoriteIds.delete(listing.id);
+      await ref.delete();
+    }
+    if(btnEl){
+      btnEl.classList.toggle('active', nowFav);
+      btnEl.textContent = nowFav ? '♥' : '♡';
+    }
+    if(document.getElementById('screen-favorites').classList.contains('active')){
+      refreshFavoritesScreen();
+    }
+  }catch(err){
+    console.error(err);
+    toast(t('error') + err.message);
+  }
+}
+
+async function refreshFavoritesScreen(){
+  const lockCard = document.getElementById('favoritesLoggedOut');
+  const container = document.getElementById('favoritesContainer');
+  if(!currentUser){
+    lockCard.classList.remove('hidden');
+    container.classList.add('hidden');
+    return;
+  }
+  lockCard.classList.add('hidden');
+  container.classList.remove('hidden');
+  container.innerHTML = `<div class="empty-state"><div class="ic">♡</div>${t('loading')}</div>`;
+  try{
+    const snap = await db.collection('users').doc(currentUser.uid).collection('favorites')
+      .orderBy('savedAt','desc').get();
+    if(snap.empty){
+      container.innerHTML = `<div class="lock-empty"><div class="ic">♡</div>${t('favEmpty')}</div>`;
+      return;
+    }
+    const ids = [];
+    snap.forEach(doc=> ids.push(doc.id));
+    const listingDocs = await Promise.all(ids.map(id => db.collection('listings').doc(id).get()));
+    container.innerHTML = '';
+    let any = false;
+    listingDocs.forEach(docSnap=>{
+      if(docSnap.exists){
+        any = true;
+        container.appendChild(renderListingCard({ id: docSnap.id, ...docSnap.data() }));
+      }
+    });
+    if(!any){
+      container.innerHTML = `<div class="lock-empty"><div class="ic">♡</div>${t('favEmpty')}</div>`;
+    }
+  }catch(err){
+    console.error(err);
+    container.innerHTML = `<div class="lock-empty"><div class="ic">⚠️</div>${t('loadError')}${err.message}</div>`;
+  }
+}
+
+async function logContact(listingId){
+  if(!currentUser) return;
+  try{
+    await db.collection('contactLogs').add({
+      listingId: listingId,
+      viewerUid: currentUser.uid,
+      viewerMode: userDoc ? userDoc.mode : null,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }catch(err){ console.error(err); }
+}
+
+/* ============ PROFILE ============ */
+function refreshProfileScreen(){
+  const loggedOutCard = document.getElementById('profileLoggedOut');
+  const loggedInBlock = document.getElementById('profileLoggedIn');
+  if(!currentUser){
+    loggedOutCard.classList.remove('hidden');
+    loggedInBlock.classList.add('hidden');
+    return;
+  }
+  loggedOutCard.classList.add('hidden');
+  loggedInBlock.classList.remove('hidden');
+
+  document.getElementById('profileEmail').textContent = currentUser.email;
+  document.getElementById('profilePhoneInput').value = (userDoc && userDoc.phone) ? userDoc.phone : '';
+  const modeLabel = userDoc && userDoc.mode === 'assisted'
+    ? t('modeAssisted')
+    : t('modeIndependent');
+  document.getElementById('profileMode').textContent = modeLabel;
+
+  if(userDoc && userDoc.isAgent){
+    document.getElementById('agentRegisterCard').classList.add('hidden');
+    document.getElementById('agentPanelCard').classList.remove('hidden');
+    loadMyListings();
+  } else {
+    document.getElementById('agentRegisterCard').classList.remove('hidden');
+    document.getElementById('agentPanelCard').classList.add('hidden');
+  }
+}
+
+document.getElementById('savePhoneBtn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('savePhoneBtn');
+  let phone = document.getElementById('profilePhoneInput').value.trim();
+  if(!phone.startsWith('+')) phone = '+998' + phone.replace(/\D/g,'').replace(/^998/,'');
+  if(phone.length < 12){ toast('Telefon raqamini to\'liq kiriting'); return; }
+
+  btn.disabled = true;
+  try{
+    await db.collection('users').doc(currentUser.uid).update({ phone: phone });
+    userDoc.phone = phone;
+    toast('Telefon raqami saqlandi');
+  }catch(err){
+    console.error(err);
+    toast('Xatolik: ' + err.message);
+  }finally{
+    btn.disabled = false;
+  }
+});
+
+document.getElementById('changeModeBtn').addEventListener('click', async ()=>{
+  const newMode = userDoc.mode === 'assisted' ? 'independent' : 'assisted';
+  await db.collection('users').doc(currentUser.uid).update({ mode: newMode });
+  userDoc.mode = newMode;
+  refreshProfileScreen();
+  toast('Rejim o\'zgartirildi');
+});
+
+document.getElementById('agentRegisterBtn').addEventListener('click', async ()=>{
+  const name = document.getElementById('agentName').value.trim();
+  const district = document.getElementById('agentDistrict').value.trim();
+  if(!name || !district){ toast('Ism va hududni kiriting'); return; }
+  if(!userDoc || !userDoc.phone){
+    toast('Avval yuqorida telefon raqamingizni saqlang');
+    return;
+  }
+
+  await db.collection('agents').doc(currentUser.uid).set({
+    name: name,
+    district: district,
+    phone: userDoc.phone,
+    verified: false,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+  await db.collection('users').doc(currentUser.uid).update({ isAgent: true });
+  userDoc.isAgent = true;
+  toast('Siz makler sifatida ro\'yxatdan o\'tdingiz!');
+  refreshProfileScreen();
+});
+
+async function loadMyListings(){
+  const container = document.getElementById('myListingsSummary');
+  container.innerHTML = t('loading');
+  try{
+    const snap = await db.collection('listings').where('ownerUid','==',currentUser.uid).get();
+    container.innerHTML = `<strong>${snap.size}</strong>${t('activeListingsSuffix')}`;
+  }catch(err){
+    container.innerHTML = t('error') + err.message;
+  }
+}
+
+/* ============ INITIAL SCREEN ============ */
+showScreen('feed');
+loadListings();
+</script>
+</body>
+</html>
