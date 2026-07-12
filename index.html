@@ -1291,6 +1291,17 @@
       <h3 style="margin:0 0 6px;font-size:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><span data-i18n="agentPanelTitle">Makler paneli</span> <span class="badge" id="agentStatusBadge"></span></h3>
       <p class="center-note" style="text-align:left;margin:0;" id="agentPanelStatusText"></p>
     </div>
+    <div class="card" id="brokerWalletCard">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:13px;color:var(--text-dim);" data-i18n="walletBalance">Lead balansi</div>
+          <div style="font-size:26px;font-weight:800;font-family:'Space Grotesk',sans-serif;line-height:1.1;"><span id="brokerCredits">0</span> <span style="font-size:14px;color:var(--text-dim);" data-i18n="creditsUnit">kredit</span></div>
+          <span class="badge badge-owner" id="brokerPlanBadge" style="margin-top:6px;"></span>
+        </div>
+        <button class="btn btn-primary btn-sm" id="topupBtn"><span class="btn-label" data-i18n="topupBtn">Balansni to'ldirish</span></button>
+      </div>
+      <p class="center-note" style="text-align:left;margin:10px 0 0;" data-i18n="walletNote">Har bir mijoz so'rovini qabul qilish — 1 kredit. Premium obunada cheksiz.</p>
+    </div>
     <div class="card">
       <h4 style="margin:0 0 4px;font-size:15px;">📨 <span data-i18n="agentRequestsTitle">Mijoz so'rovlari</span></h4>
       <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="agentRequestsSub">Mijozlar qoldirgan so'rovlar. Bog'lanib, mos variant taklif qiling.</p>
@@ -1346,6 +1357,32 @@
     <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="admHotlineSub">Bu raqam Yordam bo'limida hammaga ko'rinadi.</p>
     <input type="tel" id="adminHotlineInput" placeholder="+998 71 200 00 00">
     <button class="btn btn-secondary btn-sm" id="adminSaveHotlineBtn" style="margin-top:12px;"><span class="btn-label" data-i18n="saveBtn">Saqlash</span></button>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 4px;font-size:16px;">💳 <span data-i18n="admTopupsTitle">To'lov so'rovlari</span></h3>
+    <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="admTopupsSub">Maklerlarning balans to'ldirish so'rovlari.</p>
+    <div id="adminTopups"></div>
+  </div>
+</div>
+
+<!-- ===================== TOP-UP (BALANS) SCREEN ===================== -->
+<div class="screen" id="screen-topup">
+  <div class="screen-head">
+    <button class="back-btn" id="topupBackBtn" type="button">‹</button>
+    <h2 class="section-title" style="margin:0;" data-i18n="topupTitle">Balansni to'ldirish</h2>
+  </div>
+  <div class="card">
+    <p class="center-note" style="text-align:left;margin:0;" data-i18n="topupSub">Lead kreditini sotib oling yoki premium obunaga o'ting.</p>
+  </div>
+  <div id="topupPackages"></div>
+  <div class="card">
+    <h3 style="margin:0 0 6px;font-size:15px;">⭐ <span data-i18n="topupPremiumTitle">Premium obuna</span></h3>
+    <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="topupPremiumDesc">Cheksiz lead qabul qilish + so'rovlarda ustuvor ko'rsatish.</p>
+    <button class="btn btn-primary" id="topupPremiumBtn"><span class="btn-label"></span></button>
+  </div>
+  <div class="card">
+    <p class="center-note" style="text-align:left;margin:0;" data-i18n="topupPayNote">Hozircha to'lov admin tomonidan qo'lda tasdiqlanadi. Payme/Click keyingi bosqichda ulanadi.</p>
   </div>
 </div>
 
@@ -1542,6 +1579,9 @@ const I18N = {
     statListings:"e'lonlar", statAgents:"maklerlar", statSupport:"qo'llab-quvvatlash",
     supportTitle:"Yordam xizmati", supportHotlineTitle:"Ishonch telefoni", supportHotlineSub:"Savol yoki muammo bo'lsa qo'ng'iroq qiling.", supportWriteTitle:"Bizga yozing", supportWriteSub:"Muammo yoki taklifingizni yozib qoldiring — javob beramiz.", supportMsgPh:"Xabaringiz...", supportContactLabel:"Bog'lanish uchun (ixtiyoriy)", supportSendBtn:"Yuborish", supportSent:"Xabaringiz yuborildi. Rahmat!", supportEmptyMsg:"Iltimos, xabar matnini yozing.",
     adminTitle:"Admin panel", adminEntrySub:"Statistika, verifikatsiya va sozlamalarni boshqarish", admStatsTitle:"Statistika", admStatListings:"e'lonlar", admStatActive:"faol", admStatBrokers:"maklerlar", admStatVerified:"tasdiqlangan", admStatRequests:"so'rovlar", admStatUsers:"foydalanuvchi", admVerifyTitle:"Verifikatsiya so'rovlari", admVerifySub:"Makler bo'lish uchun tasdiq kutayotganlar.", admNoPending:"Kutayotgan so'rovlar yo'q", admApprove:"✓ Tasdiqlash", admReject:"✕ Rad etish", admApproved:"Makler tasdiqlandi", admRejected:"So'rov rad etildi", admHotlineTitle:"Ishonch telefoni", admHotlineSub:"Bu raqam Yordam bo'limida hammaga ko'rinadi.", admHotlineSaved:"Ishonch telefoni saqlandi",
+    walletBalance:"Lead balansi", creditsUnit:"kredit", brokerPlanFree:"Oddiy reja", brokerPlanPremium:"Premium", topupBtn:"Balansni to'ldirish", walletNote:"Har bir mijoz so'rovini qabul qilish — 1 kredit. Premium obunada cheksiz.", creditEmpty:"Lead krediti tugadi. Balansni to'ldiring.", priceSom:"so'm",
+    topupTitle:"Balansni to'ldirish", topupSub:"Lead kreditini sotib oling yoki premium obunaga o'ting.", topupBuyBtn:"So'rov yuborish", topupSent:"So'rov yuborildi! Admin tasdiqlagach balans yangilanadi.", topupPremiumTitle:"Premium obuna", topupPremiumDesc:"Cheksiz lead qabul qilish + so'rovlarda ustuvor ko'rsatish.", topupPremiumBtn:"Premiumga o'tish", topupPayNote:"Hozircha to'lov admin tomonidan qo'lda tasdiqlanadi. Payme/Click keyingi bosqichda ulanadi.",
+    admTopupsTitle:"To'lov so'rovlari", admTopupsSub:"Maklerlarning balans to'ldirish so'rovlari.", admNoTopups:"To'lov so'rovlari yo'q", admTopupApprove:"✓ Tasdiqlash", admTopupApproved:"To'lov tasdiqlandi — balans yangilandi",
     googleSignIn:"Google orqali davom etish", or:"yoki",
     tabLogin:"Kirish", tabRegister:"Ro'yxatdan o'tish",
     email:"Email", password:"Parol", forgotPassword:"Parolni unutdingizmi?",
@@ -1643,6 +1683,9 @@ const I18N = {
     statListings:"объявлений", statAgents:"риелторов", statSupport:"поддержка",
     supportTitle:"Служба поддержки", supportHotlineTitle:"Телефон доверия", supportHotlineSub:"Если есть вопрос или проблема — позвоните.", supportWriteTitle:"Напишите нам", supportWriteSub:"Опишите проблему или предложение — мы ответим.", supportMsgPh:"Ваше сообщение...", supportContactLabel:"Для связи (необязательно)", supportSendBtn:"Отправить", supportSent:"Сообщение отправлено. Спасибо!", supportEmptyMsg:"Пожалуйста, напишите текст сообщения.",
     adminTitle:"Админ-панель", adminEntrySub:"Управление статистикой, верификацией и настройками", admStatsTitle:"Статистика", admStatListings:"объявления", admStatActive:"активные", admStatBrokers:"риелторы", admStatVerified:"проверенные", admStatRequests:"запросы", admStatUsers:"пользователи", admVerifyTitle:"Запросы на верификацию", admVerifySub:"Ожидают подтверждения статуса риелтора.", admNoPending:"Нет ожидающих запросов", admApprove:"✓ Подтвердить", admReject:"✕ Отклонить", admApproved:"Риелтор подтверждён", admRejected:"Запрос отклонён", admHotlineTitle:"Телефон доверия", admHotlineSub:"Этот номер виден всем в разделе Поддержки.", admHotlineSaved:"Телефон доверия сохранён",
+    walletBalance:"Баланс лидов", creditsUnit:"кредит", brokerPlanFree:"Обычный план", brokerPlanPremium:"Премиум", topupBtn:"Пополнить баланс", walletNote:"Приём каждого запроса — 1 кредит. В премиум-подписке безлимитно.", creditEmpty:"Кредиты закончились. Пополните баланс.", priceSom:"сум",
+    topupTitle:"Пополнить баланс", topupSub:"Купите кредиты для лидов или перейдите на премиум.", topupBuyBtn:"Отправить запрос", topupSent:"Запрос отправлен! Баланс обновится после подтверждения администратором.", topupPremiumTitle:"Премиум-подписка", topupPremiumDesc:"Безлимитный приём лидов + приоритет в запросах.", topupPremiumBtn:"Перейти на премиум", topupPayNote:"Пока оплата подтверждается администратором вручную. Payme/Click подключим на следующем этапе.",
+    admTopupsTitle:"Запросы на оплату", admTopupsSub:"Запросы риелторов на пополнение баланса.", admNoTopups:"Нет запросов на оплату", admTopupApprove:"✓ Подтвердить", admTopupApproved:"Оплата подтверждена — баланс обновлён",
     googleSignIn:"Продолжить через Google", or:"или",
     tabLogin:"Вход", tabRegister:"Регистрация",
     email:"Email", password:"Пароль", forgotPassword:"Забыли пароль?",
@@ -1744,6 +1787,9 @@ const I18N = {
     statListings:"listings", statAgents:"brokers", statSupport:"support",
     supportTitle:"Support", supportHotlineTitle:"Helpline", supportHotlineSub:"Call us if you have a question or issue.", supportWriteTitle:"Write to us", supportWriteSub:"Leave your issue or suggestion — we'll reply.", supportMsgPh:"Your message...", supportContactLabel:"Contact (optional)", supportSendBtn:"Send", supportSent:"Message sent. Thank you!", supportEmptyMsg:"Please write a message.",
     adminTitle:"Admin panel", adminEntrySub:"Manage statistics, verification and settings", admStatsTitle:"Statistics", admStatListings:"listings", admStatActive:"active", admStatBrokers:"brokers", admStatVerified:"verified", admStatRequests:"requests", admStatUsers:"users", admVerifyTitle:"Verification requests", admVerifySub:"Brokers awaiting verification.", admNoPending:"No pending requests", admApprove:"✓ Approve", admReject:"✕ Reject", admApproved:"Broker verified", admRejected:"Request rejected", admHotlineTitle:"Helpline", admHotlineSub:"This number is visible to everyone in Support.", admHotlineSaved:"Helpline saved",
+    walletBalance:"Lead balance", creditsUnit:"credits", brokerPlanFree:"Free plan", brokerPlanPremium:"Premium", topupBtn:"Top up balance", walletNote:"Accepting each client request costs 1 credit. Unlimited with Premium.", creditEmpty:"Out of lead credits. Please top up.", priceSom:"UZS",
+    topupTitle:"Top up balance", topupSub:"Buy lead credits or upgrade to Premium.", topupBuyBtn:"Send request", topupSent:"Request sent! Balance updates after admin approval.", topupPremiumTitle:"Premium subscription", topupPremiumDesc:"Unlimited lead accepts + priority in requests.", topupPremiumBtn:"Go Premium", topupPayNote:"For now payments are approved manually by admin. Payme/Click will be connected next.",
+    admTopupsTitle:"Payment requests", admTopupsSub:"Brokers' balance top-up requests.", admNoTopups:"No payment requests", admTopupApprove:"✓ Approve", admTopupApproved:"Payment approved — balance updated",
     googleSignIn:"Continue with Google", or:"or",
     tabLogin:"Log in", tabRegister:"Sign up",
     email:"Email", password:"Password", forgotPassword:"Forgot password?",
@@ -2682,6 +2728,11 @@ $('openAdminBtn').addEventListener('click', ()=>{ showScreen('admin'); refreshAd
 $('adminBackBtn').addEventListener('click', ()=>{ showScreen('profile'); refreshProfileScreen(); });
 $('adminSaveHotlineBtn').addEventListener('click', e=>saveHotline(e.currentTarget));
 
+/* ============ TOP-UP NAV ============ */
+$('topupBtn').addEventListener('click', openTopup);
+$('topupBackBtn').addEventListener('click', ()=>{ showScreen('agent'); refreshAgentScreen(); });
+$('topupPremiumBtn').addEventListener('click', e=>sendTopup({ premium:true, amount:PREMIUM_PRICE }, e.currentTarget));
+
 /* ============ MAKLER (BROKER) SCREEN ============ */
 $('openAgentBtn').addEventListener('click', ()=>{ showScreen('agent'); refreshAgentScreen(); });
 $('agentBackBtn').addEventListener('click', ()=>{ showScreen('profile'); refreshProfileScreen(); });
@@ -2696,6 +2747,7 @@ function refreshAgentScreen(){
     const badge = $('agentStatusBadge');
     if(st==='verified'){ badge.textContent = '✓ '+t('verified'); badge.className='badge badge-verified'; $('agentPanelStatusText').textContent = t('agentPanelVerifiedText'); }
     else{ badge.textContent = '⏳ '+t('verifyPending'); badge.className='badge badge-pending'; $('agentPanelStatusText').textContent = t('agentPanelPendingText'); }
+    renderBrokerWallet();
     loadAgentRequests();
   }else{
     // prefill known info
@@ -2746,8 +2798,12 @@ $('agentRegisterBtn').addEventListener('click', async ()=>{
     });
     // Sensitive verification data goes into the private user doc (owner-only readable)
     const verification = { passport, pinfl: pinfl||null, address, status:'pending', consentAt: firebase.firestore.FieldValue.serverTimestamp() };
-    await db.collection('users').doc(currentUser.uid).update({ isAgent:true, agentName:name, agentDistrict:district, verification });
+    const updateData = { isAgent:true, agentName:name, agentDistrict:district, verification };
+    // Yangi maklerga bepul boshlang'ich lead krediti (faqat birinchi marta)
+    if(typeof userDoc.credits !== 'number'){ updateData.credits = WELCOME_CREDITS; updateData.plan = 'free'; }
+    await db.collection('users').doc(currentUser.uid).update(updateData);
     userDoc.isAgent = true; userDoc.agentName = name; userDoc.agentDistrict = district;
+    if(typeof userDoc.credits !== 'number'){ userDoc.credits = WELCOME_CREDITS; userDoc.plan = 'free'; }
     userDoc.verification = { passport, pinfl: pinfl||null, address, status:'pending' };
     toast(t('agentSubmitted'),'success');
     refreshAgentScreen();
@@ -2837,6 +2893,7 @@ function refreshAdminScreen(){
   $('adminHotlineInput').value = hotlineNumber || '';
   loadAdminStats();
   loadPendingVerifications();
+  loadAdminTopups();
 }
 
 async function loadAdminStats(){
@@ -2910,6 +2967,88 @@ async function saveHotline(btn){
     );
     hotlineNumber = val; renderHotline();
     toast(t('admHotlineSaved'), 'success');
+  }catch(err){ toast(t('error')+err.message, 'error'); }
+  finally{ setLoading(btn, false); }
+}
+
+/* ============ TOP-UP (balansni to'ldirish) ============ */
+function openTopup(){
+  showScreen('topup');
+  renderTopupPackages();
+  const pb = $('topupPremiumBtn').querySelector('.btn-label');
+  if(pb) pb.textContent = t('topupPremiumBtn') + ' — ' + PREMIUM_PRICE + ' ' + t('priceSom');
+}
+function renderTopupPackages(){
+  const box = $('topupPackages'); if(!box) return;
+  box.innerHTML = '';
+  CREDIT_PACKAGES.forEach(pkg=>{
+    const card = document.createElement('div'); card.className='card';
+    card.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:12px;';
+    card.innerHTML = `
+      <div>
+        <div style="font-size:18px;font-weight:800;font-family:'Space Grotesk',sans-serif;">${pkg.credits} <span style="font-size:13px;color:var(--text-dim);" >${t('creditsUnit')}</span></div>
+        <div class="center-note" style="text-align:left;margin:2px 0 0;">${pkg.price} ${t('priceSom')}</div>
+      </div>
+      <button class="btn btn-secondary btn-sm topup-buy"><span class="btn-label">${t('topupBuyBtn')}</span></button>`;
+    card.querySelector('.topup-buy').addEventListener('click', e=>sendTopup({ credits:pkg.credits, amount:pkg.price }, e.currentTarget));
+    box.appendChild(card);
+  });
+}
+async function sendTopup(data, btn){
+  if(!currentUser){ requireLogin('profile'); return; }
+  setLoading(btn, true);
+  try{
+    await db.collection('topups').add({
+      brokerUid: currentUser.uid,
+      brokerName: (userDoc && userDoc.agentName) || currentUser.email || '',
+      credits: data.credits || 0,
+      premium: !!data.premium,
+      amount: data.amount || '',
+      status: 'pending',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    toast(t('topupSent'), 'success');
+  }catch(err){ toast(t('error')+err.message, 'error'); }
+  finally{ setLoading(btn, false); }
+}
+
+/* ============ ADMIN: to'lov so'rovlari ============ */
+async function loadAdminTopups(){
+  const el = $('adminTopups'); if(!el) return;
+  el.innerHTML = `<div class="center-note">${t('loading')}</div>`;
+  try{
+    const snap = await db.collection('topups').where('status','==','pending').limit(50).get();
+    const items = []; snap.forEach(d=>items.push({ id:d.id, ...d.data() }));
+    if(items.length===0){ el.innerHTML = `<div class="center-note">${t('admNoTopups')}</div>`; return; }
+    el.innerHTML = '';
+    items.forEach(u=>{
+      const label = u.premium ? ('⭐ '+t('brokerPlanPremium')) : (u.credits+' '+t('creditsUnit'));
+      const card = document.createElement('div'); card.className='req-card';
+      card.innerHTML = `
+        <div style="font-weight:600;">${esc(u.brokerName||u.brokerUid)}</div>
+        <div class="rc-meta">${label} · ${esc(u.amount||'')} ${t('priceSom')}</div>
+        <div class="rc-actions" style="display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm at-approve"><span class="btn-label">${t('admTopupApprove')}</span></button>
+          <button class="btn btn-outline btn-sm at-reject"><span class="btn-label">${t('admReject')}</span></button>
+        </div>`;
+      card.querySelector('.at-approve').addEventListener('click', e=>adminApproveTopup(u, true, e.currentTarget));
+      card.querySelector('.at-reject').addEventListener('click', e=>adminApproveTopup(u, false, e.currentTarget));
+      el.appendChild(card);
+    });
+  }catch(err){ el.innerHTML = `<div class="center-note">${t('error')}${esc(err.message)}</div>`; }
+}
+
+async function adminApproveTopup(u, approve, btn){
+  if(!isAdminUser()) return;
+  setLoading(btn, true);
+  try{
+    if(approve){
+      if(u.premium){ await db.collection('users').doc(u.brokerUid).update({ plan:'premium' }); }
+      else { await db.collection('users').doc(u.brokerUid).update({ credits: firebase.firestore.FieldValue.increment(u.credits||0) }); }
+    }
+    await db.collection('topups').doc(u.id).update({ status: approve ? 'approved' : 'rejected' });
+    toast(approve ? t('admTopupApproved') : t('admRejected'), 'success');
+    loadAdminTopups();
   }catch(err){ toast(t('error')+err.message, 'error'); }
   finally{ setLoading(btn, false); }
 }
@@ -3289,6 +3428,28 @@ $('submitRequestBtn').addEventListener('click', async ()=>{
 // Bitta so'rovni maksimal shuncha makler qabul qila oladi (spam oldini olish)
 const ACCEPT_LIMIT = 3;
 
+/* ============ MONETIZATSIYA (lead krediti) ============ */
+const WELCOME_CREDITS = 5;   // yangi maklerga bepul lead krediti
+const LEAD_COST = 1;         // har bir so'rovni qabul qilish narxi (kredit)
+const CREDIT_PACKAGES = [
+  { credits:10,  price:'25 000' },
+  { credits:30,  price:'60 000' },
+  { credits:100, price:'150 000' }
+];
+const PREMIUM_PRICE = '199 000'; // oylik premium (cheksiz lead)
+
+function brokerCredits(){ return (userDoc && typeof userDoc.credits==='number') ? userDoc.credits : 0; }
+function brokerIsPremium(){ return !!(userDoc && userDoc.plan==='premium'); }
+
+function renderBrokerWallet(){
+  const c = $('brokerCredits'); if(c) c.textContent = brokerCredits();
+  const badge = $('brokerPlanBadge');
+  if(badge){
+    if(brokerIsPremium()){ badge.textContent = '⭐ '+t('brokerPlanPremium'); badge.className='badge badge-verified'; }
+    else{ badge.textContent = t('brokerPlanFree'); badge.className='badge badge-owner'; }
+  }
+}
+
 // Makler hududi so'rov hududiga mosligini tekshiradi (birinchi so'z bo'yicha)
 function requestMatchesMyArea(r){
   const myArea = (userDoc && userDoc.agentDistrict || '').toLowerCase().trim();
@@ -3370,25 +3531,37 @@ async function loadAgentRequests(){
 async function acceptRequest(id, btn){
   if(!currentUser){ requireLogin('profile'); return; }
   setLoading(btn, true);
+  let charged = false;
   try{
     const ref = db.collection('requests').doc(id);
+    const uref = db.collection('users').doc(currentUser.uid);
     await db.runTransaction(async (tx)=>{
+      // Barcha o'qishlar yozishdan oldin
       const doc = await tx.get(ref);
+      const udoc = await tx.get(uref);
       if(!doc.exists) throw new Error('gone');
       const d = doc.data();
       const arr = Array.isArray(d.acceptedBy) ? d.acceptedBy : [];
       if(arr.includes(currentUser.uid)) return;      // allaqachon qabul qilgan
       if(arr.length >= ACCEPT_LIMIT) throw new Error('FULL');
+      // Lead krediti: premium — cheksiz; aks holda kredit kerak
+      const ud = udoc.exists ? udoc.data() : {};
+      const premium = ud.plan === 'premium';
+      const credits = (typeof ud.credits === 'number') ? ud.credits : 0;
+      if(!premium && credits < LEAD_COST) throw new Error('NOCREDIT');
       tx.update(ref, {
         acceptedBy: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
         acceptCount: (d.acceptCount || arr.length) + 1,
         status: 'accepted'
       });
+      if(!premium){ tx.update(uref, { credits: credits - LEAD_COST }); charged = true; }
     });
+    if(charged && userDoc && typeof userDoc.credits==='number'){ userDoc.credits -= LEAD_COST; renderBrokerWallet(); }
     toast(t('reqAcceptedToast'), 'success');
     loadAgentRequests();
   }catch(err){
     if(err.message === 'FULL'){ toast(t('reqAcceptFullToast'),'error'); loadAgentRequests(); }
+    else if(err.message === 'NOCREDIT'){ toast(t('creditEmpty'),'error'); openTopup(); }
     else{ console.error(err); toast(t('error')+err.message,'error'); }
   }finally{ setLoading(btn, false); }
 }
