@@ -386,9 +386,9 @@
   /* ===== Broker-help mode selector (bosh sahifada ko'rinadi) ===== */
   .mode-switch{display:flex;gap:8px;margin-bottom:11px;}
   .mode-opt{
-    flex:1;min-width:0;display:flex;align-items:center;gap:9px;text-align:left;
+    flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:9px;text-align:center;
     background:var(--surface-2);border:1.5px solid var(--line);border-radius:13px;
-    padding:10px 11px;cursor:pointer;
+    padding:11px;cursor:pointer;
     transition:border-color .15s ease, background .15s ease, transform .12s ease;
   }
   .mode-opt:active{transform:scale(0.98);}
@@ -1029,11 +1029,9 @@
   <div class="search-float">
     <div class="mode-switch" id="modeSwitch">
       <button class="mode-opt active" data-mode="independent" type="button">
-        <span class="mo-ic">🔍</span>
         <span class="mo-tx"><b data-i18n="modeIndepTitle">Mustaqil</b><small data-i18n="modeIndepDesc">Komissiyasiz, to'g'ridan-to'g'ri</small></span>
       </button>
       <button class="mode-opt" data-mode="assisted" type="button">
-        <span class="mo-ic">🤝</span>
         <span class="mo-tx"><b data-i18n="modeAssistTitle">Makler yordamida</b><small data-i18n="modeAssistDesc">Makler mos uy topadi</small></span>
       </button>
     </div>
@@ -1479,8 +1477,8 @@ const I18N = {
     modeAssisted:"Rejim: Makler yordamida", modeIndependent:"Rejim: Mustaqil qidiruv",
     modeIndepTitle:"Mustaqil", modeIndepDesc:"Komissiyasiz, to'g'ridan-to'g'ri",
     modeAssistTitle:"Makler yordamida", modeAssistDesc:"Makler mos uy topadi",
-    modeHintIndep:"To'g'ridan-to'g'ri mulk egalari — <b>komissiyasiz</b>, arzonroq.",
-    modeHintAssist:"Tekshirilgan maklerlar sizga mos uy topishda yordam beradi.",
+    modeHintIndep:"To'g'ridan-to'g'ri mijoz va mulk egasi o'rtasida kelishuv — <b>komissiyasiz</b>.",
+    modeHintAssist:"Sotuvchi va xaridor o'rtasidagi ishonchli vakil — kafolat bilan, siz istagandek uy-joy topishda yordam beradi.",
     modeAppliedIndep:"Mustaqil rejim — to'g'ridan-to'g'ri egasi bilan", modeAppliedAssist:"Makler rejimi yoqildi",
     ctaTitle:"Aniq nima kerakligini yozib qoldiring", ctaSub:"Mos maklerlar so'rovingizni ko'rib, siz bilan bog'lanadi", ctaBtn:"So'rov qoldirish",
     reqTitle:"Makler uchun so'rov", reqSub:"Nima izlayotganingizni yozing — mos maklerlar bog'lanadi.",
@@ -1568,8 +1566,8 @@ const I18N = {
     modeAssisted:"Режим: с помощью риелтора", modeIndependent:"Режим: самостоятельный поиск",
     modeIndepTitle:"Самостоятельно", modeIndepDesc:"Без комиссии, напрямую",
     modeAssistTitle:"С риелтором", modeAssistDesc:"Риелтор подберёт жильё",
-    modeHintIndep:"Напрямую от собственников — <b>без комиссии</b>, дешевле.",
-    modeHintAssist:"Проверенные риелторы помогут подобрать жильё.",
+    modeHintIndep:"Прямая сделка между клиентом и собственником — <b>без комиссии</b>.",
+    modeHintAssist:"Надёжный посредник между продавцом и покупателем — с гарантией поможет найти жильё, как вы хотите.",
     modeAppliedIndep:"Самостоятельный режим — напрямую с владельцем", modeAppliedAssist:"Режим риелтора включён",
     ctaTitle:"Опишите, что именно вам нужно", ctaSub:"Подходящие риелторы увидят запрос и свяжутся с вами", ctaBtn:"Оставить запрос",
     reqTitle:"Запрос риелтору", reqSub:"Опишите, что ищете — подходящие риелторы свяжутся.",
@@ -1657,8 +1655,8 @@ const I18N = {
     modeAssisted:"Mode: With broker's help", modeIndependent:"Mode: Independent search",
     modeIndepTitle:"On my own", modeIndepDesc:"No commission, direct",
     modeAssistTitle:"With a broker", modeAssistDesc:"A broker finds a home",
-    modeHintIndep:"Directly from owners — <b>no commission</b>, cheaper.",
-    modeHintAssist:"Verified brokers help you find a suitable home.",
+    modeHintIndep:"A direct deal between the client and the owner — <b>no commission</b>.",
+    modeHintAssist:"A trusted representative between seller and buyer — with a guarantee, helps you find the home you want.",
     modeAppliedIndep:"Independent mode — directly with the owner", modeAppliedAssist:"Broker mode enabled",
     ctaTitle:"Tell us exactly what you need", ctaSub:"Matching brokers will see your request and contact you", ctaBtn:"Leave a request",
     reqTitle:"Request to brokers", reqSub:"Describe what you're looking for — matching brokers will reach out.",
