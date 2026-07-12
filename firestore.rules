@@ -98,6 +98,19 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
+    // ---- Top-ups (balans to'ldirish so'rovlari) ----
+    // Makler o'z nomidan so'rov yaratadi ('pending'); tasdiqlashni faqat admin bajaradi.
+    // DIQQAT: balansning haqiqiy himoyasi uchun kelajakda Cloud Functions kerak,
+    // chunki foydalanuvchi o'z users hujjatidagi 'credits' ni tahrirlay oladi.
+    match /topups/{topupId} {
+      allow create: if isSignedIn()
+        && request.resource.data.brokerUid == request.auth.uid
+        && request.resource.data.status == 'pending';
+      allow read: if isSignedIn()
+        && (resource.data.brokerUid == request.auth.uid || isAdmin());
+      allow update, delete: if isAdmin();
+    }
+
     // ---- Chats ----
     // Faqat suhbat ishtirokchilari kira oladi.
     match /chats/{chatId} {
