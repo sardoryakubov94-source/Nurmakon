@@ -943,6 +943,7 @@
     </div>
   </div>
   <div class="topbar-right">
+    <button class="icon-btn" id="supportBtn" title="Yordam" aria-label="Support"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v-1a8 8 0 0 1 16 0v1"/><path d="M4 14a2 2 0 0 1 2-2h1v6H6a2 2 0 0 1-2-2v-2Z"/><path d="M20 14a2 2 0 0 0-2-2h-1v6h1a2 2 0 0 0 2-2v-2Z"/><path d="M18 18v.5a3 3 0 0 1-3 3h-3"/></svg></button>
     <button class="topbar-login-btn" id="topbarLoginBtn" data-i18n="navLogin">Kirish</button>
     <button class="icon-btn" id="logoutBtn" title="Chiqish" style="display:none;">⎋</button>
   </div>
@@ -1043,11 +1044,6 @@
     </div>
     <div class="brand">Nur<span>Makon</span></div>
     <p class="hero-sub" data-i18n="heroSub">Uy-joy izlashning oson va ishonchli yo'li</p>
-    <div class="hero-stats">
-      <div class="hero-stat"><b id="statListings">—</b><small data-i18n="statListings">e'lonlar</small></div>
-      <div class="hero-stat"><b id="statAgents">—</b><small data-i18n="statAgents">maklerlar</small></div>
-      <div class="hero-stat"><b>24/7</b><small data-i18n="statSupport">qo'llab-quvvatlash</small></div>
-    </div>
   </div>
   <div class="search-float">
     <div class="mode-switch" id="modeSwitch">
@@ -1237,6 +1233,13 @@
       <div class="lock-chevron">›</div>
     </div>
 
+    <div class="lock-card hidden" id="openAdminBtn" style="margin-top:0;">
+      <div class="lock-ic">🛠️</div>
+      <div class="lock-txt"><h3 data-i18n="adminTitle">Admin panel</h3>
+        <p data-i18n="adminEntrySub">Statistika, verifikatsiya va sozlamalarni boshqarish</p></div>
+      <div class="lock-chevron">›</div>
+    </div>
+
     <button class="btn btn-danger-soft" id="profileLogoutBtn" style="margin-top:14px;"><span class="btn-label" data-i18n="logoutBtnLabel">Tizimdan chiqish</span></button>
   </div>
 </div>
@@ -1293,6 +1296,56 @@
       <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="agentRequestsSub">Mijozlar qoldirgan so'rovlar. Bog'lanib, mos variant taklif qiling.</p>
       <div id="agentRequests"></div>
     </div>
+  </div>
+</div>
+
+<!-- ===================== SUPPORT (YORDAM) SCREEN ===================== -->
+<div class="screen" id="screen-support">
+  <div class="screen-head">
+    <button class="back-btn" id="supportBackBtn" type="button">‹</button>
+    <h2 class="section-title" style="margin:0;" data-i18n="supportTitle">Yordam xizmati</h2>
+  </div>
+
+  <div class="card" id="supportHotlineRow">
+    <h3 style="margin:0 0 4px;font-size:16px;">📞 <span data-i18n="supportHotlineTitle">Ishonch telefoni</span></h3>
+    <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="supportHotlineSub">Savol yoki muammo bo'lsa qo'ng'iroq qiling.</p>
+    <div id="supportHotline" style="font-size:22px;font-weight:700;font-family:'Space Grotesk',sans-serif;margin-bottom:12px;"></div>
+    <button class="btn btn-primary" id="supportCallBtn"><span class="btn-label" data-i18n="contactCall">📞 Qo'ng'iroq qilish</span></button>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 4px;font-size:16px;">✍️ <span data-i18n="supportWriteTitle">Bizga yozing</span></h3>
+    <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="supportWriteSub">Muammo yoki taklifingizni yozib qoldiring — javob beramiz.</p>
+    <textarea id="supportMessage" rows="4" data-i18n-placeholder="supportMsgPh" placeholder="Xabaringiz..."></textarea>
+    <label data-i18n="supportContactLabel" style="margin-top:8px;">Bog'lanish uchun (ixtiyoriy)</label>
+    <input type="text" id="supportContact" placeholder="+998 90 123 45 67">
+    <button class="btn btn-secondary" id="supportSendBtn" style="margin-top:12px;"><span class="btn-label" data-i18n="supportSendBtn">Yuborish</span></button>
+  </div>
+</div>
+
+<!-- ===================== ADMIN PANEL SCREEN ===================== -->
+<div class="screen" id="screen-admin">
+  <div class="screen-head">
+    <button class="back-btn" id="adminBackBtn" type="button">‹</button>
+    <h2 class="section-title" style="margin:0;" data-i18n="adminTitle">Admin panel</h2>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 12px;font-size:16px;">📊 <span data-i18n="admStatsTitle">Statistika</span></h3>
+    <div class="stat-grid" id="adminStats"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 4px;font-size:16px;">🛡️ <span data-i18n="admVerifyTitle">Verifikatsiya so'rovlari</span></h3>
+    <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="admVerifySub">Makler bo'lish uchun tasdiq kutayotganlar.</p>
+    <div id="adminPending"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 4px;font-size:16px;">📞 <span data-i18n="admHotlineTitle">Ishonch telefoni</span></h3>
+    <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="admHotlineSub">Bu raqam Yordam bo'limida hammaga ko'rinadi.</p>
+    <input type="tel" id="adminHotlineInput" placeholder="+998 71 200 00 00">
+    <button class="btn btn-secondary btn-sm" id="adminSaveHotlineBtn" style="margin-top:12px;"><span class="btn-label" data-i18n="saveBtn">Saqlash</span></button>
   </div>
 </div>
 
@@ -1487,6 +1540,8 @@ const I18N = {
   uz:{
     heroSub:"Uy-joy izlashning oson va ishonchli yo'li",
     statListings:"e'lonlar", statAgents:"maklerlar", statSupport:"qo'llab-quvvatlash",
+    supportTitle:"Yordam xizmati", supportHotlineTitle:"Ishonch telefoni", supportHotlineSub:"Savol yoki muammo bo'lsa qo'ng'iroq qiling.", supportWriteTitle:"Bizga yozing", supportWriteSub:"Muammo yoki taklifingizni yozib qoldiring — javob beramiz.", supportMsgPh:"Xabaringiz...", supportContactLabel:"Bog'lanish uchun (ixtiyoriy)", supportSendBtn:"Yuborish", supportSent:"Xabaringiz yuborildi. Rahmat!", supportEmptyMsg:"Iltimos, xabar matnini yozing.",
+    adminTitle:"Admin panel", adminEntrySub:"Statistika, verifikatsiya va sozlamalarni boshqarish", admStatsTitle:"Statistika", admStatListings:"e'lonlar", admStatActive:"faol", admStatBrokers:"maklerlar", admStatVerified:"tasdiqlangan", admStatRequests:"so'rovlar", admStatUsers:"foydalanuvchi", admVerifyTitle:"Verifikatsiya so'rovlari", admVerifySub:"Makler bo'lish uchun tasdiq kutayotganlar.", admNoPending:"Kutayotgan so'rovlar yo'q", admApprove:"✓ Tasdiqlash", admReject:"✕ Rad etish", admApproved:"Makler tasdiqlandi", admRejected:"So'rov rad etildi", admHotlineTitle:"Ishonch telefoni", admHotlineSub:"Bu raqam Yordam bo'limida hammaga ko'rinadi.", admHotlineSaved:"Ishonch telefoni saqlandi",
     googleSignIn:"Google orqali davom etish", or:"yoki",
     tabLogin:"Kirish", tabRegister:"Ro'yxatdan o'tish",
     email:"Email", password:"Parol", forgotPassword:"Parolni unutdingizmi?",
@@ -1586,6 +1641,8 @@ const I18N = {
   ru:{
     heroSub:"Простой и надёжный способ найти жильё",
     statListings:"объявлений", statAgents:"риелторов", statSupport:"поддержка",
+    supportTitle:"Служба поддержки", supportHotlineTitle:"Телефон доверия", supportHotlineSub:"Если есть вопрос или проблема — позвоните.", supportWriteTitle:"Напишите нам", supportWriteSub:"Опишите проблему или предложение — мы ответим.", supportMsgPh:"Ваше сообщение...", supportContactLabel:"Для связи (необязательно)", supportSendBtn:"Отправить", supportSent:"Сообщение отправлено. Спасибо!", supportEmptyMsg:"Пожалуйста, напишите текст сообщения.",
+    adminTitle:"Админ-панель", adminEntrySub:"Управление статистикой, верификацией и настройками", admStatsTitle:"Статистика", admStatListings:"объявления", admStatActive:"активные", admStatBrokers:"риелторы", admStatVerified:"проверенные", admStatRequests:"запросы", admStatUsers:"пользователи", admVerifyTitle:"Запросы на верификацию", admVerifySub:"Ожидают подтверждения статуса риелтора.", admNoPending:"Нет ожидающих запросов", admApprove:"✓ Подтвердить", admReject:"✕ Отклонить", admApproved:"Риелтор подтверждён", admRejected:"Запрос отклонён", admHotlineTitle:"Телефон доверия", admHotlineSub:"Этот номер виден всем в разделе Поддержки.", admHotlineSaved:"Телефон доверия сохранён",
     googleSignIn:"Продолжить через Google", or:"или",
     tabLogin:"Вход", tabRegister:"Регистрация",
     email:"Email", password:"Пароль", forgotPassword:"Забыли пароль?",
@@ -1685,6 +1742,8 @@ const I18N = {
   en:{
     heroSub:"The easy and trusted way to find a home",
     statListings:"listings", statAgents:"brokers", statSupport:"support",
+    supportTitle:"Support", supportHotlineTitle:"Helpline", supportHotlineSub:"Call us if you have a question or issue.", supportWriteTitle:"Write to us", supportWriteSub:"Leave your issue or suggestion — we'll reply.", supportMsgPh:"Your message...", supportContactLabel:"Contact (optional)", supportSendBtn:"Send", supportSent:"Message sent. Thank you!", supportEmptyMsg:"Please write a message.",
+    adminTitle:"Admin panel", adminEntrySub:"Manage statistics, verification and settings", admStatsTitle:"Statistics", admStatListings:"listings", admStatActive:"active", admStatBrokers:"brokers", admStatVerified:"verified", admStatRequests:"requests", admStatUsers:"users", admVerifyTitle:"Verification requests", admVerifySub:"Brokers awaiting verification.", admNoPending:"No pending requests", admApprove:"✓ Approve", admReject:"✕ Reject", admApproved:"Broker verified", admRejected:"Request rejected", admHotlineTitle:"Helpline", admHotlineSub:"This number is visible to everyone in Support.", admHotlineSaved:"Helpline saved",
     googleSignIn:"Continue with Google", or:"or",
     tabLogin:"Log in", tabRegister:"Sign up",
     email:"Email", password:"Password", forgotPassword:"Forgot password?",
@@ -2610,8 +2669,18 @@ function refreshProfileScreen(){
       statusLine.textContent = t('agentSectionSub');
     }
   }
+  const adminBtn = $('openAdminBtn'); if(adminBtn) adminBtn.classList.toggle('hidden', !isAdminUser());
   loadMyListings();
 }
+
+/* ============ SUPPORT + ADMIN NAV ============ */
+$('supportBtn').addEventListener('click', openSupport);
+$('supportBackBtn').addEventListener('click', ()=>showScreen(supportReturn||'feed'));
+$('supportSendBtn').addEventListener('click', e=>sendSupport(e.currentTarget));
+$('supportCallBtn').addEventListener('click', ()=>{ if(hotlineNumber) location.href='tel:'+hotlineNumber.replace(/\s/g,''); });
+$('openAdminBtn').addEventListener('click', ()=>{ showScreen('admin'); refreshAdminScreen(); });
+$('adminBackBtn').addEventListener('click', ()=>{ showScreen('profile'); refreshProfileScreen(); });
+$('adminSaveHotlineBtn').addEventListener('click', e=>saveHotline(e.currentTarget));
 
 /* ============ MAKLER (BROKER) SCREEN ============ */
 $('openAgentBtn').addEventListener('click', ()=>{ showScreen('agent'); refreshAgentScreen(); });
@@ -2716,16 +2785,133 @@ async function loadMyListings(){
   }catch(err){ listEl.innerHTML = `<div class="center-note">${t('error')}${esc(err.message)}</div>`; }
 }
 
-/* ============ STATS (hero) ============ */
-async function loadHeroStats(){
+/* ============ SUPPORT (yordam + ishonch telefoni) ============ */
+let hotlineNumber = '';
+let supportReturn = 'feed';
+
+async function loadHotline(){
   try{
-    const [ls, ag] = await Promise.all([
-      db.collection('listings').where('status','==','active').get(),
-      db.collection('agents').get()
+    const snap = await db.collection('config').doc('support').get();
+    hotlineNumber = (snap.exists && snap.data().hotline) ? snap.data().hotline : '';
+  }catch(e){ hotlineNumber = ''; }
+  renderHotline();
+}
+function renderHotline(){
+  const row = $('supportHotlineRow'); const num = $('supportHotline');
+  if(row && num){
+    if(hotlineNumber){ num.textContent = hotlineNumber; row.classList.remove('hidden'); }
+    else { row.classList.add('hidden'); }
+  }
+  const ai = $('adminHotlineInput'); if(ai) ai.value = hotlineNumber || '';
+}
+function openSupport(){
+  const cur = document.querySelector('.screen.active');
+  if(cur && cur.id && cur.id!=='screen-support' && cur.id!=='screen-admin') supportReturn = cur.id.replace('screen-','');
+  showScreen('support'); renderHotline();
+}
+async function sendSupport(btn){
+  if(!currentUser){ requireLogin('support'); return; }
+  const msg = $('supportMessage').value.trim();
+  if(!msg){ toast(t('supportEmptyMsg'),'error'); return; }
+  setLoading(btn, true);
+  try{
+    await db.collection('supportMessages').add({
+      message: msg,
+      senderUid: currentUser.uid,
+      email: currentUser.email || null,
+      contact: $('supportContact').value.trim() || null,
+      status: 'new',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    $('supportMessage').value = '';
+    toast(t('supportSent'), 'success');
+  }catch(err){ toast(t('error')+err.message, 'error'); }
+  finally{ setLoading(btn, false); }
+}
+
+/* ============ ADMIN PANEL ============ */
+function isAdminUser(){ return !!(userDoc && userDoc.isAdmin === true); }
+
+function refreshAdminScreen(){
+  if(!isAdminUser()){ showScreen('profile'); return; }
+  $('adminHotlineInput').value = hotlineNumber || '';
+  loadAdminStats();
+  loadPendingVerifications();
+}
+
+async function loadAdminStats(){
+  const el = $('adminStats'); if(!el) return;
+  el.innerHTML = `<div class="center-note">${t('loading')}</div>`;
+  try{
+    const [ls, ag, rq, us] = await Promise.all([
+      db.collection('listings').get(),
+      db.collection('agents').get(),
+      db.collection('requests').get(),
+      db.collection('users').get()
     ]);
-    $('statListings').textContent = ls.size>999 ? (Math.floor(ls.size/100)/10)+'k' : ls.size;
-    $('statAgents').textContent = ag.size;
-  }catch(err){ $('statListings').textContent='—'; $('statAgents').textContent='—'; }
+    const activeLs = ls.docs.filter(d=>d.data().status==='active').length;
+    const verifiedAg = ag.docs.filter(d=>d.data().verified===true).length;
+    el.innerHTML = `
+      <div class="stat-box"><b>${ls.size}</b><small>${t('admStatListings')}</small></div>
+      <div class="stat-box"><b>${activeLs}</b><small>${t('admStatActive')}</small></div>
+      <div class="stat-box"><b>${ag.size}</b><small>${t('admStatBrokers')}</small></div>
+      <div class="stat-box"><b>${verifiedAg}</b><small>${t('admStatVerified')}</small></div>
+      <div class="stat-box"><b>${rq.size}</b><small>${t('admStatRequests')}</small></div>
+      <div class="stat-box"><b>${us.size}</b><small>${t('admStatUsers')}</small></div>`;
+  }catch(err){ el.innerHTML = `<div class="center-note">${t('error')}${esc(err.message)}</div>`; }
+}
+
+async function loadPendingVerifications(){
+  const el = $('adminPending'); if(!el) return;
+  el.innerHTML = `<div class="center-note">${t('loading')}</div>`;
+  try{
+    const snap = await db.collection('users').where('verification.status','==','pending').limit(50).get();
+    const items = []; snap.forEach(d=>items.push({ uid:d.id, ...d.data() }));
+    if(items.length===0){ el.innerHTML = `<div class="center-note">${t('admNoPending')}</div>`; return; }
+    el.innerHTML = '';
+    items.forEach(u=>{
+      const v = u.verification || {};
+      const card = document.createElement('div'); card.className='req-card';
+      card.innerHTML = `
+        <div style="font-weight:600;">${esc(u.agentName || u.email || u.uid)}</div>
+        <div class="rc-meta">📍 ${esc(u.agentDistrict||'—')} · 📞 ${esc(u.phone||'—')}</div>
+        <div class="rc-note">🪪 ${esc(v.passport||'—')} · ${esc(v.address||'—')}</div>
+        <div class="rc-actions" style="display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm adm-approve"><span class="btn-label">${t('admApprove')}</span></button>
+          <button class="btn btn-outline btn-sm adm-reject"><span class="btn-label">${t('admReject')}</span></button>
+        </div>`;
+      card.querySelector('.adm-approve').addEventListener('click', e=>adminVerify(u.uid, true, e.currentTarget));
+      card.querySelector('.adm-reject').addEventListener('click', e=>adminVerify(u.uid, false, e.currentTarget));
+      el.appendChild(card);
+    });
+  }catch(err){ el.innerHTML = `<div class="center-note">${t('error')}${esc(err.message)}</div>`; }
+}
+
+async function adminVerify(uid, approve, btn){
+  if(!isAdminUser()) return;
+  setLoading(btn, true);
+  try{
+    await db.collection('users').doc(uid).update({ 'verification.status': approve ? 'verified' : 'rejected' });
+    await db.collection('agents').doc(uid).set({ verified: !!approve }, { merge:true });
+    toast(approve ? t('admApproved') : t('admRejected'), 'success');
+    loadPendingVerifications(); loadAdminStats();
+  }catch(err){ toast(t('error')+err.message, 'error'); }
+  finally{ setLoading(btn, false); }
+}
+
+async function saveHotline(btn){
+  if(!isAdminUser()) return;
+  const val = $('adminHotlineInput').value.trim();
+  setLoading(btn, true);
+  try{
+    await db.collection('config').doc('support').set(
+      { hotline: val, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+      { merge:true }
+    );
+    hotlineNumber = val; renderHotline();
+    toast(t('admHotlineSaved'), 'success');
+  }catch(err){ toast(t('error')+err.message, 'error'); }
+  finally{ setLoading(btn, false); }
 }
 
 /* ============================================================
@@ -3214,7 +3400,7 @@ renderPostLocReadout();
 syncModeUI();
 showScreen('feed');
 loadListings();
-loadHeroStats();
+loadHotline();
 </script>
 </body>
 </html>
