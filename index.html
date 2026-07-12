@@ -500,6 +500,21 @@
   .badge-sale{background:var(--danger-soft);color:#ff9b8f;}
   .badge-verified{background:rgba(51,161,132,0.9);color:#fff;}
   .badge-new{background:rgba(240,168,60,0.92);color:#241505;}
+  /* E'lon tarif belgilari */
+  .badge-vip{background:linear-gradient(135deg,#f0a83c,#ffce7a);color:#241505;box-shadow:0 2px 8px rgba(240,168,60,0.4);}
+  .badge-top{background:linear-gradient(135deg,#5aa6ff,#8ec5ff);color:#0a1a2f;}
+  .badge-urgent{background:rgba(230,70,60,0.95);color:#fff;}
+  /* Tarif tanlash tugmalari (post forma) */
+  .tier-select{display:flex;gap:8px;margin-top:8px;}
+  .tier-opt{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:11px 6px;background:var(--surface-2);border:1.5px solid var(--line);border-radius:13px;color:var(--text);cursor:pointer;transition:all .16s ease;}
+  .tier-opt .tier-ic{font-size:20px;}
+  .tier-opt .tier-name{font-size:13px;font-weight:700;}
+  .tier-opt .tier-cost{font-size:11px;color:var(--text-dim);}
+  .tier-opt.active{border-color:var(--gold-2);background:var(--gold-soft);}
+  .tier-opt:active{transform:scale(0.97);}
+  /* Reklama (promote) tugmalari — mening e'lonlarim */
+  .promo-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .promo-actions .btn{width:auto;flex:1 1 auto;padding:8px 10px;font-size:12px;}
   .badge-solid-sale{background:rgba(226,86,74,0.9);color:#fff;}
   .badge-solid-rent{background:rgba(160,140,255,0.9);color:#fff;}
 
@@ -917,6 +932,18 @@
   </div>
 </div>
 
+<!-- ===================== PROMOTE (REKLAMA) SHEET ===================== -->
+<div class="modal-overlay" id="promoteSheet">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <div class="modal-head"><h2 data-i18n="promoteTitle">E'lonni reklama qilish</h2>
+      <button class="modal-close" id="promoteCloseX" type="button">✕</button></div>
+    <p class="center-note" id="promoteBalance" style="text-align:left;margin:0 0 12px;"></p>
+    <div id="promoteOptions"></div>
+    <p class="center-note" data-i18n="promoteNote" style="text-align:left;margin-top:12px;">Reklama darhol yoqiladi; balansdan kredit yechiladi. Kredit yetmasa avval balansni to'ldiring.</p>
+  </div>
+</div>
+
 <!-- ===================== TOP BAR ===================== -->
 <div class="topbar" id="topbar">
   <div class="topbar-left" id="topbarLeft">
@@ -1171,6 +1198,23 @@
   </div>
   <div id="postLocReadout" style="margin-top:8px;"></div>
 
+  <div id="postPromoBlock">
+    <label style="margin-top:16px;" data-i18n="postPromoLabel">E'lon turi</label>
+    <div class="tier-select" id="postTierSelect">
+      <button type="button" class="tier-opt active" data-tier="standard">
+        <span class="tier-ic">📄</span><span class="tier-name" data-i18n="tierStandard">Oddiy</span><span class="tier-cost" id="tierCostStandard"></span></button>
+      <button type="button" class="tier-opt" data-tier="top">
+        <span class="tier-ic">🔝</span><span class="tier-name" data-i18n="tierTop">TOP</span><span class="tier-cost">3 💳</span></button>
+      <button type="button" class="tier-opt" data-tier="vip">
+        <span class="tier-ic">💎</span><span class="tier-name" data-i18n="tierVip">VIP</span><span class="tier-cost">5 💳</span></button>
+    </div>
+    <label class="checkbox-row" style="margin-top:12px;">
+      <input type="checkbox" id="postUrgent">
+      <span data-i18n="postUrgentLabel">⚡ Shoshilinch belgisi (+2 kredit)</span>
+    </label>
+    <p class="center-note" id="postPromoNote" style="text-align:left;margin-top:8px;"></p>
+  </div>
+
   <button class="btn btn-primary" id="submitListingBtn" style="margin-top:18px;"><span class="btn-label" data-i18n="postSubmitBtn">E'lonni joylash</span></button>
   <button class="btn btn-ghost hidden" id="cancelEditBtn" style="margin-top:10px;"><span class="btn-label" data-i18n="cancelEdit">Tahrirni bekor qilish</span></button>
   <p class="center-note" id="postStatus"></p>
@@ -1222,6 +1266,13 @@
 
     <div class="card" id="myListingsCard">
       <h3 style="margin:0 0 12px;font-size:16px;" data-i18n="myListingsTitle">Mening e'lonlarim</h3>
+      <div id="profileWalletRow" style="display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:12px;padding:11px 13px;margin-bottom:12px;">
+        <div>
+          <span style="font-size:12.5px;color:var(--text-dim);" data-i18n="walletBalance">Lead balansi</span>
+          <div style="font-size:18px;font-weight:800;font-family:'Space Grotesk',sans-serif;line-height:1.1;"><span id="profileCredits">0</span> <span style="font-size:12px;color:var(--text-dim);" data-i18n="creditsUnit">kredit</span></div>
+        </div>
+        <button class="btn btn-primary btn-sm" id="profileTopupBtn" style="width:auto;"><span class="btn-label" data-i18n="topupBtn">Balansni to'ldirish</span></button>
+      </div>
       <div class="stat-grid" id="myStats"></div>
       <div id="myListingsList"></div>
     </div>
@@ -1582,6 +1633,7 @@ const I18N = {
     walletBalance:"Lead balansi", creditsUnit:"kredit", brokerPlanFree:"Oddiy reja", brokerPlanPremium:"Premium", topupBtn:"Balansni to'ldirish", walletNote:"Har bir mijoz so'rovini qabul qilish — 1 kredit. Premium obunada cheksiz.", creditEmpty:"Lead krediti tugadi. Balansni to'ldiring.", priceSom:"so'm",
     topupTitle:"Balansni to'ldirish", topupSub:"Lead kreditini sotib oling yoki premium obunaga o'ting.", topupBuyBtn:"So'rov yuborish", topupSent:"So'rov yuborildi! Admin tasdiqlagach balans yangilanadi.", topupPremiumTitle:"Premium obuna", topupPremiumDesc:"Cheksiz lead qabul qilish + so'rovlarda ustuvor ko'rsatish.", topupPremiumBtn:"Premiumga o'tish", topupPayNote:"Hozircha to'lov admin tomonidan qo'lda tasdiqlanadi. Payme/Click keyingi bosqichda ulanadi.",
     admTopupsTitle:"To'lov so'rovlari", admTopupsSub:"Maklerlarning balans to'ldirish so'rovlari.", admNoTopups:"To'lov so'rovlari yo'q", admTopupApprove:"✓ Tasdiqlash", admTopupApproved:"To'lov tasdiqlandi — balans yangilandi",
+    postPromoLabel:"E'lon turi", tierStandard:"Oddiy", tierTop:"TOP", tierVip:"VIP", tierStandardCost:"1-si bepul", postUrgentLabel:"⚡ Shoshilinch belgisi (+2 kredit)", postPromoInfo:"Birinchi {free} ta e'lon bepul, keyingisi {extra} kredit.", urgentBadge:"Shoshilinch", promoteBtn:"Reklama", promoteTitle:"E'lonni reklama qilish", promoteBalance:"Balans: {n} kredit", promoteNote:"Reklama darhol yoqiladi; balansdan kredit yechiladi. Kredit yetmasa avval balansni to'ldiring.", promoBump:"Ko'tarish (tepaga)", promoteDone:"Reklama yoqildi!", promoSkippedLowCredit:"Kredit yetmadi — oddiy e'lon sifatida joylandi.", needCreditToPost:"Kredit yetarli emas. Balansni to'ldiring.", listingPostedPaid:"E'lon joylandi! {n} kredit yechildi.",
     googleSignIn:"Google orqali davom etish", or:"yoki",
     tabLogin:"Kirish", tabRegister:"Ro'yxatdan o'tish",
     email:"Email", password:"Parol", forgotPassword:"Parolni unutdingizmi?",
@@ -1686,6 +1738,7 @@ const I18N = {
     walletBalance:"Баланс лидов", creditsUnit:"кредит", brokerPlanFree:"Обычный план", brokerPlanPremium:"Премиум", topupBtn:"Пополнить баланс", walletNote:"Приём каждого запроса — 1 кредит. В премиум-подписке безлимитно.", creditEmpty:"Кредиты закончились. Пополните баланс.", priceSom:"сум",
     topupTitle:"Пополнить баланс", topupSub:"Купите кредиты для лидов или перейдите на премиум.", topupBuyBtn:"Отправить запрос", topupSent:"Запрос отправлен! Баланс обновится после подтверждения администратором.", topupPremiumTitle:"Премиум-подписка", topupPremiumDesc:"Безлимитный приём лидов + приоритет в запросах.", topupPremiumBtn:"Перейти на премиум", topupPayNote:"Пока оплата подтверждается администратором вручную. Payme/Click подключим на следующем этапе.",
     admTopupsTitle:"Запросы на оплату", admTopupsSub:"Запросы риелторов на пополнение баланса.", admNoTopups:"Нет запросов на оплату", admTopupApprove:"✓ Подтвердить", admTopupApproved:"Оплата подтверждена — баланс обновлён",
+    postPromoLabel:"Тип объявления", tierStandard:"Обычное", tierTop:"ТОП", tierVip:"VIP", tierStandardCost:"1-е бесплатно", postUrgentLabel:"⚡ Метка «Срочно» (+2 кредита)", postPromoInfo:"Первые {free} объявл. бесплатно, следующее — {extra} кредит.", urgentBadge:"Срочно", promoteBtn:"Продвижение", promoteTitle:"Продвижение объявления", promoteBalance:"Баланс: {n} кредитов", promoteNote:"Продвижение включается сразу; кредиты списываются с баланса. Если не хватает — сначала пополните.", promoBump:"Поднять (вверх)", promoteDone:"Продвижение включено!", promoSkippedLowCredit:"Не хватило кредитов — размещено как обычное.", needCreditToPost:"Недостаточно кредитов. Пополните баланс.", listingPostedPaid:"Объявление размещено! Списано {n} кредитов.",
     googleSignIn:"Продолжить через Google", or:"или",
     tabLogin:"Вход", tabRegister:"Регистрация",
     email:"Email", password:"Пароль", forgotPassword:"Забыли пароль?",
@@ -1790,6 +1843,7 @@ const I18N = {
     walletBalance:"Lead balance", creditsUnit:"credits", brokerPlanFree:"Free plan", brokerPlanPremium:"Premium", topupBtn:"Top up balance", walletNote:"Accepting each client request costs 1 credit. Unlimited with Premium.", creditEmpty:"Out of lead credits. Please top up.", priceSom:"UZS",
     topupTitle:"Top up balance", topupSub:"Buy lead credits or upgrade to Premium.", topupBuyBtn:"Send request", topupSent:"Request sent! Balance updates after admin approval.", topupPremiumTitle:"Premium subscription", topupPremiumDesc:"Unlimited lead accepts + priority in requests.", topupPremiumBtn:"Go Premium", topupPayNote:"For now payments are approved manually by admin. Payme/Click will be connected next.",
     admTopupsTitle:"Payment requests", admTopupsSub:"Brokers' balance top-up requests.", admNoTopups:"No payment requests", admTopupApprove:"✓ Approve", admTopupApproved:"Payment approved — balance updated",
+    postPromoLabel:"Listing type", tierStandard:"Standard", tierTop:"TOP", tierVip:"VIP", tierStandardCost:"1st free", postUrgentLabel:"⚡ Urgent badge (+2 credits)", postPromoInfo:"First {free} listing(s) free, next one {extra} credit.", urgentBadge:"Urgent", promoteBtn:"Promote", promoteTitle:"Promote listing", promoteBalance:"Balance: {n} credits", promoteNote:"Promotion activates instantly; credits are deducted. If not enough, top up first.", promoBump:"Bump (to top)", promoteDone:"Promotion activated!", promoSkippedLowCredit:"Not enough credits — posted as standard.", needCreditToPost:"Not enough credits. Please top up.", listingPostedPaid:"Listing posted! {n} credits deducted.",
     googleSignIn:"Continue with Google", or:"or",
     tabLogin:"Log in", tabRegister:"Sign up",
     email:"Email", password:"Password", forgotPassword:"Forgot password?",
@@ -2222,6 +2276,7 @@ function resetPostForm(){
   $('cancelEditBtn').classList.add('hidden');
   if(userDoc && userDoc.phone) $('postPhone').value = userDoc.phone;
   pickedLat = null; pickedLng = null; renderPostLocReadout();
+  $('postPromoBlock').classList.remove('hidden'); resetTierSelect();
   setupPostOwnerType();
 }
 // Faqat ro'yxatdan o'tgan maklerlar "makler sifatida" joylay oladi (aralashuvga cheklov)
@@ -2235,8 +2290,33 @@ function setupPostOwnerType(){
 }
 $('cancelEditBtn').addEventListener('click', ()=>{ resetPostForm(); showScreen('feed'); });
 
+/* ---- E'lon tarifi (post forma) ---- */
+document.querySelectorAll('#postTierSelect .tier-opt').forEach(opt=>{
+  opt.addEventListener('click', ()=>{
+    document.querySelectorAll('#postTierSelect .tier-opt').forEach(o=>o.classList.remove('active'));
+    opt.classList.add('active');
+    updatePostPromoNote();
+  });
+});
+$('postUrgent').addEventListener('change', updatePostPromoNote);
+function selectedTier(){ const a=document.querySelector('#postTierSelect .tier-opt.active'); return a?a.dataset.tier:'standard'; }
+function resetTierSelect(){
+  document.querySelectorAll('#postTierSelect .tier-opt').forEach(o=>o.classList.toggle('active', o.dataset.tier==='standard'));
+  $('postUrgent').checked = false;
+  const std = $('tierCostStandard'); if(std) std.textContent = t('tierStandardCost');
+  updatePostPromoNote();
+}
+function updatePostPromoNote(){
+  const note = $('postPromoNote'); if(!note) return;
+  const promo = (TIER_COST[selectedTier()]||0) + ($('postUrgent').checked?URGENT_COST:0);
+  let msg = t('postPromoInfo').replace('{free}', FREE_LISTINGS).replace('{extra}', LISTING_EXTRA_COST);
+  if(promo>0) msg += ' — <b>+'+promo+' '+t('creditsUnit')+'</b>';
+  note.innerHTML = msg;
+}
+
 function startEditListing(l){
   editingListingId = l.id;
+  $('postPromoBlock').classList.add('hidden'); // tahrirlashda tarif o'zgarmaydi (reklama alohida)
   $('postOwnerType').value = l.ownerType||'owner';
   $('postDealType').value = l.dealType||'sale';
   $('postPropertyType').value = l.propertyType||'apartment';
@@ -2292,14 +2372,38 @@ $('submitListingBtn').addEventListener('click', async ()=>{
       lng: (pickedLng!=null ? pickedLng : null)
     };
     if(editingListingId){
+      // Tahrirlashda tarif o'zgarmaydi (reklama alohida boshqariladi)
       await db.collection('listings').doc(editingListingId).update(payload);
       toast(t('listingUpdated'),'success');
     }else{
+      // ---- Tarif + bepul limit + kredit ----
+      let tier = selectedTier();
+      let urgent = $('postUrgent').checked;
+      const freeSlot = await hasFreeListingSlot(phone);
+      let cost = (freeSlot ? 0 : LISTING_EXTRA_COST) + (TIER_COST[tier]||0) + (urgent?URGENT_COST:0);
+      if(cost > userCredits()){
+        if(freeSlot){
+          // Kredit yetmasa — oddiy bepul e'lon sifatida joylanadi
+          tier='standard'; urgent=false; cost=0;
+          toast(t('promoSkippedLowCredit'),'error');
+        }else{
+          // Bepul slot ham, kredit ham yo'q — joylab bo'lmaydi
+          statusEl.textContent = ''; toast(t('needCreditToPost'),'error');
+          setLoading(btn, false); openTopup(); return;
+        }
+      }
+      const now = Date.now();
+      payload.tier = tier;
+      payload.tierUntil = (tier!=='standard') ? (now + PROMO_MS) : null;
+      payload.urgent = urgent;
+      payload.urgentUntil = urgent ? (now + PROMO_MS) : null;
+      payload.bumpedAt = now;
       payload.ownerUid = currentUser.uid;
       payload.views = 0;
       payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
       await db.collection('listings').add(payload);
-      toast(t('listingPosted'),'success');
+      if(cost>0){ await spendCredits(cost); }
+      toast(cost>0 ? t('listingPostedPaid').replace('{n}',cost) : t('listingPosted'),'success');
     }
     resetPostForm();
     showScreen('feed'); loadListings();
@@ -2387,12 +2491,16 @@ function getFilteredListings(){
   }
   if(advFilters.priceMin) list = list.filter(l=>(l.price||0) >= Number(advFilters.priceMin));
   if(advFilters.priceMax) list = list.filter(l=>(l.price||0) <= Number(advFilters.priceMax));
-  switch(currentSort){
-    case 'priceAsc': list.sort((a,b)=>(a.price||0)-(b.price||0)); break;
-    case 'priceDesc': list.sort((a,b)=>(b.price||0)-(a.price||0)); break;
-    case 'areaDesc': list.sort((a,b)=>(b.area||0)-(a.area||0)); break;
-    default: list.sort((a,b)=>((b.createdAt&&b.createdAt.seconds)||0)-((a.createdAt&&a.createdAt.seconds)||0));
+  function secondarySort(a,b){
+    switch(currentSort){
+      case 'priceAsc': return (a.price||0)-(b.price||0);
+      case 'priceDesc': return (b.price||0)-(a.price||0);
+      case 'areaDesc': return (b.area||0)-(a.area||0);
+      default: return listingSortTime(b)-listingSortTime(a);
+    }
   }
+  // VIP -> TOP -> oddiy yuqorida; keyin tanlangan tartib
+  list.sort((a,b)=> (tierRank(effTier(b))-tierRank(effTier(a))) || secondarySort(a,b));
   return list;
 }
 
@@ -2428,6 +2536,9 @@ function renderListingCard(l){
     ? `<span class="badge badge-agent">👔 ${t('ownerAgent')}</span>`
     : `<span class="badge badge-owner">🔑 ${t('ownerOwner')}</span>`;
   const newBadge = isNew(l) ? `<span class="badge badge-new">NEW</span>` : '';
+  const et = effTier(l);
+  const tierBadge = et==='vip' ? `<span class="badge badge-vip">💎 VIP</span>` : et==='top' ? `<span class="badge badge-top">🔝 TOP</span>` : '';
+  const urgentBadge = effUrgent(l) ? `<span class="badge badge-urgent">⚡ ${t('urgentBadge')}</span>` : '';
   const isFav = favoriteIds.has(l.id);
   const photoCount = (l.photos && l.photos.length>1) ? `<div class="photo-count">📷 ${l.photos.length}</div>` : '';
   const specs = [];
@@ -2437,7 +2548,7 @@ function renderListingCard(l){
 
   div.innerHTML = `
     <div class="listing-media">
-      <div class="media-badges">${dealBadge}${ownerBadge}${newBadge}</div>
+      <div class="media-badges">${tierBadge}${urgentBadge}${dealBadge}${ownerBadge}${newBadge}</div>
       <button class="fav-btn ${isFav?'active':''}" data-id="${l.id}" aria-label="fav">${isFav?'♥':'♡'}</button>
       ${photo ? `<img src="${esc(photo)}" alt="" loading="lazy">` : `<div class="no-photo">${propIcon(l.propertyType)}</div>`}
       ${photoCount}
@@ -2487,7 +2598,7 @@ async function openDetail(l){
 
   const isOwn = currentUser && l.ownerUid === currentUser.uid;
   $('detailContent').innerHTML = `
-    <div class="detail-meta-row">${dealBadge}${ownerBadge}<span class="listing-time" style="margin-left:auto;">🕐 ${timeAgo(l.createdAt)}</span></div>
+    <div class="detail-meta-row">${effTier(l)==='vip'?'<span class="badge badge-vip">💎 VIP</span>':effTier(l)==='top'?'<span class="badge badge-top">🔝 TOP</span>':''}${effUrgent(l)?`<span class="badge badge-urgent">⚡ ${t('urgentBadge')}</span>`:''}${dealBadge}${ownerBadge}<span class="listing-time" style="margin-left:auto;">🕐 ${timeAgo(l.createdAt)}</span></div>
     <div class="detail-price">${fmtPrice(l.price)} <span class="price-secondary">≈ ${fmtPriceSecondary(l.price)}</span></div>
     <div class="listing-loc" style="margin-top:6px;">📍 ${esc(l.region)}, ${esc(l.district)}</div>
     <div class="detail-spec-grid">${specs.map(s=>`<div class="detail-spec"><div class="k">${s.k}</div><div class="v">${s.v}</div></div>`).join('')}</div>
@@ -2603,6 +2714,7 @@ function openContact(l){
   logContact(l.id);
 }
 $('contactCloseX').addEventListener('click', ()=>closeSheet('contactSheet'));
+$('promoteCloseX').addEventListener('click', ()=>closeSheet('promoteSheet'));
 $('contactCallBtn').addEventListener('click', ()=>{ window.location.href = 'tel:'+contactPhone; });
 $('contactTelegramBtn').addEventListener('click', ()=>{
   const num = contactPhone.replace(/\D/g,'');
@@ -2716,6 +2828,7 @@ function refreshProfileScreen(){
     }
   }
   const adminBtn = $('openAdminBtn'); if(adminBtn) adminBtn.classList.toggle('hidden', !isAdminUser());
+  const pc = $('profileCredits'); if(pc) pc.textContent = userCredits();
   loadMyListings();
 }
 
@@ -2730,7 +2843,13 @@ $('adminSaveHotlineBtn').addEventListener('click', e=>saveHotline(e.currentTarge
 
 /* ============ TOP-UP NAV ============ */
 $('topupBtn').addEventListener('click', openTopup);
-$('topupBackBtn').addEventListener('click', ()=>{ showScreen('agent'); refreshAgentScreen(); });
+$('profileTopupBtn').addEventListener('click', openTopup);
+$('topupBackBtn').addEventListener('click', ()=>{
+  const r = topupReturn || 'profile';
+  showScreen(r);
+  if(r==='agent') refreshAgentScreen();
+  else if(r==='profile') refreshProfileScreen();
+});
 $('topupPremiumBtn').addEventListener('click', e=>sendTopup({ premium:true, amount:PREMIUM_PRICE }, e.currentTarget));
 
 /* ============ MAKLER (BROKER) SCREEN ============ */
@@ -2829,16 +2948,66 @@ async function loadMyListings(){
     listEl.innerHTML = '';
     mine.forEach(l=>{
       const photo = (l.photos && l.photos[0]) ? `<img src="${esc(l.photos[0])}" alt="">` : `<div class="noimg">${propIcon(l.propertyType)}</div>`;
+      const et = effTier(l);
+      const tierTag = et==='vip' ? `<span class="badge badge-vip" style="margin-left:6px;">💎 VIP</span>`
+        : et==='top' ? `<span class="badge badge-top" style="margin-left:6px;">🔝 TOP</span>` : '';
+      const urgTag = effUrgent(l) ? `<span class="badge badge-urgent" style="margin-left:6px;">⚡</span>` : '';
       const row = document.createElement('div'); row.className='mini-listing';
       row.innerHTML = `${photo}
-        <div class="minfo"><div class="mp">${fmtPrice(l.price)}</div>
-          <div class="ml">📍 ${esc(l.region)}, ${esc(l.district)} · 👁 ${l.views||0}</div></div>
+        <div class="minfo"><div class="mp">${fmtPrice(l.price)}${tierTag}${urgTag}</div>
+          <div class="ml">📍 ${esc(l.region)}, ${esc(l.district)} · 👁 ${l.views||0}</div>
+          <div class="promo-actions"><button class="btn btn-outline pr"><span class="btn-label">🚀 ${t('promoteBtn')}</span></button></div></div>
         <div class="mini-actions"><button class="ed" title="edit">✏️</button><button class="dl" title="delete">🗑</button></div>`;
       row.querySelector('.ed').addEventListener('click', ()=>startEditListing(l));
       row.querySelector('.dl').addEventListener('click', ()=>deleteListing(l));
+      row.querySelector('.pr').addEventListener('click', ()=>openPromote(l));
       listEl.appendChild(row);
     });
   }catch(err){ listEl.innerHTML = `<div class="center-note">${t('error')}${esc(err.message)}</div>`; }
+}
+
+/* ============ E'LONNI REKLAMA QILISH (TOP / VIP / shoshilinch / ko'tarish) ============ */
+let promoteTarget = null;
+function openPromote(l){
+  promoteTarget = l;
+  const et = effTier(l);
+  $('promoteBalance').innerHTML = t('promoteBalance').replace('{n}', `<b>${userCredits()}</b>`);
+  const opts = [
+    { type:'top',    label:'🔝 '+t('tierTop'),      cost:TOP_COST,    disabled: (et==='top'||et==='vip') },
+    { type:'vip',    label:'💎 '+t('tierVip'),      cost:VIP_COST,    disabled: (et==='vip') },
+    { type:'urgent', label:'⚡ '+t('urgentBadge'),  cost:URGENT_COST, disabled: effUrgent(l) },
+    { type:'bump',   label:'🔄 '+t('promoBump'),    cost:BUMP_COST,   disabled: false }
+  ];
+  const box = $('promoteOptions'); box.innerHTML = '';
+  opts.forEach(o=>{
+    const b = document.createElement('button');
+    b.className = 'btn btn-secondary'; b.style.cssText = 'margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;';
+    b.innerHTML = `<span class="btn-label">${o.label}${o.disabled?' ✓':''}</span><span style="font-weight:700;">${o.cost} 💳</span>`;
+    if(o.disabled){ b.disabled = true; }
+    else b.addEventListener('click', ()=>promoteListing(o.type, o.cost, b));
+    box.appendChild(b);
+  });
+  openSheet('promoteSheet');
+}
+async function promoteListing(type, cost, btn){
+  if(!promoteTarget) return;
+  if(cost > userCredits()){ toast(t('needCreditToPost'),'error'); closeSheet('promoteSheet'); openTopup(); return; }
+  setLoading(btn, true);
+  try{
+    const now = Date.now(); const upd = {};
+    if(type==='top'){ upd.tier='top'; upd.tierUntil = now + PROMO_MS; }
+    else if(type==='vip'){ upd.tier='vip'; upd.tierUntil = now + PROMO_MS; }
+    else if(type==='urgent'){ upd.urgent = true; upd.urgentUntil = now + PROMO_MS; }
+    else if(type==='bump'){ upd.bumpedAt = now; }
+    await db.collection('listings').doc(promoteTarget.id).update(upd);
+    await spendCredits(cost);
+    Object.assign(promoteTarget, upd);
+    toast(t('promoteDone'), 'success');
+    closeSheet('promoteSheet');
+    loadMyListings();
+    if($('screen-feed').classList.contains('active')) loadListings();
+  }catch(err){ toast(t('error')+err.message, 'error'); }
+  finally{ setLoading(btn, false); }
 }
 
 /* ============ SUPPORT (yordam + ishonch telefoni) ============ */
@@ -2972,7 +3141,10 @@ async function saveHotline(btn){
 }
 
 /* ============ TOP-UP (balansni to'ldirish) ============ */
+let topupReturn = 'profile';
 function openTopup(){
+  const cur = document.querySelector('.screen.active');
+  if(cur && cur.id && cur.id!=='screen-topup') topupReturn = cur.id.replace('screen-','');
   showScreen('topup');
   renderTopupPackages();
   const pb = $('topupPremiumBtn').querySelector('.btn-label');
@@ -3440,6 +3612,38 @@ const PREMIUM_PRICE = '199 000'; // oylik premium (cheksiz lead)
 
 function brokerCredits(){ return (userDoc && typeof userDoc.credits==='number') ? userDoc.credits : 0; }
 function brokerIsPremium(){ return !!(userDoc && userDoc.plan==='premium'); }
+
+/* ---- E'lon tariflari: oddiy(bepul 1 ta) / TOP / VIP / shoshilinch / ko'tarish ---- */
+const FREE_LISTINGS = 1;        // birinchi e'lon bepul (telefon raqami bo'yicha)
+const LISTING_EXTRA_COST = 1;   // keyingi oddiy e'lon narxi (kredit)
+const TOP_COST = 3, VIP_COST = 5, URGENT_COST = 2, BUMP_COST = 1;
+const PROMO_DAYS = 7;           // TOP/VIP/shoshilinch amal muddati
+const PROMO_MS = PROMO_DAYS*86400000;
+const TIER_COST = { standard:0, top:TOP_COST, vip:VIP_COST };
+
+function userCredits(){ return (userDoc && typeof userDoc.credits==='number') ? userDoc.credits : 0; }
+function tierRank(tr){ return tr==='vip'?2 : tr==='top'?1 : 0; }
+function effTier(l){ return (l.tierUntil && l.tierUntil > Date.now()) ? (l.tier||'standard') : 'standard'; }
+function effUrgent(l){ return !!(l.urgentUntil && l.urgentUntil > Date.now()); }
+function listingSortTime(l){ return Math.max((((l.createdAt&&l.createdAt.seconds)||0)*1000), l.bumpedAt||0); }
+// Balansdan kredit yechish (client-side; haqiqiy himoya keyin Cloud Functions bilan)
+async function spendCredits(cost){
+  if(cost<=0) return;
+  await db.collection('users').doc(currentUser.uid).update({ credits: firebase.firestore.FieldValue.increment(-cost) });
+  if(userDoc) userDoc.credits = userCredits() - cost;
+}
+// Bepul e'lon sloti bormi? Ayni hisob + shu telefon raqamiga bog'liq (boshqa gmail bilan aylanib o'tishni cheklaydi)
+async function hasFreeListingSlot(phone){
+  try{
+    const [mine, byPhone] = await Promise.all([
+      db.collection('listings').where('ownerUid','==',currentUser.uid).get(),
+      phone ? db.collection('listings').where('phone','==',phone).get() : Promise.resolve({docs:[]})
+    ]);
+    const mineActive = mine.docs.filter(d=>(d.data().status||'active')==='active').length;
+    const phoneActive = (byPhone.docs||[]).filter(d=>(d.data().status||'active')==='active').length;
+    return Math.max(mineActive, phoneActive) < FREE_LISTINGS;
+  }catch(e){ return true; }
+}
 
 function renderBrokerWallet(){
   const c = $('brokerCredits'); if(c) c.textContent = brokerCredits();
