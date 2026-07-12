@@ -5,11 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>NurMakon — Uy-joy topish, sotish, ijaraga berish</title>
 <meta name="description" content="NurMakon — O'zbekistonda uy-joy sotib olish, sotish va ijaraga berishning oson, ishonchli va zamonaviy platformasi.">
-<meta name="theme-color" content="#0d1117">
+<meta name="theme-color" content="#0c1d44">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230d1117'/%3E%3Cpath d='M25 70V45l25-20 25 20v25H58V52H42v18z' fill='%23f0a83c'/%3E%3C/svg%3E">
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NurMakon">
+<link rel="apple-touch-icon" href="icon.svg">
+<!-- Leaflet (OpenStreetMap, kalitsiz) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <style>
   :root{
     --ink:#0d1117;
@@ -41,6 +49,14 @@
     --grad-teal:linear-gradient(180deg, #3fb89a 0%, var(--teal) 55%, var(--teal-2) 100%);
     --nav-h:76px;
     --safe-b:env(safe-area-inset-bottom, 0px);
+    /* To'q ko'k 3D yorqin fon (deep-blue 3D glow) */
+    --app-bg:
+      radial-gradient(1100px 640px at 12% -6%, rgba(78,146,255,0.34), transparent 58%),
+      radial-gradient(980px 660px at 112% 8%, rgba(140,96,255,0.24), transparent 55%),
+      radial-gradient(880px 600px at 50% 120%, rgba(38,206,232,0.18), transparent 60%),
+      radial-gradient(700px 520px at 88% 82%, rgba(58,120,255,0.16), transparent 62%),
+      linear-gradient(158deg, #0c1d44 0%, #0a1430 44%, #070c1c 100%);
+    --bar-bg:rgba(11,26,60,0.68);
   }
   /* ===== Light theme ===== */
   html[data-theme="light"]{
@@ -58,13 +74,19 @@
     --teal-soft:rgba(31,122,99,0.12);
     --shadow-1:0 1px 2px rgba(20,30,45,0.06), 0 8px 24px -14px rgba(20,30,45,0.18);
     --shadow-2:0 2px 8px rgba(20,30,45,0.1), 0 18px 44px -18px rgba(20,30,45,0.28);
+    --app-bg:
+      radial-gradient(1000px 580px at 14% -6%, rgba(96,156,255,0.22), transparent 58%),
+      radial-gradient(860px 580px at 110% 6%, rgba(150,120,255,0.16), transparent 55%),
+      radial-gradient(760px 520px at 50% 118%, rgba(70,200,230,0.12), transparent 60%),
+      linear-gradient(160deg, #dfe8fb 0%, #e7ecf6 50%, #eef1f8 100%);
+    --bar-bg:rgba(223,232,251,0.72);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
   body{
-    background:
-      radial-gradient(1200px 600px at 50% -10%, var(--gold-soft), transparent 60%),
-      var(--ink);
+    background:var(--app-bg);
+    background-attachment:fixed;
+    background-size:cover;
     color:var(--text);
     font-family:'Inter',system-ui,sans-serif;
     padding-bottom:calc(var(--nav-h) + var(--safe-b));
@@ -86,10 +108,10 @@
     display:flex;align-items:center;justify-content:space-between;
     gap:10px;
     padding:12px 16px;
-    background:color-mix(in srgb, var(--ink) 82%, transparent);
-    backdrop-filter:blur(14px);
-    -webkit-backdrop-filter:blur(14px);
-    border-bottom:1px solid var(--line-soft);
+    background:var(--bar-bg);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    border-bottom:1px solid rgba(255,255,255,0.06);
   }
   .topbar-left{display:flex;align-items:center;gap:8px;min-width:0;}
   .topbar-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
@@ -190,10 +212,10 @@
     display:flex;align-items:stretch;
     height:calc(var(--nav-h) + var(--safe-b));
     padding:0 6px var(--safe-b);
-    background:color-mix(in srgb, var(--surface) 92%, transparent);
-    backdrop-filter:blur(16px);
-    -webkit-backdrop-filter:blur(16px);
-    border-top:1px solid var(--line-soft);
+    background:var(--bar-bg);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border-top:1px solid rgba(255,255,255,0.06);
   }
   .nav-item{
     flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
@@ -227,40 +249,68 @@
 
   /* ===== Language & currency switcher ===== */
   .switch-group{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-  .lang-toggle,.currency-toggle{
+  .currency-toggle{
     display:flex;align-items:center;gap:1px;
     background:var(--surface-2);
     border:1px solid var(--line);
     border-radius:20px;padding:3px;
   }
-  .lang-pill,.currency-pill{
+  .currency-pill{
     display:flex;align-items:center;gap:3px;
     background:transparent;border:none;color:var(--text-dim);
     font-size:11px;font-weight:700;letter-spacing:-0.01em;
     padding:5px 9px;border-radius:14px;cursor:pointer;white-space:nowrap;
     transition:background .15s ease, color .15s ease, transform .12s ease;
   }
-  .lang-pill:active,.currency-pill:active{transform:scale(0.94);}
-  .lang-pill span{font-size:11px;line-height:1;}
-  .lang-pill.active,.currency-pill.active{background:var(--grad-gold);color:#241505;}
-  .lang-toggle:not(.expanded) .lang-pill:not(.active){display:none;}
-  .lang-toggle:not(.expanded) .lang-pill.active::after{content:"▾";font-size:9px;margin-left:1px;opacity:0.8;}
+  .currency-pill:active{transform:scale(0.94);}
+  .currency-pill.active{background:var(--grad-gold);color:#241505;}
+
+  /* ===== Language dropdown (pastga ochiladi) ===== */
+  .lang-dd{position:relative;}
+  .lang-current{
+    display:flex;align-items:center;gap:5px;
+    background:var(--surface-2);border:1px solid var(--line);color:var(--text-dim);
+    font-size:11px;font-weight:700;letter-spacing:-0.01em;
+    padding:6px 10px;border-radius:20px;cursor:pointer;white-space:nowrap;
+    transition:border-color .15s ease, color .15s ease, transform .12s ease;
+  }
+  .lang-current:active{transform:scale(0.95);}
+  .lang-current .caret{font-size:8px;opacity:0.85;transition:transform .2s ease;}
+  .lang-dd.open .lang-current{border-color:var(--gold);color:var(--text);background:var(--surface-3);}
+  .lang-dd.open .lang-current .caret{transform:rotate(180deg);}
+  .lang-menu{
+    position:absolute;top:calc(100% + 7px);left:0;
+    display:none;flex-direction:column;gap:2px;min-width:138px;z-index:60;
+    background:var(--surface);border:1px solid var(--line);border-radius:13px;
+    padding:5px;box-shadow:var(--shadow-2);
+  }
+  .lang-dd.open .lang-menu{display:flex;animation:fadeIn .16s ease;}
+  .lang-menu .lang-pill{
+    display:flex;align-items:center;gap:9px;justify-content:flex-start;
+    background:transparent;border:none;color:var(--text);
+    font-size:13.5px;font-weight:600;padding:10px 12px;border-radius:9px;cursor:pointer;white-space:nowrap;
+    transition:background .15s ease, transform .12s ease;
+  }
+  .lang-menu .lang-pill span{font-size:16px;line-height:1;}
+  .lang-menu .lang-pill:active{transform:scale(0.97);}
+  .lang-menu .lang-pill:hover{background:var(--surface-2);}
+  .lang-menu .lang-pill.active{background:var(--gold-soft);color:var(--gold);}
+  .lang-menu .lang-pill.active::after{content:"✓";margin-left:auto;font-size:12px;}
 
   /* ===== Hero banner ===== */
   .hero-banner{
-    position:relative;overflow:hidden;
+    position:relative;overflow:visible;
     margin:-16px -16px 0;
-    min-height:200px;
-    background:
-      radial-gradient(900px 480px at 50% -15%, rgba(240,168,60,0.22), transparent 62%),
-      linear-gradient(165deg, #1c2530 0%, #141b24 55%, var(--ink) 100%);
+    min-height:186px;
+    background:transparent;               /* to'liq fonga qo'shilib ketadi */
     display:flex;flex-direction:column;justify-content:flex-end;
-    padding:26px 20px 48px;text-align:center;
+    padding:26px 20px 44px;text-align:center;
   }
-  .hero-banner::before{
-    content:"";position:absolute;inset:0;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23f0a83c' stroke-opacity='0.1' stroke-width='1'%3E%3Crect x='10' y='10' width='60' height='60'/%3E%3Crect x='10' y='10' width='60' height='60' transform='rotate(45 40 40)'/%3E%3Ccircle cx='40' cy='40' r='14'/%3E%3C/g%3E%3C/svg%3E");
-    background-size:80px 80px;opacity:0.7;
+  .hero-banner::before{                    /* 3D yorqin nur (glow) */
+    content:"";position:absolute;left:50%;top:-30px;transform:translateX(-50%);
+    width:340px;height:200px;pointer-events:none;
+    background:radial-gradient(closest-side, rgba(120,175,255,0.28), transparent 72%);
+    filter:blur(6px);
   }
   .hero-banner > *{position:relative;z-index:1;}
   .hero-banner .brand{font-size:34px;text-shadow:0 2px 14px rgba(0,0,0,0.6);}
@@ -548,6 +598,80 @@
   .no-scroll{overflow:hidden;}
   .hscroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-ms-overflow-style:none;}
   .hscroll::-webkit-scrollbar{display:none;}
+
+  /* ===== Nav unread badge ===== */
+  .nav-item{position:relative;}
+  .nav-badge{
+    position:absolute;top:4px;left:50%;margin-left:4px;
+    min-width:17px;height:17px;padding:0 4px;border-radius:9px;
+    background:var(--danger);color:#fff;font-size:10px;font-weight:800;
+    display:none;align-items:center;justify-content:center;line-height:1;
+    border:2px solid var(--surface);
+  }
+  .nav-badge.show{display:flex;}
+
+  /* ===== Map ===== */
+  #mapPickerMap,#detailMap{width:100%;border-radius:14px;overflow:hidden;}
+  #mapPickerMap{height:56vh;margin:12px 0;border:1px solid var(--line);}
+  #detailMap{height:180px;border:1px solid var(--line-soft);margin-top:8px;}
+  .leaflet-container{background:var(--surface-2);font-family:'Inter',sans-serif;}
+  .map-hint{font-size:12.5px;color:var(--text-dim);text-align:center;margin:0;}
+  .map-pin-note{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:11px;padding:11px 13px;margin-top:10px;font-size:13px;color:var(--text-dim);}
+  .loc-field{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .loc-field .btn{flex:1;}
+  .loc-chip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--teal);background:var(--teal-soft);padding:6px 11px;border-radius:20px;font-weight:600;}
+  .directions-link{display:inline-flex;align-items:center;gap:6px;margin-top:10px;color:var(--gold);font-weight:600;font-size:13.5px;}
+
+  /* ===== Chat: conversation list ===== */
+  .chat-item{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;cursor:pointer;transition:transform .12s ease, border-color .15s ease;}
+  .chat-item:active{transform:scale(0.99);}
+  .chat-item:hover{border-color:var(--gold-2);}
+  .chat-avatar{width:46px;height:46px;border-radius:50%;flex-shrink:0;background:var(--grad-gold);display:flex;align-items:center;justify-content:center;font-size:20px;color:#241505;position:relative;}
+  .chat-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+  .chat-meta{flex:1;min-width:0;}
+  .chat-meta .cm-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .chat-meta .cm-name{font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .chat-meta .cm-time{font-size:11px;color:var(--text-faint);flex-shrink:0;}
+  .chat-meta .cm-last{font-size:13px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+  .chat-meta .cm-last.unread{color:var(--text);font-weight:600;}
+  .chat-unread-dot{min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--gold);color:#241505;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+  /* ===== Chat: thread ===== */
+  #chatThreadModal .modal{padding:0;display:flex;flex-direction:column;height:88vh;max-height:88vh;}
+  .chat-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line-soft);position:sticky;top:0;background:var(--surface);z-index:2;}
+  .chat-head .back{width:34px;height:34px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;}
+  .chat-head .ch-name{font-weight:700;font-size:15.5px;}
+  .chat-head .ch-sub{font-size:12px;color:var(--text-dim);}
+  .chat-ref{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--surface-2);border-bottom:1px solid var(--line-soft);cursor:pointer;}
+  .chat-ref img,.chat-ref .noimg{width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .chat-ref .cr-info{flex:1;min-width:0;}
+  .chat-ref .cr-price{font-weight:700;color:var(--gold);font-size:14px;}
+  .chat-ref .cr-loc{font-size:12px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;}
+  .msg{max-width:78%;padding:10px 13px;border-radius:15px;font-size:14.5px;line-height:1.4;word-break:break-word;position:relative;}
+  .msg .mt{font-size:10px;opacity:0.65;margin-top:4px;text-align:right;}
+  .msg.out{align-self:flex-end;background:var(--grad-gold);color:#241505;border-bottom-right-radius:5px;}
+  .msg.in{align-self:flex-start;background:var(--surface-2);border:1px solid var(--line-soft);border-bottom-left-radius:5px;}
+  .msg-day{align-self:center;font-size:11px;color:var(--text-faint);background:var(--surface-2);padding:4px 12px;border-radius:20px;margin:6px 0;}
+  .chat-input-bar{display:flex;gap:8px;padding:10px 12px calc(10px + var(--safe-b));border-top:1px solid var(--line-soft);background:var(--surface);align-items:flex-end;}
+  .chat-input-bar textarea{flex:1;min-height:44px;max-height:120px;resize:none;padding:11px 14px;border-radius:22px;}
+  .chat-send{width:44px;height:44px;border-radius:50%;flex-shrink:0;background:var(--grad-gold);border:none;color:#241505;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .chat-send:active{transform:scale(0.9);}
+  .chat-send[disabled]{opacity:0.5;pointer-events:none;}
+
+  /* ===== Install banner ===== */
+  .install-banner{
+    position:fixed;left:12px;right:12px;bottom:calc(var(--nav-h) + var(--safe-b) + 12px);z-index:70;
+    display:none;align-items:center;gap:12px;
+    background:var(--surface);border:1px solid var(--gold);border-radius:16px;padding:12px 14px;
+    box-shadow:var(--shadow-2);max-width:576px;margin:0 auto;
+  }
+  .install-banner.show{display:flex;animation:slideUp .3s ease;}
+  .install-banner .ib-ic{width:42px;height:42px;border-radius:11px;background:var(--grad-gold);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+  .install-banner .ib-txt{flex:1;min-width:0;}
+  .install-banner .ib-txt b{font-size:14px;}
+  .install-banner .ib-txt p{margin:2px 0 0;font-size:12px;color:var(--text-dim);}
+  .install-banner .ib-close{background:none;border:none;color:var(--text-faint);font-size:16px;cursor:pointer;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -683,10 +807,15 @@
   </div>
   <div class="topbar-right">
     <div class="switch-group" id="switchGroup">
-      <div class="lang-toggle" id="langToggle">
-        <button class="lang-pill" data-lang="uz" type="button">O'z<span>🇺🇿</span></button>
-        <button class="lang-pill" data-lang="ru" type="button">Ру<span>🇷🇺</span></button>
-        <button class="lang-pill" data-lang="en" type="button">En<span>🇬🇧</span></button>
+      <div class="lang-dd" id="langToggle">
+        <button class="lang-current" id="langCurrentBtn" type="button">
+          <span id="langCurrentLabel">O'z 🇺🇿</span><span class="caret">▾</span>
+        </button>
+        <div class="lang-menu">
+          <button class="lang-pill" data-lang="uz" type="button"><span>🇺🇿</span>O'zbek</button>
+          <button class="lang-pill" data-lang="ru" type="button"><span>🇷🇺</span>Русский</button>
+          <button class="lang-pill" data-lang="en" type="button"><span>🇬🇧</span>English</button>
+        </div>
       </div>
       <div class="currency-toggle" id="currencyToggle">
         <button class="currency-pill active" data-cur="uzs" type="button">so'm</button>
@@ -883,6 +1012,12 @@
   </label>
   <div id="photoPreview" class="photo-preview"></div>
 
+  <label data-i18n="postMapLabel">Xaritada joylashuv (ixtiyoriy)</label>
+  <div class="loc-field">
+    <button type="button" class="btn btn-outline btn-sm" id="postPickLocationBtn"><span class="btn-label" data-i18n="mapPick">🗺️ Xaritadan tanlash</span></button>
+  </div>
+  <div id="postLocReadout" style="margin-top:8px;"></div>
+
   <button class="btn btn-primary" id="submitListingBtn" style="margin-top:18px;"><span class="btn-label" data-i18n="postSubmitBtn">E'lonni joylash</span></button>
   <button class="btn btn-ghost hidden" id="cancelEditBtn" style="margin-top:10px;"><span class="btn-label" data-i18n="cancelEdit">Tahrirni bekor qilish</span></button>
   <p class="center-note" id="postStatus"></p>
@@ -957,11 +1092,69 @@
   </div>
 </div>
 
+<!-- ===================== CHAT (MESSAGES) SCREEN ===================== -->
+<div class="screen" id="screen-chat">
+  <h2 class="section-title" style="margin-top:8px;" data-i18n="navMessages">Xabarlar</h2>
+  <p class="section-sub" data-i18n="chatSub">E'lon egalari va maklerlar bilan yozishmalaringiz.</p>
+  <div class="lock-card" id="chatLoggedOut">
+    <div class="lock-ic">💬</div>
+    <div class="lock-txt"><h3 data-i18n="lockChatTitle">Xabarlar uchun kiring</h3>
+      <p data-i18n="lockChatSub">Sotuvchilar bilan yozishish uchun tizimga kiring</p></div>
+    <div class="lock-chevron">›</div>
+  </div>
+  <div id="chatListContainer" class="hidden"></div>
+</div>
+
+<!-- ===================== MAP PICKER MODAL ===================== -->
+<div class="modal-overlay" id="mapModal">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <div class="modal-head"><h2 data-i18n="mapTitle">Joylashuvni tanlang</h2>
+      <button class="modal-close" id="mapCloseX" type="button">✕</button></div>
+    <p class="map-hint" data-i18n="mapPickHint">Xaritani bosib yoki markerni surib mulk joylashuvini belgilang.</p>
+    <div id="mapPickerMap"></div>
+    <button class="btn btn-outline btn-sm" id="mapMyLocationBtn" style="margin-bottom:10px;"><span class="btn-label" data-i18n="mapMyLocation">📍 Mening joylashuvim</span></button>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="mapClearBtn"><span class="btn-label" data-i18n="filterReset">Tozalash</span></button>
+      <button class="btn btn-primary" id="mapConfirmBtn"><span class="btn-label" data-i18n="mapConfirm">Tasdiqlash</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CHAT THREAD MODAL ===================== -->
+<div class="modal-overlay" id="chatThreadModal">
+  <div class="modal">
+    <div class="chat-head">
+      <button class="back" id="chatBackBtn">‹</button>
+      <div class="chat-avatar" id="chatHeadAvatar">👤</div>
+      <div style="min-width:0;">
+        <div class="ch-name" id="chatHeadName">—</div>
+        <div class="ch-sub" id="chatHeadSub"></div>
+      </div>
+    </div>
+    <div class="chat-ref" id="chatRefBar" style="display:none;"></div>
+    <div class="chat-msgs" id="chatMsgs"></div>
+    <div class="chat-input-bar">
+      <textarea id="chatInput" rows="1" placeholder="Xabar yozing..." data-i18n-placeholder="typeMessage"></textarea>
+      <button class="chat-send" id="chatSendBtn">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== INSTALL BANNER (PWA) ===================== -->
+<div class="install-banner" id="installBanner">
+  <div class="ib-ic">📲</div>
+  <div class="ib-txt"><b data-i18n="installTitle">Ilovani o'rnating</b><p data-i18n="installHint">NurMakon'ni telefon ekraningizga qo'shing</p></div>
+  <button class="btn btn-primary btn-sm" id="installBtn" style="width:auto;flex-shrink:0;"><span class="btn-label" data-i18n="installBtn">O'rnatish</span></button>
+  <button class="ib-close" id="installCloseBtn">✕</button>
+</div>
+
 <!-- ===================== BOTTOM NAV ===================== -->
 <div class="bottomnav" id="bottomnav">
   <button class="nav-item active" data-screen="feed"><div class="ic">🏠</div><span data-i18n="navSearch">Qidirish</span></button>
   <button class="nav-item" data-screen="favorites"><div class="ic">♡</div><span data-i18n="navFavorites">Sevimli</span></button>
   <button class="nav-item nav-item-center" data-screen="post"><div class="ic">＋</div><span data-i18n="navPost">E'lon</span></button>
+  <button class="nav-item" data-screen="chat"><div class="ic">💬</div><span data-i18n="navMessages">Xabarlar</span><span class="nav-badge" id="chatNavBadge">0</span></button>
   <button class="nav-item" data-screen="profile"><div class="ic">👤</div><span data-i18n="navProfile">Profil</span></button>
 </div>
 
@@ -971,6 +1164,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 
 <script>
@@ -1007,6 +1201,14 @@ let currentSort = 'new';
 let advFilters = { propType:'', rooms:'', priceMin:'', priceMax:'' };
 let detailContext = null;  // listing currently in detail view
 let galleryPhotos = [];    // for lightbox
+let pickedLat = null, pickedLng = null;   // location picker result
+let pickerMap = null, pickerMarker = null, detailMapObj = null;
+let deferredInstallPrompt = null;         // PWA install event
+let chatUnsub = null;                     // conversation list listener
+let threadUnsub = null;                   // active thread listener
+let activeChatId = null;                  // open conversation
+let totalUnread = 0;                      // unread badge count
+let convCache = {};                       // chatId -> conversation data
 
 /* ============ HELPERS ============ */
 const $ = (id)=>document.getElementById(id);
@@ -1095,7 +1297,17 @@ const I18N = {
     hoursAgo:" soat oldin", daysAgo:" kun oldin", weeksAgo:" hafta oldin", monthsAgo:" oy oldin",
     ownerContact:"Egasi bilan bog'laning", agentContact:"Makler bilan bog'laning",
     fillRequired:"Barcha majburiy maydonlarni to'ldiring", uploadingPhotos:"Rasmlar yuklanmoqda...",
-    savingListing:"E'lon saqlanmoqda...", listingPosted:"E'lon muvaffaqiyatli joylandi!"
+    savingListing:"E'lon saqlanmoqda...", listingPosted:"E'lon muvaffaqiyatli joylandi!",
+    navMessages:"Xabarlar", chatSub:"E'lon egalari va maklerlar bilan yozishmalaringiz.",
+    lockChatTitle:"Xabarlar uchun kiring", lockChatSub:"Sotuvchilar bilan yozishish uchun tizimga kiring",
+    chatEmpty:"Hozircha xabarlar yo'q", chatEmptySub:"E'lon sahifasida \"Yozish\" tugmasini bosib suhbat boshlang.",
+    messageBtn:"Yozish", typeMessage:"Xabar yozing...", you:"Siz", chatSelf:"Bu sizning e'loningiz",
+    mapTitle:"Joylashuvni tanlang", mapPick:"🗺️ Xaritadan tanlash", mapChange:"🗺️ Joyni o'zgartirish",
+    mapPickHint:"Xaritani bosib yoki markerni surib mulk joylashuvini belgilang.",
+    mapConfirm:"Tasdiqlash", mapMyLocation:"📍 Mening joylashuvim", mapDirections:"Yo'l ko'rsatish",
+    postMapLabel:"Xaritada joylashuv (ixtiyoriy)", mapLocationSet:"Joylashuv belgilandi", mapNoGeo:"Joylashuvni aniqlab bo'lmadi",
+    detailLocation:"Joylashuvi", installTitle:"Ilovani o'rnating", installHint:"NurMakon'ni telefon ekraningizga qo'shing",
+    installBtn:"O'rnatish", installed:"Ilova o'rnatildi ✓", notifNewMsg:"Yangi xabar", msgEmpty:"Suhbatni boshlang 👋"
   },
   ru:{
     heroSub:"Простой и надёжный способ найти жильё",
@@ -1161,7 +1373,17 @@ const I18N = {
     hoursAgo:" ч. назад", daysAgo:" дн. назад", weeksAgo:" нед. назад", monthsAgo:" мес. назад",
     ownerContact:"Связаться с владельцем", agentContact:"Связаться с риелтором",
     fillRequired:"Заполните все обязательные поля", uploadingPhotos:"Загрузка фото...",
-    savingListing:"Сохранение объявления...", listingPosted:"Объявление успешно размещено!"
+    savingListing:"Сохранение объявления...", listingPosted:"Объявление успешно размещено!",
+    navMessages:"Сообщения", chatSub:"Ваша переписка с владельцами и риелторами.",
+    lockChatTitle:"Войдите для сообщений", lockChatSub:"Войдите, чтобы писать продавцам",
+    chatEmpty:"Пока нет сообщений", chatEmptySub:"Начните чат кнопкой «Написать» на странице объявления.",
+    messageBtn:"Написать", typeMessage:"Напишите сообщение...", you:"Вы", chatSelf:"Это ваше объявление",
+    mapTitle:"Выберите местоположение", mapPick:"🗺️ Выбрать на карте", mapChange:"🗺️ Изменить место",
+    mapPickHint:"Нажмите на карту или перетащите маркер, чтобы указать местоположение.",
+    mapConfirm:"Подтвердить", mapMyLocation:"📍 Моё местоположение", mapDirections:"Проложить маршрут",
+    postMapLabel:"Местоположение на карте (необязательно)", mapLocationSet:"Местоположение указано", mapNoGeo:"Не удалось определить местоположение",
+    detailLocation:"Местоположение", installTitle:"Установите приложение", installHint:"Добавьте NurMakon на экран телефона",
+    installBtn:"Установить", installed:"Приложение установлено ✓", notifNewMsg:"Новое сообщение", msgEmpty:"Начните беседу 👋"
   },
   en:{
     heroSub:"The easy and trusted way to find a home",
@@ -1227,7 +1449,17 @@ const I18N = {
     hoursAgo:" h ago", daysAgo:" d ago", weeksAgo:" w ago", monthsAgo:" mo ago",
     ownerContact:"Contact the owner", agentContact:"Contact the broker",
     fillRequired:"Please fill in all required fields", uploadingPhotos:"Uploading photos...",
-    savingListing:"Saving listing...", listingPosted:"Listing posted successfully!"
+    savingListing:"Saving listing...", listingPosted:"Listing posted successfully!",
+    navMessages:"Messages", chatSub:"Your conversations with owners and brokers.",
+    lockChatTitle:"Log in for messages", lockChatSub:"Log in to message sellers",
+    chatEmpty:"No messages yet", chatEmptySub:"Start a chat with the \"Message\" button on a listing.",
+    messageBtn:"Message", typeMessage:"Type a message...", you:"You", chatSelf:"This is your listing",
+    mapTitle:"Choose location", mapPick:"🗺️ Pick on map", mapChange:"🗺️ Change location",
+    mapPickHint:"Tap the map or drag the marker to set the property location.",
+    mapConfirm:"Confirm", mapMyLocation:"📍 My location", mapDirections:"Get directions",
+    postMapLabel:"Location on map (optional)", mapLocationSet:"Location set", mapNoGeo:"Could not detect location",
+    detailLocation:"Location", installTitle:"Install the app", installHint:"Add NurMakon to your home screen",
+    installBtn:"Install", installed:"App installed ✓", notifNewMsg:"New message", msgEmpty:"Start the conversation 👋"
   }
 };
 
@@ -1242,12 +1474,16 @@ function applyLanguage(lang){
   localStorage.setItem('nm_lang', currentLang);
   document.documentElement.lang = currentLang;
   document.querySelectorAll('.lang-pill').forEach(p=>p.classList.toggle('active', p.dataset.lang===currentLang));
+  const LANG_SHORT = { uz:"O'z 🇺🇿", ru:"Ру 🇷🇺", en:"En 🇬🇧" };
+  const lcl = $('langCurrentLabel'); if(lcl) lcl.textContent = LANG_SHORT[currentLang] || LANG_SHORT.uz;
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{ el.placeholder = t(el.dataset.i18nPlaceholder); });
   document.querySelectorAll('[data-i18n-html]').forEach(el=>{ el.innerHTML = t(el.dataset.i18nHtml); });
   if($('screen-feed').classList.contains('active')) renderListings();
   if($('screen-favorites').classList.contains('active')) refreshFavoritesScreen();
   if($('screen-profile').classList.contains('active')) refreshProfileScreen();
+  if($('screen-chat').classList.contains('active') && typeof refreshChatScreen==='function') refreshChatScreen();
+  if(typeof renderPostLocReadout==='function') renderPostLocReadout();
 }
 
 /* ============ THEME ============ */
@@ -1257,7 +1493,7 @@ function applyTheme(theme){
   $('themeBtn').textContent = theme === 'light' ? '☀️' : '🌙';
   $('themeBtn').title = theme === 'light' ? 'Yorug\'' : 'Qorong\'i';
   const meta = document.querySelector('meta[name="theme-color"]');
-  if(meta) meta.content = theme === 'light' ? '#eef1f5' : '#0d1117';
+  if(meta) meta.content = theme === 'light' ? '#dfe8fb' : '#0c1d44';
 }
 $('themeBtn').addEventListener('click', ()=>{
   const cur = document.documentElement.getAttribute('data-theme');
@@ -1267,15 +1503,15 @@ applyTheme(localStorage.getItem('nm_theme') || 'dark');
 
 /* ============ LANGUAGE / CURRENCY SWITCHER UI ============ */
 const langToggle = $('langToggle');
-document.querySelectorAll('.lang-pill').forEach(pill=>{
+$('langCurrentBtn').addEventListener('click', e=>{ e.stopPropagation(); langToggle.classList.toggle('open'); });
+document.querySelectorAll('.lang-menu .lang-pill').forEach(pill=>{
   pill.addEventListener('click', e=>{
     e.stopPropagation();
-    if(!langToggle.classList.contains('expanded')){ langToggle.classList.add('expanded'); return; }
     applyLanguage(pill.dataset.lang);
-    langToggle.classList.remove('expanded');
+    langToggle.classList.remove('open');
   });
 });
-document.addEventListener('click', e=>{ if(!langToggle.contains(e.target)) langToggle.classList.remove('expanded'); });
+document.addEventListener('click', e=>{ if(!langToggle.contains(e.target)) langToggle.classList.remove('open'); });
 
 document.querySelectorAll('.currency-pill').forEach(pill=>{
   pill.addEventListener('click', e=>{ e.stopPropagation(); setCurrency(pill.dataset.cur); });
@@ -1463,10 +1699,14 @@ auth.onAuthStateChanged(async (user)=>{
     }
     await loadFavoriteIds();
     refreshProfileScreen(); refreshFavoritesScreen();
+    subscribeConversations();
   }else{
     currentUser = null; userDoc = null; favoriteIds.clear();
     $('logoutBtn').style.display = 'none';
     $('topbarLoginBtn').style.display = 'flex';
+    if(chatUnsub){ chatUnsub(); chatUnsub=null; }
+    if(threadUnsub){ threadUnsub(); threadUnsub=null; }
+    totalUnread = 0; updateChatBadge();
     refreshProfileScreen(); refreshFavoritesScreen();
   }
   renderListings();
@@ -1509,6 +1749,7 @@ document.querySelectorAll('.nav-item').forEach(item=>{
     if(target==='feed') loadListings();
     if(target==='profile') refreshProfileScreen();
     if(target==='favorites') refreshFavoritesScreen();
+    if(target==='chat') refreshChatScreen();
   });
 });
 
@@ -1558,6 +1799,7 @@ function resetPostForm(){
   $('submitListingBtn').querySelector('.btn-label').textContent = t('postSubmitBtn');
   $('cancelEditBtn').classList.add('hidden');
   if(userDoc && userDoc.phone) $('postPhone').value = userDoc.phone;
+  pickedLat = null; pickedLng = null; renderPostLocReadout();
 }
 $('cancelEditBtn').addEventListener('click', ()=>{ resetPostForm(); showScreen('feed'); });
 
@@ -1577,6 +1819,9 @@ function startEditListing(l){
   existingPhotos = Array.isArray(l.photos) ? l.photos.slice() : [];
   selectedPhotos = [];
   renderPhotoPreview();
+  pickedLat = (typeof l.lat==='number') ? l.lat : null;
+  pickedLng = (typeof l.lng==='number') ? l.lng : null;
+  renderPostLocReadout();
   $('postScreenTitle').textContent = t('editTitle');
   $('submitListingBtn').querySelector('.btn-label').textContent = t('saveEditBtn');
   $('cancelEditBtn').classList.remove('hidden');
@@ -1610,7 +1855,9 @@ $('submitListingBtn').addEventListener('click', async ()=>{
       rooms: Number($('postRooms').value)||null,
       floor: $('postFloor').value.trim()||null,
       description: $('postDescription').value.trim(),
-      phone, photos, status:'active'
+      phone, photos, status:'active',
+      lat: (pickedLat!=null ? pickedLat : null),
+      lng: (pickedLng!=null ? pickedLng : null)
     };
     if(editingListingId){
       await db.collection('listings').doc(editingListingId).update(payload);
@@ -1785,12 +2032,18 @@ async function openDetail(l){
       <div class="oinfo"><h4>${l.ownerType==='agent'?t('ownerAgent'):t('ownerOwner')}</h4>
         <p>${l.ownerType==='agent'?t('agentContact'):t('ownerContact')} · 👁 ${l.views||0} ${t('views')}</p></div>
     </div>
+    ${(typeof l.lat==='number' && typeof l.lng==='number') ? `
+      <div class="detail-section-title">${t('detailLocation')}</div>
+      <div id="detailMap"></div>
+      <a class="directions-link" id="detailDirections" target="_blank" rel="noopener">🧭 ${t('mapDirections')}</a>
+    ` : ''}
     <div class="detail-actions">
       ${isOwn ? `
         <button class="btn btn-outline" id="detailEditBtn"><span class="btn-label">✏️ ${t('edit')}</span></button>
         <button class="btn btn-danger-soft" id="detailDeleteBtn"><span class="btn-label">🗑 ${t('delete')}</span></button>
       ` : `
-        <button class="btn btn-outline" id="detailShareBtn" style="flex:0 0 auto;width:auto;padding:15px 18px;">↗</button>
+        <button class="btn btn-outline" id="detailShareBtn" style="flex:0 0 auto;width:auto;padding:15px 16px;">↗</button>
+        <button class="btn btn-outline" id="detailMsgBtn"><span class="btn-label">💬 ${t('messageBtn')}</span></button>
         <button class="btn btn-primary" id="detailContactBtn"><span class="btn-label">📞 ${t('contactBtn')}</span></button>
       `}
     </div>`;
@@ -1814,6 +2067,22 @@ async function openDetail(l){
   }else{
     $('detailContactBtn').addEventListener('click', ()=>openContact(l));
     $('detailShareBtn').addEventListener('click', ()=>shareListing(l));
+    $('detailMsgBtn').addEventListener('click', ()=>startChatFromListing(l));
+  }
+
+  // Render detail map (if coordinates present)
+  if(typeof l.lat==='number' && typeof l.lng==='number' && window.L){
+    setTimeout(()=>{
+      try{
+        if(detailMapObj){ detailMapObj.remove(); detailMapObj=null; }
+        detailMapObj = L.map('detailMap', { zoomControl:false, attributionControl:false, dragging:false, scrollWheelZoom:false, doubleClickZoom:false, boxZoom:false, keyboard:false, tap:false }).setView([l.lat, l.lng], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom:19 }).addTo(detailMapObj);
+        L.marker([l.lat, l.lng]).addTo(detailMapObj);
+        detailMapObj.invalidateSize();
+      }catch(e){ console.warn(e); }
+    }, 250);
+    const dir = $('detailDirections');
+    if(dir) dir.href = `https://yandex.uz/maps/?pt=${l.lng},${l.lat}&z=16&l=map`;
   }
 }
 
@@ -2055,9 +2324,325 @@ async function loadHeroStats(){
   }catch(err){ $('statListings').textContent='—'; $('statAgents').textContent='—'; }
 }
 
+/* ============================================================
+   MAP LOCATION PICKER (Leaflet + OpenStreetMap)
+   ============================================================ */
+const DEFAULT_CENTER = [40.7821, 72.3442]; // Andijon (fallback)
+
+function renderPostLocReadout(){
+  const el = $('postLocReadout');
+  const btnLabel = $('postPickLocationBtn').querySelector('.btn-label');
+  if(pickedLat!=null && pickedLng!=null){
+    el.innerHTML = `<span class="loc-chip">📍 ${pickedLat.toFixed(5)}, ${pickedLng.toFixed(5)}</span>`;
+    btnLabel.textContent = t('mapChange');
+  }else{
+    el.innerHTML = '';
+    btnLabel.textContent = t('mapPick');
+  }
+}
+
+$('postPickLocationBtn').addEventListener('click', ()=>{
+  if(!window.L){ toast(t('error')+'map'); return; }
+  openSheet('mapModal');
+  setTimeout(initPickerMap, 220);
+});
+$('mapCloseX').addEventListener('click', ()=>closeSheet('mapModal'));
+
+function initPickerMap(){
+  const start = (pickedLat!=null && pickedLng!=null) ? [pickedLat, pickedLng] : DEFAULT_CENTER;
+  if(pickerMap){ pickerMap.remove(); pickerMap=null; }
+  pickerMap = L.map('mapPickerMap').setView(start, pickedLat!=null?15:12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom:19, attribution:'© OpenStreetMap' }).addTo(pickerMap);
+  pickerMarker = L.marker(start, { draggable:true }).addTo(pickerMap);
+  pickerMarker.on('dragend', ()=>{ const p = pickerMarker.getLatLng(); setPicked(p.lat, p.lng); });
+  pickerMap.on('click', (e)=>{ pickerMarker.setLatLng(e.latlng); setPicked(e.latlng.lat, e.latlng.lng); });
+  pickerMap.invalidateSize();
+}
+let tempLat=null, tempLng=null;
+function setPicked(lat, lng){ tempLat=lat; tempLng=lng; }
+
+$('mapMyLocationBtn').addEventListener('click', ()=>{
+  if(!navigator.geolocation){ toast(t('mapNoGeo'),'error'); return; }
+  navigator.geolocation.getCurrentPosition(
+    (pos)=>{
+      const { latitude, longitude } = pos.coords;
+      if(pickerMap && pickerMarker){ pickerMap.setView([latitude,longitude],16); pickerMarker.setLatLng([latitude,longitude]); }
+      setPicked(latitude, longitude);
+    },
+    ()=>toast(t('mapNoGeo'),'error'),
+    { enableHighAccuracy:true, timeout:8000 }
+  );
+});
+$('mapClearBtn').addEventListener('click', ()=>{
+  pickedLat=null; pickedLng=null; tempLat=null; tempLng=null;
+  renderPostLocReadout(); closeSheet('mapModal');
+});
+$('mapConfirmBtn').addEventListener('click', ()=>{
+  if(tempLat!=null){ pickedLat=tempLat; pickedLng=tempLng; }
+  else if(pickerMarker){ const p=pickerMarker.getLatLng(); pickedLat=p.lat; pickedLng=p.lng; }
+  renderPostLocReadout();
+  closeSheet('mapModal');
+  if(pickedLat!=null) toast(t('mapLocationSet'),'success');
+});
+
+/* ============================================================
+   PWA: service worker + install prompt
+   ============================================================ */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(err=>console.warn('SW:', err));
+  });
+}
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  if(!localStorage.getItem('nm_install_dismissed')) $('installBanner').classList.add('show');
+});
+$('installBtn').addEventListener('click', async ()=>{
+  $('installBanner').classList.remove('show');
+  if(!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+});
+$('installCloseBtn').addEventListener('click', ()=>{
+  $('installBanner').classList.remove('show');
+  localStorage.setItem('nm_install_dismissed','1');
+});
+window.addEventListener('appinstalled', ()=>{ $('installBanner').classList.remove('show'); toast(t('installed'),'success'); });
+
+/* ============================================================
+   CHAT / MESSAGING
+   ============================================================ */
+let conversationsLoadedOnce = false;
+
+function chatIdFor(listingId, a, b){ return listingId + '__' + [a,b].sort().join('-'); }
+function updateChatBadge(){
+  const b = $('chatNavBadge');
+  if(totalUnread>0){ b.textContent = totalUnread>99?'99+':totalUnread; b.classList.add('show'); }
+  else b.classList.remove('show');
+}
+
+async function startChatFromListing(l){
+  if(!currentUser){ toast(t('needLoginToast')); requireLogin('chat'); return; }
+  if(l.ownerUid === currentUser.uid){ toast(t('chatSelf')); return; }
+  const cid = chatIdFor(l.id, currentUser.uid, l.ownerUid);
+  const info = {};
+  info[currentUser.uid] = { label: currentUser.email || t('you'), kind:'buyer' };
+  info[l.ownerUid] = { label: (l.ownerType==='agent'?t('ownerAgent'):t('ownerOwner')), kind: l.ownerType||'owner' };
+  const snapshot = {
+    id: l.id, price: l.price||0, region: l.region||'', district: l.district||'',
+    dealType: l.dealType||'sale', photo: (l.photos&&l.photos[0])||'', propertyType: l.propertyType||'apartment'
+  };
+  try{
+    await db.collection('chats').doc(cid).set({
+      participants: [currentUser.uid, l.ownerUid],
+      participantsInfo: info,
+      listingId: l.id,
+      listingSnapshot: snapshot,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge:true });
+    closeSheet('detailModal');
+    openThread(cid);
+  }catch(err){ console.error(err); toast(t('error')+err.message,'error'); }
+}
+
+function subscribeConversations(){
+  if(chatUnsub){ chatUnsub(); chatUnsub=null; }
+  if(!currentUser) return;
+  conversationsLoadedOnce = false;
+  chatUnsub = db.collection('chats').where('participants','array-contains',currentUser.uid)
+    .onSnapshot((snap)=>{
+      const convs = [];
+      snap.forEach(d=>convs.push({ id:d.id, ...d.data() }));
+      convs.sort((a,b)=>((b.lastAt&&b.lastAt.seconds)||0)-((a.lastAt&&a.lastAt.seconds)||0));
+      convCache = {}; convs.forEach(c=>convCache[c.id]=c);
+      totalUnread = convs.reduce((s,c)=>s + ((c.unread&&c.unread[currentUser.uid])||0), 0);
+      updateChatBadge();
+      if(conversationsLoadedOnce){
+        snap.docChanges().forEach(ch=>{
+          if(ch.type!=='removed'){
+            const c = ch.doc.data();
+            const myUnread = (c.unread && c.unread[currentUser.uid]) || 0;
+            if(c.lastSender && c.lastSender!==currentUser.uid && myUnread>0 && ch.doc.id!==activeChatId){
+              notifyNewMessage(c);
+            }
+          }
+        });
+      }
+      conversationsLoadedOnce = true;
+      if($('screen-chat').classList.contains('active')) renderConversationList(convs);
+    }, (err)=>console.warn('chats:', err));
+}
+
+function notifyNewMessage(c){
+  const body = c.lastMessage || '';
+  if(document.hidden && 'Notification' in window && Notification.permission==='granted'){
+    try{ new Notification(t('notifNewMsg'), { body, icon:'icon.svg' }); }catch(e){}
+  }else if(!$('chatThreadModal').classList.contains('active')){
+    toast('💬 ' + t('notifNewMsg') + (body?(': '+body.slice(0,40)):''));
+  }
+}
+
+function refreshChatScreen(){
+  const lock = $('chatLoggedOut'); const container = $('chatListContainer');
+  if(!currentUser){ lock.classList.remove('hidden'); container.classList.add('hidden'); return; }
+  lock.classList.add('hidden'); container.classList.remove('hidden');
+  const convs = Object.values(convCache).sort((a,b)=>((b.lastAt&&b.lastAt.seconds)||0)-((a.lastAt&&a.lastAt.seconds)||0));
+  renderConversationList(convs);
+}
+$('chatLoggedOut').addEventListener('click', ()=>requireLogin('chat'));
+
+function otherOf(c){
+  const oid = (c.participants||[]).find(u=>u!==currentUser.uid);
+  const info = (c.participantsInfo && c.participantsInfo[oid]) || {};
+  return { uid:oid, label: info.label || '—', kind: info.kind };
+}
+function avatarFor(other){
+  if(other.kind==='agent') return '👔';
+  if(other.kind==='owner') return '🔑';
+  return (other.label||'?').charAt(0).toUpperCase();
+}
+
+function renderConversationList(convs){
+  const container = $('chatListContainer');
+  if(!convs || convs.length===0){
+    container.innerHTML = `<div class="empty-state"><div class="ic">💬</div><div class="title">${t('chatEmpty')}</div><div class="sub">${t('chatEmptySub')}</div></div>`;
+    return;
+  }
+  container.innerHTML = '';
+  convs.forEach(c=>{
+    const other = otherOf(c);
+    const unread = (c.unread && c.unread[currentUser.uid]) || 0;
+    const last = c.lastMessage || (c.listingSnapshot ? (fmtPrice(c.listingSnapshot.price)) : '');
+    const item = document.createElement('div'); item.className='chat-item';
+    item.innerHTML = `
+      <div class="chat-avatar">${avatarFor(other)}</div>
+      <div class="chat-meta">
+        <div class="cm-top"><span class="cm-name">${esc(other.label)}</span><span class="cm-time">${c.lastAt?timeAgo(c.lastAt):''}</span></div>
+        <div class="cm-last ${unread?'unread':''}">${esc(last).slice(0,60)}</div>
+      </div>
+      ${unread?`<div class="chat-unread-dot">${unread>9?'9+':unread}</div>`:''}`;
+    item.addEventListener('click', ()=>openThread(c.id));
+    container.appendChild(item);
+  });
+}
+
+async function openThread(cid){
+  activeChatId = cid;
+  let c = convCache[cid];
+  if(!c){ try{ const d = await db.collection('chats').doc(cid).get(); if(d.exists) c={id:d.id,...d.data()}; }catch(e){} }
+  if(!c){ toast(t('error')); return; }
+  const other = otherOf(c);
+  $('chatHeadAvatar').textContent = avatarFor(other);
+  $('chatHeadName').textContent = other.label;
+  $('chatHeadSub').textContent = c.listingSnapshot ? (c.listingSnapshot.region+', '+c.listingSnapshot.district) : '';
+
+  // reference bar (the listing this chat is about)
+  const ref = $('chatRefBar'); const s = c.listingSnapshot;
+  if(s){
+    ref.style.display='flex';
+    ref.innerHTML = `${s.photo?`<img src="${esc(s.photo)}" alt="">`:`<div class="noimg">${propIcon(s.propertyType)}</div>`}
+      <div class="cr-info"><div class="cr-price">${fmtPrice(s.price)}</div><div class="cr-loc">📍 ${esc(s.region)}, ${esc(s.district)}</div></div>
+      <span style="color:var(--text-faint);font-size:18px;">›</span>`;
+    ref.onclick = ()=>openListingById(c.listingId);
+  }else{ ref.style.display='none'; }
+
+  $('chatMsgs').innerHTML = `<div class="center-note">${t('loading')}</div>`;
+  openSheet('chatThreadModal');
+  requestNotifPermission();
+
+  if(threadUnsub){ threadUnsub(); threadUnsub=null; }
+  threadUnsub = db.collection('chats').doc(cid).collection('messages').orderBy('createdAt','asc')
+    .onSnapshot((snap)=>{
+      const msgs=[]; snap.forEach(d=>msgs.push(d.data()));
+      renderMessages(msgs);
+      markThreadRead(cid);
+    }, (err)=>{ console.warn(err); $('chatMsgs').innerHTML = `<div class="center-note">${t('error')}${esc(err.message)}</div>`; });
+}
+
+function renderMessages(msgs){
+  const box = $('chatMsgs');
+  if(!msgs.length){ box.innerHTML = `<div class="empty-state" style="padding:30px;"><div class="ic">💬</div><div class="sub">${t('msgEmpty')}</div></div>`; return; }
+  let html=''; let lastDay='';
+  msgs.forEach(m=>{
+    const out = m.senderUid===currentUser.uid;
+    let time='';
+    if(m.createdAt && m.createdAt.toDate){
+      const d=m.createdAt.toDate();
+      const day = d.toLocaleDateString();
+      if(day!==lastDay){ html+=`<div class="msg-day">${day}</div>`; lastDay=day; }
+      time = d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+    }
+    html += `<div class="msg ${out?'out':'in'}">${esc(m.text)}<div class="mt">${time}</div></div>`;
+  });
+  box.innerHTML = html;
+  box.scrollTop = box.scrollHeight;
+}
+
+async function markThreadRead(cid){
+  const c = convCache[cid];
+  if(c && c.unread && (c.unread[currentUser.uid]||0)===0) return;
+  try{
+    const upd = {}; upd['unread.'+currentUser.uid] = 0;
+    await db.collection('chats').doc(cid).update(upd);
+  }catch(e){ /* silent */ }
+}
+
+async function sendMessage(){
+  const inp = $('chatInput'); const text = inp.value.trim();
+  if(!text || !activeChatId || !currentUser) return;
+  const c = convCache[activeChatId];
+  const otherUid = c ? (c.participants||[]).find(u=>u!==currentUser.uid) : null;
+  inp.value=''; autoGrow(inp);
+  $('chatSendBtn').disabled = true;
+  try{
+    await db.collection('chats').doc(activeChatId).collection('messages').add({
+      senderUid: currentUser.uid, text, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    const upd = {
+      lastMessage: text,
+      lastSender: currentUser.uid,
+      lastAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    if(otherUid) upd['unread.'+otherUid] = firebase.firestore.FieldValue.increment(1);
+    await db.collection('chats').doc(activeChatId).update(upd);
+  }catch(err){ console.error(err); toast(t('error')+err.message,'error'); }
+  finally{ $('chatSendBtn').disabled = false; }
+}
+
+$('chatSendBtn').addEventListener('click', sendMessage);
+$('chatInput').addEventListener('keydown', (e)=>{
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+});
+$('chatInput').addEventListener('input', (e)=>autoGrow(e.target));
+function autoGrow(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+$('chatBackBtn').addEventListener('click', ()=>{
+  if(threadUnsub){ threadUnsub(); threadUnsub=null; }
+  activeChatId=null; closeSheet('chatThreadModal');
+  if($('screen-chat').classList.contains('active')) refreshChatScreen();
+});
+
+async function openListingById(id){
+  if(!id) return;
+  try{
+    const d = await db.collection('listings').doc(id).get();
+    if(d.exists) openDetail({ id:d.id, ...d.data() });
+    else toast(t('noListings'));
+  }catch(e){ toast(t('error')+e.message,'error'); }
+}
+
+function requestNotifPermission(){
+  if('Notification' in window && Notification.permission==='default'){
+    Notification.requestPermission().catch(()=>{});
+  }
+}
+
 /* ============ INIT ============ */
 applyLanguage(currentLang);
 setCurrency(currentCurrency);
+renderPostLocReadout();
 showScreen('feed');
 loadListings();
 loadHeroStats();

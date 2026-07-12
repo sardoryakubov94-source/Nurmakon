@@ -1,0 +1,27 @@
+{
+  "name": "NurMakon — Uy-joy topish",
+  "short_name": "NurMakon",
+  "description": "O'zbekistonda uy-joy sotib olish, sotish va ijaraga berishning oson, ishonchli platformasi.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a1430",
+  "theme_color": "#0c1d44",
+  "lang": "uz",
+  "categories": ["business", "lifestyle", "shopping"],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
