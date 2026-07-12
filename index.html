@@ -402,6 +402,19 @@
   .search-row input{flex:1;}
   .search-row .btn{width:auto;padding:14px 18px;flex-shrink:0;}
 
+  /* ===== Auth screen close button (guest can dismiss) ===== */
+  .auth-close-btn{
+    position:absolute;top:14px;right:14px;z-index:50;
+    width:36px;height:36px;border-radius:50%;
+    background:rgba(13,17,23,0.55);
+    border:1px solid rgba(255,255,255,0.14);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    color:var(--text);font-size:18px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:transform .12s ease, background .15s ease;
+  }
+  .auth-close-btn:active{transform:scale(0.90);background:rgba(13,17,23,0.7);}
+
   /* ===== Language switcher (floats over the background photo, no bar) ===== */
   .langbar{
     position:absolute;top:14px;left:14px;z-index:45;
@@ -517,6 +530,7 @@
 
 <!-- ===================== AUTH SCREEN ===================== -->
 <div class="screen active" id="screen-auth" style="padding-top:0;">
+  <button class="auth-close-btn" id="authCloseBtn" type="button">✕</button>
   <div class="hero-banner hero-banner-auth">
     <div class="brand hero-logo">Nur<span>Makon</span></div>
     <p class="hero-sub" data-i18n="heroSub">Uy-joy izlashning oson va ishonchli yo'li</p>
@@ -1268,6 +1282,9 @@ auth.onAuthStateChanged(async (user)=>{
     showScreen('auth');
   }
 });
+
+/* ============ AUTH CLOSE BUTTON (guest browsing) ============ */
+document.getElementById('authCloseBtn').addEventListener('click', ()=> showScreen('feed'));
 
 /* ============ ONBOARDING ============ */
 let onboardingChoice = null;
