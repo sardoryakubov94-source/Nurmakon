@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>NurMakon — Uy-joy topish, sotish, ijaraga berish</title>
 <meta name="description" content="NurMakon — O'zbekistonda uy-joy sotib olish, sotish va ijaraga berishning oson, ishonchli va zamonaviy platformasi.">
-<meta name="theme-color" content="#0c1e42">
+<meta name="theme-color" content="#1e2433">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
@@ -49,28 +49,9 @@
     --grad-teal:linear-gradient(180deg, #3fb89a 0%, var(--teal) 55%, var(--teal-2) 100%);
     --nav-h:76px;
     --safe-b:env(safe-area-inset-bottom, 0px);
-    /* Chuqur elegant to'q fon — jonli "Nur" aurora .bg-fx orqali qo'shiladi */
-    --app-bg:radial-gradient(1250px 900px at 50% -6%, #141b2c 0%, #0b0f19 48%, #06080e 100%);
-    --bar-bg:rgba(10,13,22,0.78);
-  }
-  /* ===== Light theme ===== */
-  html[data-theme="light"]{
-    --ink:#eef1f5;
-    --ink-2:#e7ebf1;
-    --surface:#ffffff;
-    --surface-2:#f3f5f9;
-    --surface-3:#e9edf3;
-    --line:#dde3ec;
-    --line-soft:#e8edf3;
-    --text:#131a22;
-    --text-dim:#5a6a7d;
-    --text-faint:#94a3b8;
-    --gold-soft:rgba(214,138,31,0.14);
-    --teal-soft:rgba(31,122,99,0.12);
-    --shadow-1:0 1px 2px rgba(20,30,45,0.06), 0 8px 24px -14px rgba(20,30,45,0.18);
-    --shadow-2:0 2px 8px rgba(20,30,45,0.1), 0 18px 44px -18px rgba(20,30,45,0.28);
-    --app-bg:radial-gradient(1250px 900px at 50% -6%, #ffffff 0%, #eef1f7 55%, #e6eaf2 100%);
-    --bar-bg:rgba(238,241,245,0.85);
+    /* Bitta tema: to'q, lekin pasti qora emas — yumshoq to'q rang (aura ko'rinadi) */
+    --app-bg:radial-gradient(1300px 1000px at 50% -4%, #262c3d 0%, #1c2231 46%, #181c28 100%);
+    --bar-bg:rgba(22,26,36,0.72);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
@@ -122,8 +103,6 @@
   .bg-fx .motes i:nth-child(10){left:92%;animation-duration:21s;animation-delay:9.5s;width:3px;height:3px;}
   .bg-fx .motes i:nth-child(11){left:34%;animation-duration:25s;animation-delay:11s;}
   .bg-fx .motes i:nth-child(12){left:61%;animation-duration:15s;animation-delay:13s;width:5px;height:5px;}
-  html[data-theme="light"] .bg-fx .orb{opacity:.5;}
-  html[data-theme="light"] .bg-fx .motes i{background:rgba(214,138,31,0.75);box-shadow:0 0 7px 1px rgba(214,138,31,0.35);}
   @media (prefers-reduced-motion: reduce){
     .bg-fx .orb{animation:none;} .bg-fx .motes{display:none;}
   }
@@ -279,21 +258,37 @@
 
   /* ===== Language & currency switcher ===== */
   .switch-group{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-  .currency-toggle{
-    display:flex;align-items:center;gap:1px;
-    background:var(--surface-2);
-    border:1px solid var(--line);
-    border-radius:20px;padding:3px;
+  /* ===== Currency dropdown (til kabi bitta tugma, pastga ochiladi) ===== */
+  .cur-dd{position:relative;}
+  .cur-current{
+    display:flex;align-items:center;gap:5px;
+    background:var(--grad-gold);border:none;color:#241505;
+    font-size:11.5px;font-weight:700;letter-spacing:-0.01em;
+    padding:7px 12px;border-radius:20px;cursor:pointer;white-space:nowrap;
+    box-shadow:0 3px 10px -4px rgba(240,168,60,0.6);
+    transition:filter .15s ease, transform .12s ease;
   }
-  .currency-pill{
-    display:flex;align-items:center;gap:3px;
-    background:transparent;border:none;color:var(--text-dim);
-    font-size:11px;font-weight:700;letter-spacing:-0.01em;
-    padding:5px 9px;border-radius:14px;cursor:pointer;white-space:nowrap;
-    transition:background .15s ease, color .15s ease, transform .12s ease;
+  .cur-current:active{transform:scale(0.95);}
+  .cur-current .caret{font-size:8px;opacity:0.9;transition:transform .2s ease;}
+  .cur-dd.open .cur-current{filter:brightness(0.96);}
+  .cur-dd.open .cur-current .caret{transform:rotate(180deg);}
+  .cur-menu{
+    position:absolute;top:calc(100% + 7px);left:0;
+    display:none;flex-direction:column;gap:2px;min-width:124px;z-index:60;
+    background:var(--surface);border:1px solid var(--line);border-radius:13px;
+    padding:5px;box-shadow:var(--shadow-2);
   }
-  .currency-pill:active{transform:scale(0.94);}
-  .currency-pill.active{background:var(--grad-gold);color:#241505;}
+  .cur-dd.open .cur-menu{display:flex;animation:fadeIn .16s ease;}
+  .cur-menu .currency-pill{
+    display:flex;align-items:center;gap:9px;justify-content:flex-start;
+    background:transparent;border:none;color:var(--text);
+    font-size:13.5px;font-weight:600;padding:10px 12px;border-radius:9px;cursor:pointer;white-space:nowrap;
+    transition:background .15s ease, transform .12s ease;
+  }
+  .cur-menu .currency-pill:active{transform:scale(0.97);}
+  .cur-menu .currency-pill:hover{background:var(--surface-2);}
+  .cur-menu .currency-pill.active{background:var(--gold-soft);color:var(--gold);}
+  .cur-menu .currency-pill.active::after{content:"✓";margin-left:auto;font-size:12px;}
 
   /* ===== Language dropdown (pastga ochiladi) ===== */
   .lang-dd{position:relative;}
@@ -874,14 +869,18 @@
           <button class="lang-pill" data-lang="en" type="button"><span>🇬🇧</span>English</button>
         </div>
       </div>
-      <div class="currency-toggle" id="currencyToggle">
-        <button class="currency-pill active" data-cur="uzs" type="button">so'm</button>
-        <button class="currency-pill" data-cur="usd" type="button">$</button>
+      <div class="cur-dd" id="currencyToggle">
+        <button class="cur-current" id="curCurrentBtn" type="button">
+          <span id="curCurrentLabel">so'm</span><span class="caret">▾</span>
+        </button>
+        <div class="cur-menu">
+          <button class="currency-pill active" data-cur="uzs" type="button">so'm</button>
+          <button class="currency-pill" data-cur="usd" type="button">$ dollar</button>
+        </div>
       </div>
     </div>
   </div>
   <div class="topbar-right">
-    <button class="icon-btn" id="themeBtn" title="Tema">🌙</button>
     <button class="topbar-login-btn" id="topbarLoginBtn" data-i18n="navLogin">Kirish</button>
     <button class="icon-btn" id="logoutBtn" title="Chiqish" style="display:none;">⎋</button>
   </div>
@@ -1566,24 +1565,11 @@ function applyLanguage(lang){
   if(typeof renderPostLocReadout==='function') renderPostLocReadout();
 }
 
-/* ============ THEME ============ */
-function applyTheme(theme){
-  document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('nm_theme', theme);
-  $('themeBtn').textContent = theme === 'light' ? '☀️' : '🌙';
-  $('themeBtn').title = theme === 'light' ? 'Yorug\'' : 'Qorong\'i';
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if(meta) meta.content = theme === 'light' ? '#eef1f5' : '#0c1e42';
-}
-$('themeBtn').addEventListener('click', ()=>{
-  const cur = document.documentElement.getAttribute('data-theme');
-  applyTheme(cur === 'light' ? 'dark' : 'light');
-});
-applyTheme(localStorage.getItem('nm_theme') || 'dark');
-
-/* ============ LANGUAGE / CURRENCY SWITCHER UI ============ */
+/* ============ LANGUAGE / CURRENCY SWITCHER UI (bitta tema) ============ */
 const langToggle = $('langToggle');
-$('langCurrentBtn').addEventListener('click', e=>{ e.stopPropagation(); langToggle.classList.toggle('open'); });
+const curToggle = $('currencyToggle');
+$('langCurrentBtn').addEventListener('click', e=>{ e.stopPropagation(); curToggle.classList.remove('open'); langToggle.classList.toggle('open'); });
+$('curCurrentBtn').addEventListener('click', e=>{ e.stopPropagation(); langToggle.classList.remove('open'); curToggle.classList.toggle('open'); });
 document.querySelectorAll('.lang-menu .lang-pill').forEach(pill=>{
   pill.addEventListener('click', e=>{
     e.stopPropagation();
@@ -1591,15 +1577,22 @@ document.querySelectorAll('.lang-menu .lang-pill').forEach(pill=>{
     langToggle.classList.remove('open');
   });
 });
-document.addEventListener('click', e=>{ if(!langToggle.contains(e.target)) langToggle.classList.remove('open'); });
-
-document.querySelectorAll('.currency-pill').forEach(pill=>{
-  pill.addEventListener('click', e=>{ e.stopPropagation(); setCurrency(pill.dataset.cur); });
+document.querySelectorAll('.cur-menu .currency-pill').forEach(pill=>{
+  pill.addEventListener('click', e=>{
+    e.stopPropagation();
+    setCurrency(pill.dataset.cur);
+    curToggle.classList.remove('open');
+  });
+});
+document.addEventListener('click', e=>{
+  if(!langToggle.contains(e.target)) langToggle.classList.remove('open');
+  if(!curToggle.contains(e.target)) curToggle.classList.remove('open');
 });
 function setCurrency(cur){
   currentCurrency = cur;
   localStorage.setItem('nm_currency', cur);
-  document.querySelectorAll('.currency-pill').forEach(p=>p.classList.toggle('active', p.dataset.cur===cur));
+  document.querySelectorAll('.cur-menu .currency-pill').forEach(p=>p.classList.toggle('active', p.dataset.cur===cur));
+  const lbl = $('curCurrentLabel'); if(lbl) lbl.textContent = (cur==='usd') ? '$' : "so'm";
   if($('screen-feed').classList.contains('active')) renderListings();
   if($('screen-favorites').classList.contains('active')) refreshFavoritesScreen();
 }
