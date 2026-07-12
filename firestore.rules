@@ -44,7 +44,7 @@ service cloud.firestore {
           && request.resource.data.credits <= resource.data.credits
       );
     }
-    // Egasi o'zini 'premium' qila olmaydi — buni faqat admin (to'lov tasdiqlangач) qiladi.
+    // Egasi o'zini 'premium' qila olmaydi — buni faqat admin (to'lov tasdiqlangach) qiladi.
     function ownerPlanOk() {
       return !('plan' in request.resource.data)
         || request.resource.data.plan != 'premium'
@@ -147,8 +147,8 @@ service cloud.firestore {
 
     // ---- Top-ups (balans to'ldirish so'rovlari) ----
     // Makler o'z nomidan so'rov yaratadi ('pending'); tasdiqlashni faqat admin bajaradi.
-    // DIQQAT: balansning haqiqiy himoyasi uchun kelajakda Cloud Functions kerak,
-    // chunki foydalanuvchi o'z users hujjatidagi 'credits' ni tahrirlay oladi.
+    // Eslatma: balansni o'zi oshirishning oldi 'users' qoidalari (ownerCreditsOk)
+    // orqali olindi. To'liq server-side himoya uchun kelajakda Cloud Functions mumkin.
     match /topups/{topupId} {
       allow create: if isSignedIn()
         && request.resource.data.brokerUid == request.auth.uid
