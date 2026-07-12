@@ -398,15 +398,17 @@
   }
   .mode-opt:active{transform:scale(0.98);}
   .mode-opt .mo-ic{font-size:20px;flex-shrink:0;line-height:1;}
+  .mode-opt{padding:13px 11px;}
   .mode-opt .mo-tx{display:flex;flex-direction:column;min-width:0;}
-  .mode-opt .mo-tx b{font-size:12.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .mode-opt .mo-tx small{font-size:10px;color:var(--text-dim);line-height:1.25;margin-top:1px;}
+  .mode-opt .mo-tx b{font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .mode-opt.active{border-color:var(--gold);background:var(--gold-soft);}
-  .mode-opt.active .mo-ic{filter:drop-shadow(0 0 6px rgba(240,168,60,0.5));}
   .mode-opt.active .mo-tx b{color:var(--gold);}
+  /* Bitta izoh paneli — box bosilganda parda ochilgandek yangilanadi */
   .mode-hint{font-size:12px;color:#ffffff;font-weight:600;text-align:center;margin:0 0 12px;line-height:1.45;letter-spacing:-0.01em;
-    background:rgba(51,161,132,0.16);border:1px solid rgba(51,161,132,0.42);border-radius:11px;padding:9px 13px;}
+    background:rgba(51,161,132,0.16);border:1px solid rgba(51,161,132,0.42);border-radius:11px;padding:9px 13px;overflow:hidden;}
   .mode-hint b{color:#8af0d0;font-weight:700;}
+  .mode-hint.reveal{animation:hintReveal .34s cubic-bezier(.2,.7,.2,1);}
+  @keyframes hintReveal{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
 
   /* ===== Broker leads: client-request CTA + request cards + perks ===== */
   .broker-cta{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;
@@ -1049,10 +1051,10 @@
   <div class="search-float">
     <div class="mode-switch" id="modeSwitch">
       <button class="mode-opt active" data-mode="independent" type="button">
-        <span class="mo-tx"><b data-i18n="modeIndepTitle">Mustaqil</b><small data-i18n="modeIndepDesc">Komissiyasiz, to'g'ridan-to'g'ri</small></span>
+        <span class="mo-tx"><b data-i18n="modeIndepTitle">Mustaqil</b></span>
       </button>
       <button class="mode-opt" data-mode="assisted" type="button">
-        <span class="mo-tx"><b data-i18n="modeAssistTitle">Makler yordamida</b><small data-i18n="modeAssistDesc">Makler mos uy topadi</small></span>
+        <span class="mo-tx"><b data-i18n="modeAssistTitle">Makler yordamida</b></span>
       </button>
     </div>
     <p class="mode-hint" id="modeHint"></p>
@@ -2213,7 +2215,10 @@ function debounce(fn, d){ let tmr; return (...a)=>{ clearTimeout(tmr); tmr=setTi
 function syncModeUI(){
   document.querySelectorAll('.mode-opt').forEach(o=>o.classList.toggle('active', o.dataset.mode===currentMode));
   const hint = $('modeHint');
-  if(hint) hint.innerHTML = (currentMode==='assisted') ? t('modeHintAssist') : t('modeHintIndep');
+  if(hint){
+    hint.innerHTML = (currentMode==='assisted') ? t('modeHintAssist') : t('modeHintIndep');
+    hint.classList.remove('reveal'); void hint.offsetWidth; hint.classList.add('reveal');
+  }
   const cta = $('brokerCta'); if(cta) cta.classList.toggle('hidden', currentMode!=='assisted');
 }
 function setMode(mode, persist){
