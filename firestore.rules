@@ -140,8 +140,21 @@ service cloud.firestore {
         && request.resource.data.requesterUid == request.auth.uid;
       allow read: if isSignedIn()
         && (resource.data.requesterUid == request.auth.uid || isAgentUser() || isAdmin());
-      allow update, delete: if isSignedIn()
-        && resource.data.requesterUid == request.auth.uid;
+      // So'rov egasi (yoki admin) to'liq tahrirlaydi; makler faqat o'zini "qabul
+      // qildim" ro'yxatiga qo'sha oladi (acceptedBy/acceptCount/status), limit = 3.
+      allow update: if isSignedIn() && (
+        resource.data.requesterUid == request.auth.uid
+        || isAdmin()
+        || (
+          isAgentUser()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['acceptedBy','acceptCount','status'])
+          && request.auth.uid in request.resource.data.acceptedBy
+          && request.resource.data.acceptedBy.size() <= 3
+          && request.resource.data.status == 'accepted'
+        )
+      );
+      allow delete: if isSignedIn()
+        && (resource.data.requesterUid == request.auth.uid || isAdmin());
     }
   }
 }
