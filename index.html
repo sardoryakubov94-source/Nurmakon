@@ -161,6 +161,74 @@
   }
   .nav-item.active{color:var(--gold);background:var(--gold-soft);}
   .nav-item .ic{font-size:19px;}
+  .nav-item-center{position:relative;}
+  .nav-item-center .ic{
+    width:40px;height:40px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg, #f5b656 0%, var(--gold) 55%, var(--gold-2) 100%);
+    color:#241505;font-size:19px;
+    margin-top:-20px;
+    box-shadow:0 6px 16px -4px rgba(212,164,74,0.55);
+  }
+  .nav-item-center span{margin-top:-2px;}
+  .nav-item-center.active{background:none;color:var(--gold);}
+
+  /* ===== Guest lock card (browse without login) ===== */
+  .lock-card{
+    display:flex;align-items:center;gap:14px;
+    background:var(--surface-2);border:1px solid var(--line);
+    border-radius:16px;padding:16px;margin-top:14px;
+    cursor:pointer;transition:transform .12s ease, border-color .15s ease;
+  }
+  .lock-card:active{transform:scale(0.98);}
+  .lock-card:hover{border-color:var(--gold-2);}
+  .lock-card .lock-ic{
+    width:46px;height:46px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg, #f5b656 0%, var(--gold) 55%, var(--gold-2) 100%);
+    color:#241505;font-size:20px;
+  }
+  .lock-card .lock-txt{flex:1;}
+  .lock-card .lock-txt h3{margin:0 0 3px;font-size:16px;}
+  .lock-card .lock-txt p{margin:0;font-size:13px;color:var(--text-dim);}
+  .lock-card .lock-chevron{color:var(--text-faint);font-size:20px;}
+  .lock-empty{text-align:center;padding:60px 20px;color:var(--text-dim);}
+  .lock-empty .ic{font-size:38px;margin-bottom:10px;}
+
+  /* ===== Topbar guest login button ===== */
+  .topbar-login-btn{
+    display:flex;align-items:center;gap:6px;
+    background:linear-gradient(180deg, #f5b656 0%, var(--gold) 55%, var(--gold-2) 100%);
+    color:#241505;border:none;border-radius:11px;
+    font-size:13px;font-weight:700;
+    padding:9px 14px;cursor:pointer;
+  }
+  .topbar-login-btn:active{transform:scale(0.96);}
+
+  /* ===== Favorite heart on listing card ===== */
+  .fav-btn{
+    position:absolute;top:10px;right:10px;z-index:2;
+    width:34px;height:34px;border-radius:50%;
+    background:rgba(13,17,23,0.55);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,0.14);
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;cursor:pointer;color:rgba(244,241,234,0.85);
+    transition:transform .12s ease, background .15s ease;
+  }
+  .fav-btn:active{transform:scale(0.88);}
+  .fav-btn.active{color:#ff5f6d;background:rgba(13,17,23,0.7);}
+  .listing{position:relative;}
+
+  /* ===== Auth screen close button (guest can dismiss) ===== */
+  .auth-close-btn{
+    position:absolute;top:14px;right:14px;z-index:50;
+    width:36px;height:36px;border-radius:50%;
+    background:rgba(13,17,23,0.5);border:1px solid rgba(255,255,255,0.14);
+    color:var(--text);font-size:16px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+  }
 
   /* ===== Listing card ===== */
   .listing{
@@ -262,7 +330,7 @@
     z-index:60;display:none;max-width:88%;text-align:center;
   }
   /* ===== Hero (auth screen) ===== */
-  .hero-logo{font-size:38px;letter-spacing:-0.02em;}
+  .hero-logo{font-size:38px;letter-spacing:-0.02em;text-shadow:0 2px 14px rgba(0,0,0,0.7);}
   .hero-sub{
     color:var(--text);
     font-family:'Space Grotesk',system-ui,sans-serif;
@@ -306,7 +374,7 @@
   .auth-pane{display:none;}
   .auth-pane.active{display:block;}
 
-  /* ===== Hero banner (photo background) ===== */
+  /* ===== Hero banner (custom brand illustration, no stock photo) ===== */
   .hero-banner{
     position:relative;
     overflow:hidden;
@@ -345,12 +413,13 @@
     padding-bottom:16px;
   }
   .hero-banner-auth::after{
-    width:58%;max-width:260px;
-    bottom:-2%;
+    width:64%;max-width:300px;
+    bottom:-1%;
+    opacity:0.9;
   }
   .hero-banner-auth .brand{font-size:32px;}
   .hero-banner-auth .hero-sub{margin-top:7px;font-size:15px;}
-  .hero-banner .brand{font-size:36px;}
+  .hero-banner .brand{font-size:36px;text-shadow:0 2px 14px rgba(0,0,0,0.7);}
   .hero-banner .hero-sub{
     color:rgba(244,241,234,0.94);
     font-size:16px;
@@ -363,7 +432,7 @@
     display:flex;align-items:center;justify-content:space-between;
   }
 
-  /* ===== Auth screen: dim photo background instead of flat black ===== */
+  /* ===== Auth screen: dim custom illustration instead of flat black ===== */
   #screen-auth{
     position:relative;
     min-height:100vh;
@@ -383,17 +452,17 @@
     transform-origin:center top;
     z-index:0;
   }
-  #screen-auth .hero-banner-auth::after{
-    width:64%;max-width:300px;
-    bottom:-1%;
-    opacity:0.9;
-  }
   #screen-auth > *{
     position:relative;
     z-index:1;
   }
   #screen-auth .hero-banner-auth{
     background:none;
+  }
+  #screen-auth .hero-banner-auth::after{
+    width:64%;max-width:300px;
+    bottom:-1%;
+    opacity:0.9;
   }
   #screen-auth .card.search-float{
     background:rgba(23,29,38,0.82);
@@ -436,7 +505,7 @@
   .search-row input{flex:1;}
   .search-row .btn{width:auto;padding:14px 18px;flex-shrink:0;}
 
-  /* ===== Language switcher (floats over the background photo, no bar) ===== */
+  /* ===== Language switcher (floats over the background, no bar) ===== */
   .langbar{
     position:absolute;top:14px;left:14px;z-index:45;
     display:flex;align-items:center;
@@ -466,7 +535,6 @@
     background:linear-gradient(180deg, #f5b656 0%, var(--gold-2) 100%);
     color:#241505;
   }
-  /* Collapsed by default: only the active language pill is shown until tapped */
   .lang-toggle:not(.expanded) .lang-pill:not(.active){
     display:none;
   }
@@ -476,14 +544,43 @@
     margin-left:2px;
     opacity:0.8;
   }
-  /* When docked inside the topbar (logged-in screens) it behaves as a normal row item */
   .langbar.inline{
     position:static;top:auto;left:auto;
     margin-right:10px;
   }
+
+  /* ===== Currency switcher (sits right next to the language switcher) ===== */
+  .currency-toggle{
+    display:flex;align-items:center;gap:1px;
+    background:rgba(13,17,23,0.55);
+    border:1px solid rgba(255,255,255,0.14);
+    border-radius:20px;
+    padding:3px;
+    margin-left:6px;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    pointer-events:auto;
+  }
+  .currency-pill{
+    background:transparent;border:none;color:rgba(244,241,234,0.75);
+    font-size:10.5px;font-weight:700;letter-spacing:-0.01em;
+    padding:4px 9px;border-radius:14px;
+    cursor:pointer;white-space:nowrap;
+    transition:background .15s ease, color .15s ease, transform .12s ease;
+  }
+  .currency-pill:active{transform:scale(0.94);}
+  .currency-pill.active{
+    background:linear-gradient(180deg, #f5b656 0%, var(--gold-2) 100%);
+    color:#241505;
+  }
+  .price-secondary{
+    font-size:12.5px;font-weight:500;color:var(--text-dim);
+    font-family:'Inter',system-ui,sans-serif;margin-left:6px;
+  }
 </style>
 </head>
 <body>
+
 
 <div class="modal-overlay" id="termsModal">
   <div class="modal">
@@ -505,19 +602,19 @@
       <p>Mulk egasi/makler va xaridor/ijarachi o'rtasidagi barcha kelishuvlar, jumladan narx, komissiya miqdori va to'lov shartlari — faqat tomonlarning o'zaro kelishuviga asoslanadi. Platforma bunday kelishuvlarga aralashmaydi, ularni tasdiqlamaydi va bajarilishiga kafolat bermaydi.</p>
 
       <h4>6. Mustaqil qidiruv himoyasi</h4>
-      <p>Agar foydalanuvchi ro'yxatdan o'tishda yoki keyinchalik "mustaqil qidiraman" rejimini tanlagan bo'lsa, tizim uning ushbu tanlovini va e'lonlarga birinchi murojaat qilgan vaqtini qayd etib boradi. Foydalanuvchi shu tarzda mustaqil topgan bitimga nisbatan, kelishuvda ishtirok etmagan uchinchi tomon (makler)ning keyinchalik to'lov yoki komissiya talab qilishi — Platforma javobgarligidan tashqarida bo'lib, bunday da'volar bevosita da'vogar va foydalanuvchi o'rtasidagi masala hisoblanadi.</p>
+      <p>Agar foydalanuvchi ro'yxatdan o'tishda yoki keyinchalik "mustaqil qidiraman" rejimini tanlagan bo'lsa, tizim uning ushbu tanlovini va e'lonlarga birinchi murojaat qilgan vaqtini qayd etib boradi.</p>
 
       <h4>7. Taqiqlangan harakatlar</h4>
       <p>Foydalanuvchilarga quyidagilar taqiqlanadi: yolg'on yoki chalg'ituvchi e'lon joylash, boshqa foydalanuvchining shaxsiy ma'lumotlaridan ruxsatsiz foydalanish, Platformani firibgarlik yoki noqonuniy maqsadlarda ishlatish, boshqa foydalanuvchilarni bezovta qilish yoki ularga tazyiq o'tkazish.</p>
 
       <h4>8. Shaxsiy ma'lumotlar</h4>
-      <p>Foydalanuvchi tomonidan kiritilgan email va telefon raqami faqat hisobga kirish, bog'lanish va xizmat sifatini yaxshilash maqsadida ishlatiladi. Bu ma'lumotlar uchinchi shaxslarga sotilmaydi yoki tijorat maqsadida berilmaydi, qonun talab qilgan hollar bundan mustasno.</p>
+      <p>Foydalanuvchi tomonidan kiritilgan email va telefon raqami faqat hisobga kirish, bog'lanish va xizmat sifatini yaxshilash maqsadida ishlatiladi. Bu ma'lumotlar uchinchi shaxslarga sotilmaydi yoki tijorat maqsadida berilmaydi.</p>
 
       <h4>9. Javobgarlikni cheklash</h4>
-      <p>Platforma e'lonlar mazmuni, mulk holati yoki foydalanuvchilar o'rtasidagi kelishuvlar natijasida yuzaga kelishi mumkin bo'lgan har qanday moliyaviy yoki boshqa zarar uchun javobgar emas. Foydalanuvchi bitim tuzishdan oldin mulk va uning egasi haqidagi ma'lumotlarni mustaqil tekshirishi tavsiya etiladi.</p>
+      <p>Platforma e'lonlar mazmuni, mulk holati yoki foydalanuvchilar o'rtasidagi kelishuvlar natijasida yuzaga kelishi mumkin bo'lgan har qanday moliyaviy yoki boshqa zarar uchun javobgar emas.</p>
 
       <h4>10. Shartnomaga o'zgartirish kiritish</h4>
-      <p>Ushbu Shartnoma O'zbekiston Respublikasining rielторlik faoliyatini tartibga soluvchi amaldagi qonunchiligiga muvofiq yangilanib turishi mumkin. O'zgarishlar Platformada e'lon qilingan kundan boshlab kuchga kiradi.</p>
+      <p>Ushbu Shartnoma amaldagi qonunchilikka muvofiq yangilanib turishi mumkin. O'zgarishlar Platformada e'lon qilingan kundan boshlab kuchga kiradi.</p>
 
       <h4>11. Bog'lanish</h4>
       <p>Shartnoma yuzasidan savollar bo'yicha foydalanuvchi Platforma orqali qo'llab-quvvatlash xizmatiga murojaat qilishi mumkin.</p>
@@ -533,24 +630,28 @@
   </div>
 </div>
 
-<div class="langbar" id="langbar">
-  <div class="lang-toggle" id="langToggle">
-    <button class="lang-pill" data-lang="uz" type="button">O'zb<span>🇺🇿</span></button>
-    <button class="lang-pill" data-lang="ru" type="button">Rus<span>🇷🇺</span></button>
-    <button class="lang-pill" data-lang="en" type="button">Eng<span>🇬🇧</span></button>
-  </div>
-</div>
-
-<div class="topbar" id="topbar" style="display:none;">
+<div class="topbar" id="topbar">
   <div class="topbar-left" id="topbarLeft">
-    <div class="brand">Nur<span>Makon</span></div>
+    <div class="langbar inline" id="langbar">
+      <div class="lang-toggle" id="langToggle">
+        <button class="lang-pill" data-lang="uz" type="button">O'zb<span>🇺🇿</span></button>
+        <button class="lang-pill" data-lang="ru" type="button">Rus<span>🇷🇺</span></button>
+        <button class="lang-pill" data-lang="en" type="button">Eng<span>🇬🇧</span></button>
+      </div>
+      <div class="currency-toggle" id="currencyToggle">
+        <button class="currency-pill active" data-cur="uzs" type="button">so'm</button>
+        <button class="currency-pill" data-cur="usd" type="button">$</button>
+      </div>
+    </div>
   </div>
+  <button class="topbar-login-btn" id="topbarLoginBtn" data-i18n="navLogin">Kirish</button>
   <button class="icon-btn" id="logoutBtn" title="Chiqish" style="display:none;">⎋</button>
 </div>
 
 
 <!-- ===================== AUTH SCREEN ===================== -->
-<div class="screen active" id="screen-auth" style="padding-top:0;">
+<div class="screen" id="screen-auth" style="padding-top:0;">
+  <button class="auth-close-btn" id="authCloseBtn" type="button">✕</button>
   <div class="hero-banner hero-banner-auth">
     <div class="brand hero-logo">Nur<span>Makon</span></div>
     <p class="hero-sub" data-i18n="heroSub">Uy-joy izlashning oson va ishonchli yo'li</p>
@@ -621,7 +722,7 @@
 </div>
 
 <!-- ===================== FEED / SEARCH SCREEN ===================== -->
-<div class="screen" id="screen-feed" style="padding-top:0;">
+<div class="screen active" id="screen-feed" style="padding-top:0;">
   <div class="hero-banner">
     <div class="brand">Nur<span>Makon</span></div>
     <p class="hero-sub" data-i18n="heroSub">Uy-joy izlashning oson va ishonchli yo'li</p>
@@ -717,44 +818,76 @@
 <!-- ===================== PROFILE SCREEN ===================== -->
 <div class="screen" id="screen-profile">
   <h2 style="margin-top:10px;" data-i18n="profileTitle">Profil</h2>
-  <div class="card">
-    <div id="profileEmail" style="font-size:16px;font-weight:600;"></div>
-    <div class="center-note" style="text-align:left;margin-top:4px;" id="profileMode"></div>
-    <button class="btn btn-outline" id="changeModeBtn" style="margin-top:14px;" data-i18n="changeModeBtn">Rejimni o'zgartirish</button>
+
+  <div class="lock-card" id="profileLoggedOut">
+    <div class="lock-ic">👤</div>
+    <div class="lock-txt">
+      <h3 data-i18n="lockLoginTitle">Tizimga kirish</h3>
+      <p data-i18n="lockLoginSub">To'liq versiya uchun tizimga kiring</p>
+    </div>
+    <div class="lock-chevron">›</div>
   </div>
 
-  <div class="card">
-    <h3 style="margin:0 0 4px;" data-i18n="phoneCardTitle">Telefon raqami</h3>
-    <p class="center-note" style="text-align:left;margin-bottom:10px;" data-i18n="phoneCardSub">Bu raqam e'lonlaringizda bog'lanish uchun ko'rsatiladi.</p>
-    <input type="tel" id="profilePhoneInput" placeholder="+998 90 123 45 67">
-    <button class="btn btn-secondary" id="savePhoneBtn" style="margin-top:12px;" data-i18n="saveBtn">Saqlash</button>
-  </div>
+  <div id="profileLoggedIn" class="hidden">
+    <div class="card">
+      <div id="profileEmail" style="font-size:16px;font-weight:600;"></div>
+      <div class="center-note" style="text-align:left;margin-top:4px;" id="profileMode"></div>
+      <button class="btn btn-outline" id="changeModeBtn" style="margin-top:14px;" data-i18n="changeModeBtn">Rejimni o'zgartirish</button>
+    </div>
 
-  <div class="card" id="agentRegisterCard">
-    <h3 style="margin:0 0 4px;" data-i18n="agentRegisterTitle">Makler sifatida ro'yxatdan o'tish</h3>
-    <p class="center-note" style="text-align:left;margin-bottom:14px;" data-i18n="agentRegisterSub">Ism va ish hududingizni kiriting — darhol ishlay boshlaysiz.</p>
-    <label data-i18n="agentNameLabel">Ism-familiya</label>
-    <input type="text" id="agentName" placeholder="Ism Familiya">
-    <label data-i18n="agentDistrictLabel">Asosiy ish hududi</label>
-    <input type="text" id="agentDistrict" placeholder="Andijon shahri">
-    <button class="btn btn-secondary" id="agentRegisterBtn" style="margin-top:14px;" data-i18n="agentRegisterTitle">Makler sifatida ro'yxatdan o'tish</button>
-  </div>
+    <div class="card">
+      <h3 style="margin:0 0 4px;" data-i18n="phoneCardTitle">Telefon raqami</h3>
+      <p class="center-note" style="text-align:left;margin-bottom:10px;" data-i18n="phoneCardSub">Bu raqam e'lonlaringizda bog'lanish uchun ko'rsatiladi.</p>
+      <input type="tel" id="profilePhoneInput" placeholder="+998 90 123 45 67">
+      <button class="btn btn-secondary" id="savePhoneBtn" style="margin-top:12px;" data-i18n="saveBtn">Saqlash</button>
+    </div>
 
-  <div class="card hidden" id="agentPanelCard">
-    <h3 style="margin:0 0 10px;" data-i18n="agentPanelTitle">Makler paneli</h3>
-    <p class="center-note" style="text-align:left;" data-i18n="agentPanelSub">Siz tasdiqlangan makler sifatida ro'yxatdasiz. Mijozlar so'rovlari va o'z e'lonlaringiz shu yerda ko'rinadi.</p>
-    <div id="myListingsSummary" style="margin-top:10px;"></div>
+    <div class="card" id="agentRegisterCard">
+      <h3 style="margin:0 0 4px;" data-i18n="agentRegisterTitle">Makler sifatida ro'yxatdan o'tish</h3>
+      <p class="center-note" style="text-align:left;margin-bottom:14px;" data-i18n="agentRegisterSub">Ism va ish hududingizni kiriting — darhol ishlay boshlaysiz.</p>
+      <label data-i18n="agentNameLabel">Ism-familiya</label>
+      <input type="text" id="agentName" placeholder="Ism Familiya">
+      <label data-i18n="agentDistrictLabel">Asosiy ish hududi</label>
+      <input type="text" id="agentDistrict" placeholder="Andijon shahri">
+      <button class="btn btn-secondary" id="agentRegisterBtn" style="margin-top:14px;" data-i18n="agentRegisterTitle">Makler sifatida ro'yxatdan o'tish</button>
+    </div>
+
+    <div class="card hidden" id="agentPanelCard">
+      <h3 style="margin:0 0 10px;" data-i18n="agentPanelTitle">Makler paneli</h3>
+      <p class="center-note" style="text-align:left;" data-i18n="agentPanelSub">Siz tasdiqlangan makler sifatida ro'yxatdasiz. Mijozlar so'rovlari va o'z e'lonlaringiz shu yerda ko'rinadi.</p>
+      <div id="myListingsSummary" style="margin-top:10px;"></div>
+    </div>
+
+    <button class="btn btn-outline" id="profileLogoutBtn" style="margin-top:6px;" data-i18n="logoutBtnLabel">Tizimdan chiqish</button>
   </div>
 </div>
 
+<!-- ===================== FAVORITES SCREEN ===================== -->
+<div class="screen" id="screen-favorites">
+  <h2 style="margin-top:10px;" data-i18n="navFavorites">Sevimli</h2>
+
+  <div class="lock-card" id="favoritesLoggedOut">
+    <div class="lock-ic">♡</div>
+    <div class="lock-txt">
+      <h3 data-i18n="lockFavTitle">Sevimlilarni ko'rish uchun kiring</h3>
+      <p data-i18n="lockFavSub">Yoqqan e'lonlarni saqlab qo'yish uchun tizimga kiring</p>
+    </div>
+    <div class="lock-chevron">›</div>
+  </div>
+
+  <div id="favoritesContainer" class="hidden"></div>
+</div>
+
 <!-- ===================== BOTTOM NAV ===================== -->
-<div class="bottomnav" id="bottomnav" style="display:none;">
+<div class="bottomnav" id="bottomnav">
   <button class="nav-item active" data-screen="feed"><div class="ic">🏠</div><span data-i18n="navSearch">Qidirish</span></button>
-  <button class="nav-item" data-screen="post"><div class="ic">➕</div><span data-i18n="navPost">E'lon berish</span></button>
+  <button class="nav-item" data-screen="favorites"><div class="ic">♡</div><span data-i18n="navFavorites">Sevimli</span></button>
+  <button class="nav-item nav-item-center" data-screen="post"><div class="ic">➕</div><span data-i18n="navPost">E'lon berish</span></button>
   <button class="nav-item" data-screen="profile"><div class="ic">👤</div><span data-i18n="navProfile">Profil</span></button>
 </div>
 
 <div class="toast" id="toast"></div>
+
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -834,14 +967,12 @@ const IMGBB_API_KEY = "b5bb6961331116f8bf76874c4bfa1fdf";
 let currentUser = null;
 let userDoc = null;
 let selectedPhotos = [];
-let uploadedPhotoUrls = [];
 
 /* ============ I18N (UZ / RU / EN) ============ */
 const LANG_NAMES = { uz: "O'zbek", ru: "Русский", en: "English" };
 const I18N = {
   uz: {
     heroSub: "Uy-joy izlashning oson va ishonchli yo'li",
-    appleSignIn: "Apple orqali davom etish",
     googleSignIn: "Google orqali davom etish",
     or: "yoki",
     tabLogin: "Kirish",
@@ -902,6 +1033,15 @@ const I18N = {
     navSearch: "Qidirish",
     navPost: "E'lon berish",
     navProfile: "Profil",
+    navFavorites: "Sevimli",
+    navLogin: "Kirish",
+    lockLoginTitle: "Tizimga kirish",
+    lockLoginSub: "To'liq versiya uchun tizimga kiring",
+    lockFavTitle: "Sevimlilarni ko'rish uchun kiring",
+    lockFavSub: "Yoqqan e'lonlarni saqlab qo'yish uchun tizimga kiring",
+    favEmpty: "Hozircha sevimli e'lonlar yo'q",
+    needLoginToast: "Bu amal uchun avval tizimga kiring",
+    logoutBtnLabel: "Tizimdan chiqish",
     dealSale: "Sotiladi",
     dealRent: "Ijaraga",
     ownerAgent: "Makler",
@@ -915,7 +1055,6 @@ const I18N = {
   },
   ru: {
     heroSub: "Простой и надёжный способ найти жильё",
-    appleSignIn: "Продолжить через Apple",
     googleSignIn: "Продолжить через Google",
     or: "или",
     tabLogin: "Вход",
@@ -976,6 +1115,15 @@ const I18N = {
     navSearch: "Поиск",
     navPost: "Разместить",
     navProfile: "Профиль",
+    navFavorites: "Избранное",
+    navLogin: "Войти",
+    lockLoginTitle: "Войти в аккаунт",
+    lockLoginSub: "Войдите, чтобы получить полный доступ",
+    lockFavTitle: "Войдите, чтобы видеть избранное",
+    lockFavSub: "Войдите, чтобы сохранять понравившиеся объявления",
+    favEmpty: "Пока нет избранных объявлений",
+    needLoginToast: "Для этого действия сначала войдите в аккаунт",
+    logoutBtnLabel: "Выйти из аккаунта",
     dealSale: "Продажа",
     dealRent: "Аренда",
     ownerAgent: "Риелтор",
@@ -989,7 +1137,6 @@ const I18N = {
   },
   en: {
     heroSub: "The easy and trusted way to find a home",
-    appleSignIn: "Continue with Apple",
     googleSignIn: "Continue with Google",
     or: "or",
     tabLogin: "Log in",
@@ -1050,6 +1197,15 @@ const I18N = {
     navSearch: "Search",
     navPost: "Post listing",
     navProfile: "Profile",
+    navFavorites: "Favorites",
+    navLogin: "Log in",
+    lockLoginTitle: "Log in to your account",
+    lockLoginSub: "Log in to unlock the full experience",
+    lockFavTitle: "Log in to see favorites",
+    lockFavSub: "Log in to save listings you like",
+    favEmpty: "No favorite listings yet",
+    needLoginToast: "Please log in first to do this",
+    logoutBtnLabel: "Log out",
     dealSale: "For sale",
     dealRent: "For rent",
     ownerAgent: "Broker",
@@ -1064,6 +1220,8 @@ const I18N = {
 };
 
 let currentLang = localStorage.getItem('nm_lang') || 'uz';
+let currentCurrency = localStorage.getItem('nm_currency') || 'uzs';
+const UZS_PER_USD = 12000;
 
 function t(key){
   return (I18N[currentLang] && I18N[currentLang][key]) || I18N.uz[key] || key;
@@ -1085,11 +1243,14 @@ function applyLanguage(lang){
   document.querySelectorAll('[data-i18n-html]').forEach(el=>{
     el.innerHTML = t(el.dataset.i18nHtml);
   });
-  if(document.getElementById('screen-feed').classList.contains('active') && document.getElementById('topbar').style.display !== 'none'){
+  if(document.getElementById('screen-feed').classList.contains('active')){
     loadListings();
   }
   if(document.getElementById('screen-profile').classList.contains('active')){
     refreshProfileScreen();
+  }
+  if(document.getElementById('screen-favorites').classList.contains('active')){
+    refreshFavoritesScreen();
   }
 }
 
@@ -1099,7 +1260,6 @@ document.querySelectorAll('.lang-pill').forEach(pill=>{
   pill.addEventListener('click', (e)=>{
     e.stopPropagation();
     if(!langToggle.classList.contains('expanded')){
-      // Collapsed: first tap just opens the list, doesn't change language
       langToggle.classList.add('expanded');
       return;
     }
@@ -1111,6 +1271,28 @@ document.addEventListener('click', (e)=>{
   if(!langToggle.contains(e.target)) langToggle.classList.remove('expanded');
 });
 applyLanguage(currentLang);
+
+/* ============ CURRENCY SWITCHER UI ============ */
+document.querySelectorAll('.currency-pill').forEach(pill=>{
+  pill.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    setCurrency(pill.dataset.cur);
+  });
+});
+function setCurrency(cur){
+  currentCurrency = cur;
+  localStorage.setItem('nm_currency', cur);
+  document.querySelectorAll('.currency-pill').forEach(p=>{
+    p.classList.toggle('active', p.dataset.cur === cur);
+  });
+  if(document.getElementById('screen-feed').classList.contains('active')){
+    loadListings();
+  }
+  if(document.getElementById('screen-favorites').classList.contains('active')){
+    refreshFavoritesScreen();
+  }
+}
+setCurrency(currentCurrency);
 
 function dockLangbar(inline){
   const bar = document.getElementById('langbar');
@@ -1132,16 +1314,32 @@ function showScreen(id){
   document.querySelectorAll('.nav-item').forEach(n=>{
     n.classList.toggle('active', n.dataset.screen===id);
   });
+  const isAuth = (id === 'auth');
+  document.getElementById('topbar').style.display = isAuth ? 'none' : 'flex';
+  document.getElementById('bottomnav').style.display = isAuth ? 'none' : 'flex';
+  dockLangbar(!isAuth);
+  window.scrollTo(0,0);
 }
 function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.display = 'block';
-  setTimeout(()=>{ t.style.display='none'; }, 2500);
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(()=>{ el.style.display='none'; }, 2500);
 }
-function fmtPrice(n){
+function fmtUZS(n){
   const suffix = currentLang === 'ru' ? ' сум' : (currentLang === 'en' ? ' UZS' : " so'm");
   return Number(n).toLocaleString('ru-RU') + suffix;
+}
+function fmtUSD(n){
+  const usd = Number(n) / UZS_PER_USD;
+  const rounded = usd >= 100 ? Math.round(usd) : Math.round(usd * 100) / 100;
+  return '$' + rounded.toLocaleString('en-US');
+}
+function fmtPrice(n){
+  return currentCurrency === 'usd' ? fmtUSD(n) : fmtUZS(n);
+}
+function fmtPriceSecondary(n){
+  return currentCurrency === 'usd' ? fmtUZS(n) : fmtUSD(n);
 }
 
 /* ============ TERMS CHECKBOX (register pane) ============ */
@@ -1164,18 +1362,14 @@ document.querySelectorAll('.auth-tab').forEach(tab=>{
   });
 });
 
-/* ============ GOOGLE / APPLE SIGN-IN ============ */
+/* ============ GOOGLE SIGN-IN ============ */
 document.getElementById('googleSignInBtn').addEventListener('click', async ()=>{
   const provider = new firebase.auth.GoogleAuthProvider();
   try{
-    // Popup afzal: sahifadan chiqib ketmaydi, shuning uchun
-    // Google'dan qaytishda sessiya yo'qolib qolish muammosi bo'lmaydi.
     await auth.signInWithPopup(provider);
-    // onAuthStateChanged qolganini avtomatik bajaradi
   }catch(err){
     console.error(err);
     if(err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment'){
-      // Popup ochilmasa (brauzer bloklasa) — redirect usuliga qaytamiz
       try{
         await auth.signInWithRedirect(provider);
       }catch(err2){
@@ -1183,7 +1377,7 @@ document.getElementById('googleSignInBtn').addEventListener('click', async ()=>{
         handleSocialAuthError(err2, 'Google');
       }
     }else if(err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request'){
-      // Foydalanuvchi popup oynasini o'zi yopgan — xato ko'rsatmaymiz
+      // Foydalanuvchi o'zi yopgan
     }else{
       handleSocialAuthError(err, 'Google');
     }
@@ -1192,7 +1386,7 @@ document.getElementById('googleSignInBtn').addEventListener('click', async ()=>{
 
 function handleSocialAuthError(err, providerName){
   if(err.code === 'auth/operation-not-supported-in-this-environment'){
-    toast('Bu brauzerda ishlamaydi. Havolani nusxalab, Chrome (yoki Safari) ilovasida oching — TikTok/Instagram kabi ichki brauzerlarda ' + providerName + ' orqali kirish ishlamaydi.');
+    toast('Bu brauzerda ishlamaydi. Havolani nusxalab, Chrome (yoki Safari) ilovasida oching.');
   }else if(err.code === 'auth/operation-not-allowed'){
     toast(providerName + ' orqali kirish hozircha faollashtirilmagan.');
   }else{
@@ -1200,7 +1394,6 @@ function handleSocialAuthError(err, providerName){
   }
 }
 
-// Redirect orqali qaytgandan keyin natijani tekshirish
 auth.getRedirectResult().catch((err)=>{
   if(err && err.code){
     console.error(err);
@@ -1219,7 +1412,6 @@ document.getElementById('registerBtn').addEventListener('click', async ()=>{
   btn.disabled = true;
   try{
     await auth.createUserWithEmailAndPassword(email, password);
-    // onAuthStateChanged qolganini bajaradi
   }catch(err){
     console.error(err);
     if(err.code === 'auth/email-already-in-use'){
@@ -1267,12 +1459,13 @@ document.getElementById('logoutBtn').addEventListener('click', ()=>{
 });
 
 /* ============ AUTH STATE ============ */
+let pendingAuthTarget = 'feed';
+
 auth.onAuthStateChanged(async (user)=>{
   if(user){
     currentUser = user;
-    document.getElementById('topbar').style.display = 'flex';
-    dockLangbar(true);
     document.getElementById('logoutBtn').style.display = 'block';
+    document.getElementById('topbarLoginBtn').style.display = 'none';
     const userRef = db.collection('users').doc(user.uid);
     const snap = await userRef.get();
     if(!snap.exists){
@@ -1290,16 +1483,23 @@ auth.onAuthStateChanged(async (user)=>{
       if(!userDoc.mode){
         showScreen('onboarding');
       } else {
-        enterMainApp();
+        showScreen(pendingAuthTarget || 'feed');
+        pendingAuthTarget = 'feed';
       }
     }
+    await loadFavoriteIds();
+    refreshProfileScreen();
+    refreshFavoritesScreen();
+    if(document.getElementById('screen-feed').classList.contains('active')) loadListings();
   } else {
     currentUser = null;
-    document.getElementById('topbar').style.display = 'none';
-    dockLangbar(false);
+    userDoc = null;
+    favoriteIds.clear();
     document.getElementById('logoutBtn').style.display = 'none';
-    document.getElementById('bottomnav').style.display = 'none';
-    showScreen('auth');
+    document.getElementById('topbarLoginBtn').style.display = 'flex';
+    refreshProfileScreen();
+    refreshFavoritesScreen();
+    if(document.getElementById('screen-feed').classList.contains('active')) loadListings();
   }
 });
 
@@ -1317,23 +1517,37 @@ document.getElementById('onboardingContinueBtn').addEventListener('click', async
   if(!onboardingChoice || !currentUser) return;
   await db.collection('users').doc(currentUser.uid).update({ mode: onboardingChoice });
   userDoc.mode = onboardingChoice;
-  enterMainApp();
-});
-
-function enterMainApp(){
-  document.getElementById('topbar').style.display = 'flex';
-  document.getElementById('bottomnav').style.display = 'flex';
-  showScreen('feed');
+  showScreen(pendingAuthTarget || 'feed');
+  pendingAuthTarget = 'feed';
   loadListings();
   refreshProfileScreen();
+});
+
+/* ============ GUEST GATING (browse freely, login only where needed) ============ */
+function requireLogin(targetScreen){
+  pendingAuthTarget = targetScreen || 'feed';
+  showScreen('auth');
 }
+document.getElementById('topbarLoginBtn').addEventListener('click', ()=> requireLogin('feed'));
+document.getElementById('authCloseBtn').addEventListener('click', ()=> showScreen(pendingAuthTarget || 'feed'));
+document.getElementById('profileLoggedOut').addEventListener('click', ()=> requireLogin('profile'));
+document.getElementById('favoritesLoggedOut').addEventListener('click', ()=> requireLogin('favorites'));
+document.getElementById('profileLogoutBtn').addEventListener('click', ()=> auth.signOut());
+
 
 /* ============ BOTTOM NAV ============ */
 document.querySelectorAll('.nav-item').forEach(item=>{
   item.addEventListener('click', ()=>{
-    showScreen(item.dataset.screen);
-    if(item.dataset.screen === 'feed') loadListings();
-    if(item.dataset.screen === 'profile') refreshProfileScreen();
+    const target = item.dataset.screen;
+    if(target === 'post' && !currentUser){
+      toast(t('needLoginToast'));
+      requireLogin('post');
+      return;
+    }
+    showScreen(target);
+    if(target === 'feed') loadListings();
+    if(target === 'profile') refreshProfileScreen();
+    if(target === 'favorites') refreshFavoritesScreen();
   });
 });
 
@@ -1493,13 +1707,15 @@ function renderListingCard(l){
   const photo = (l.photos && l.photos[0]) ? l.photos[0] : '';
   const dealLabel = l.dealType === 'sale' ? t('dealSale') : t('dealRent');
   const ownerLabel = l.ownerType === 'agent' ? t('ownerAgent') : t('ownerOwner');
+  const isFav = favoriteIds.has(l.id);
 
   div.innerHTML = `
+    <button class="fav-btn ${isFav?'active':''}" data-id="${l.id}">${isFav ? '♥' : '♡'}</button>
     ${photo ? `<img src="${photo}" alt="">` : ''}
     <div class="listing-body">
       <span class="badge ${l.dealType==='sale'?'badge-sale':'badge-rent'}">${dealLabel}</span>
       <span class="badge ${l.ownerType==='agent'?'badge-agent':'badge-owner'}">${ownerLabel}</span>
-      <div class="listing-price" style="margin-top:8px;">${fmtPrice(l.price)}</div>
+      <div class="listing-price" style="margin-top:8px;">${fmtPrice(l.price)}<span class="price-secondary">≈ ${fmtPriceSecondary(l.price)}</span></div>
       <div class="listing-meta">${l.region}, ${l.district} ${l.area?('· '+l.area+' m²'):''} ${l.rooms?('· '+l.rooms+t('roomsSuffix')):''}</div>
       <div class="listing-meta" style="margin-top:6px;">${(l.description||'').slice(0,90)}</div>
       <button class="btn btn-secondary contact-btn" style="margin-top:12px;" data-phone="${l.phone}" data-id="${l.id}">${t('contactBtn')}</button>
@@ -1509,7 +1725,93 @@ function renderListingCard(l){
     logContact(l.id);
     window.location.href = 'tel:' + e.target.dataset.phone;
   });
+  div.querySelector('.fav-btn').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    toggleFavorite(l, e.currentTarget);
+  });
   return div;
+}
+
+/* ============ FAVORITES ============ */
+let favoriteIds = new Set();
+
+async function loadFavoriteIds(){
+  favoriteIds.clear();
+  if(!currentUser) return;
+  try{
+    const snap = await db.collection('users').doc(currentUser.uid).collection('favorites').get();
+    snap.forEach(doc=> favoriteIds.add(doc.id));
+  }catch(err){ console.error(err); }
+}
+
+async function toggleFavorite(listing, btnEl){
+  if(!currentUser){
+    toast(t('needLoginToast'));
+    requireLogin('favorites');
+    return;
+  }
+  const ref = db.collection('users').doc(currentUser.uid).collection('favorites').doc(listing.id);
+  const nowFav = !favoriteIds.has(listing.id);
+  try{
+    if(nowFav){
+      favoriteIds.add(listing.id);
+      await ref.set({
+        listingId: listing.id,
+        savedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }else{
+      favoriteIds.delete(listing.id);
+      await ref.delete();
+    }
+    if(btnEl){
+      btnEl.classList.toggle('active', nowFav);
+      btnEl.textContent = nowFav ? '♥' : '♡';
+    }
+    if(document.getElementById('screen-favorites').classList.contains('active')){
+      refreshFavoritesScreen();
+    }
+  }catch(err){
+    console.error(err);
+    toast(t('error') + err.message);
+  }
+}
+
+async function refreshFavoritesScreen(){
+  const lockCard = document.getElementById('favoritesLoggedOut');
+  const container = document.getElementById('favoritesContainer');
+  if(!currentUser){
+    lockCard.classList.remove('hidden');
+    container.classList.add('hidden');
+    return;
+  }
+  lockCard.classList.add('hidden');
+  container.classList.remove('hidden');
+  container.innerHTML = `<div class="empty-state"><div class="ic">♡</div>${t('loading')}</div>`;
+  try{
+    const snap = await db.collection('users').doc(currentUser.uid).collection('favorites')
+      .orderBy('savedAt','desc').get();
+    if(snap.empty){
+      container.innerHTML = `<div class="lock-empty"><div class="ic">♡</div>${t('favEmpty')}</div>`;
+      return;
+    }
+    const ids = [];
+    snap.forEach(doc=> ids.push(doc.id));
+    const listingDocs = await Promise.all(ids.map(id => db.collection('listings').doc(id).get()));
+    container.innerHTML = '';
+    let any = false;
+    listingDocs.forEach(docSnap=>{
+      if(docSnap.exists){
+        any = true;
+        container.appendChild(renderListingCard({ id: docSnap.id, ...docSnap.data() }));
+      }
+    });
+    if(!any){
+      container.innerHTML = `<div class="lock-empty"><div class="ic">♡</div>${t('favEmpty')}</div>`;
+    }
+  }catch(err){
+    console.error(err);
+    container.innerHTML = `<div class="lock-empty"><div class="ic">⚠️</div>${t('loadError')}${err.message}</div>`;
+  }
 }
 
 async function logContact(listingId){
@@ -1526,7 +1828,16 @@ async function logContact(listingId){
 
 /* ============ PROFILE ============ */
 function refreshProfileScreen(){
-  if(!currentUser) return;
+  const loggedOutCard = document.getElementById('profileLoggedOut');
+  const loggedInBlock = document.getElementById('profileLoggedIn');
+  if(!currentUser){
+    loggedOutCard.classList.remove('hidden');
+    loggedInBlock.classList.add('hidden');
+    return;
+  }
+  loggedOutCard.classList.add('hidden');
+  loggedInBlock.classList.remove('hidden');
+
   document.getElementById('profileEmail').textContent = currentUser.email;
   document.getElementById('profilePhoneInput').value = (userDoc && userDoc.phone) ? userDoc.phone : '';
   const modeLabel = userDoc && userDoc.mode === 'assisted'
@@ -1603,6 +1914,10 @@ async function loadMyListings(){
     container.innerHTML = t('error') + err.message;
   }
 }
+
+/* ============ INITIAL SCREEN ============ */
+showScreen('feed');
+loadListings();
 </script>
 </body>
 </html>
