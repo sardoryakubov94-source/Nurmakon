@@ -356,26 +356,24 @@
     filter:drop-shadow(0 6px 16px rgba(240,168,60,0.30));}
   .logo-svg .ln{fill:none;stroke:url(#hg);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;
     stroke-dasharray:1;stroke-dashoffset:1;}
-  /* Ilon kabi chiziladi: devorlar -> eshik/deraza -> tom -> lupa. Qurilgach ~6s qotib turadi (11s tsikl) */
-  .logo-group{animation:lgFade 11s ease-in-out infinite;}
-  @keyframes lgFade{0%{opacity:0;}4%{opacity:1;}90.5%{opacity:1;}96%{opacity:0;}100%{opacity:0;}}
-  .logo-svg .walls{animation:dnWalls 11s linear infinite;}
-  .logo-svg .door{animation:dnDoor 11s linear infinite;}
-  .logo-svg .window{animation:dnWindow 11s linear infinite;}
-  .logo-svg .roofL,.logo-svg .roofR{animation:dnRoof 11s linear infinite;}
-  .logo-svg .lensRing{animation:dnRing 11s linear infinite;}
-  .logo-svg .lensGrip{animation:dnGrip 11s linear infinite;}
-  /* 4 harakat: 1) devorlar  2) eshik+deraza birga  3) tom  4) lupa */
-  @keyframes dnWalls {0%,2%{stroke-dashoffset:1;}12%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
-  @keyframes dnDoor  {0%,12%{stroke-dashoffset:1;}21%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
-  @keyframes dnWindow{0%,12%{stroke-dashoffset:1;}21%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
-  @keyframes dnRoof  {0%,22%{stroke-dashoffset:1;}30%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
-  @keyframes dnRing  {0%,30%{stroke-dashoffset:1;}34%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
-  @keyframes dnGrip  {0%,34%{stroke-dashoffset:1;}36%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
+  /* Ilon kabi chiziladi (sekin, oldingi tezlik): devorlar -> deraza -> tom -> lupa. Qurilgach ~6s qotib turadi (15s tsikl) */
+  .logo-group{animation:lgFade 15s ease-in-out infinite;}
+  @keyframes lgFade{0%{opacity:0;}3%{opacity:1;}95%{opacity:1;}98.5%{opacity:0;}100%{opacity:0;}}
+  .logo-svg .walls{animation:dnWalls 15s linear infinite;}
+  .logo-svg .window{animation:dnWindow 15s linear infinite;}
+  .logo-svg .roofL,.logo-svg .roofR{animation:dnRoof 15s linear infinite;}
+  .logo-svg .lensRing{animation:dnRing 15s linear infinite;}
+  .logo-svg .lensGrip{animation:dnGrip 15s linear infinite;}
+  /* Sekin qurilish: devorlar -> deraza -> tom -> lupa (3 harakat + deraza) */
+  @keyframes dnWalls {0%,2%{stroke-dashoffset:1;}22%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
+  @keyframes dnWindow{0%,22%{stroke-dashoffset:1;}31%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
+  @keyframes dnRoof  {0%,31%{stroke-dashoffset:1;}41%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
+  @keyframes dnRing  {0%,41%{stroke-dashoffset:1;}51%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
+  @keyframes dnGrip  {0%,51%{stroke-dashoffset:1;}55%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
   @media (prefers-reduced-motion: reduce){
     .logo-svg .ln{stroke-dashoffset:0;}
     .logo-group{animation:none;opacity:1;}
-    .logo-svg .walls,.logo-svg .door,.logo-svg .window,.logo-svg .roofL,.logo-svg .roofR,.logo-svg .lensRing,.logo-svg .lensGrip{animation:none;}
+    .logo-svg .walls,.logo-svg .window,.logo-svg .roofL,.logo-svg .roofR,.logo-svg .lensRing,.logo-svg .lensGrip{animation:none;}
   }
 
   /* ===== Search float ===== */
@@ -1028,8 +1026,7 @@
         <g class="logo-group">
           <!-- 1) ilon kabi sudralib devorlarni chizadi: chap+past+o'ng+tepa (katakcha) -->
           <path class="ln walls" pathLength="1" d="M40 54 L40 106 L92 106 L92 54 L40 54"/>
-          <!-- 2) eshik va deraza chiziladi -->
-          <path class="ln door" pathLength="1" d="M54 106 L54 80 L68 80 L68 106"/>
+          <!-- 2) deraza chiziladi -->
           <path class="ln window" pathLength="1" d="M46 64 L58 64 L58 76 L46 76 Z"/>
           <!-- 3) apeksdan ikki tomonga yurib tom chiziladi -->
           <path class="ln roofL" pathLength="1" d="M66 30 L26 58"/>
