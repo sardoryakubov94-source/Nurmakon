@@ -425,6 +425,11 @@
   .req-card .rc-meta{font-size:12.5px;color:var(--text-dim);margin-top:6px;}
   .req-card .rc-note{font-size:13px;margin-top:6px;color:var(--text);white-space:pre-wrap;}
   .req-card .rc-time{font-size:11px;color:var(--text-faint);}
+  .req-card .rc-count{font-size:11.5px;color:var(--text-dim);margin-top:7px;}
+  .req-card .rc-actions{margin-top:10px;}
+  .req-card .rc-actions .btn{width:auto;}
+  .req-card .rc-accepted{display:inline-block;font-size:12px;font-weight:700;color:var(--teal);
+    background:var(--teal-soft);border-radius:8px;padding:4px 10px;margin-bottom:8px;}
   .perk-note{display:flex;align-items:flex-start;gap:9px;background:var(--gold-soft);border:1px solid transparent;border-radius:11px;padding:11px 13px;margin-top:12px;font-size:12.5px;color:var(--text);line-height:1.45;}
   .perk-note .pn-ic{font-size:18px;flex-shrink:0;}
   .perk-note b{color:var(--gold);}
@@ -1544,7 +1549,8 @@ const I18N = {
     reqTitle:"Makler uchun so'rov", reqSub:"Nima izlayotganingizni yozing — mos maklerlar bog'lanadi.",
     reqRegionLabel:"Qaysi hudud", reqBudgetLabel:"Byudjet (gacha)", reqNoteLabel:"Qo'shimcha izoh", reqNotePh:"Masalan: metroga yaqin, ta'mirli...",
     reqSubmit:"So'rovni yuborish", reqSent:"So'rovingiz yuborildi! Maklerlar tez orada bog'lanadi.", reqAnyBudget:"Byudjet ko'rsatilmagan",
-    agentRequestsTitle:"Mijoz so'rovlari", agentRequestsSub:"Mijozlar qoldirgan so'rovlar. Bog'lanib, mos variant taklif qiling.", noRequests:"Hozircha yangi so'rovlar yo'q",
+    agentRequestsTitle:"Mijoz so'rovlari", agentRequestsSub:"Mijozlar qoldirgan so'rovlar. Mos bo'lsa \"Qabul qilaman\" bosing — shundan keyin telefon ochiladi.", noRequests:"Hozircha yangi so'rovlar yo'q",
+    reqAcceptBtn:"✅ Qabul qilaman", reqAcceptedYou:"✓ Siz qabul qildingiz", reqTaken:"So'rov to'ldi", reqYourArea:"Sizning hududingiz", reqAcceptedToast:"Qabul qilindi! Endi mijoz bilan bog'laning.", reqAcceptFullToast:"Bu so'rovga yetarlicha makler qabul qilgan.", reqBrokersJoined:"makler qabul qildi",
     brokerPerks:"Erta qo'shilgan maklerlarga: mijoz so'rovlari <b>BEPUL</b> + tasdiqlangan belgi va ustuvor ko'rsatish.",
     agentSectionTitle:"Makler kabineti", agentSectionSub:"Makler bo'lib ishlash va mijoz so'rovlarini ko'rish",
     agentStatusVerified:"Tasdiqlangan makler ✓", agentStatusPending:"Verifikatsiya tekshiruvda",
@@ -1642,7 +1648,8 @@ const I18N = {
     reqTitle:"Запрос риелтору", reqSub:"Опишите, что ищете — подходящие риелторы свяжутся.",
     reqRegionLabel:"Район", reqBudgetLabel:"Бюджет (до)", reqNoteLabel:"Дополнительно", reqNotePh:"Например: рядом метро, с ремонтом...",
     reqSubmit:"Отправить запрос", reqSent:"Запрос отправлен! Риелторы скоро свяжутся.", reqAnyBudget:"Бюджет не указан",
-    agentRequestsTitle:"Запросы клиентов", agentRequestsSub:"Запросы от клиентов. Свяжитесь и предложите вариант.", noRequests:"Пока нет новых запросов",
+    agentRequestsTitle:"Запросы клиентов", agentRequestsSub:"Запросы от клиентов. Если подходит — нажмите \"Принять\", после этого откроется телефон.", noRequests:"Пока нет новых запросов",
+    reqAcceptBtn:"✅ Принять", reqAcceptedYou:"✓ Вы приняли", reqTaken:"Запрос заполнен", reqYourArea:"Ваш район", reqAcceptedToast:"Принято! Свяжитесь с клиентом.", reqAcceptFullToast:"Этот запрос уже приняли достаточно риелторов.", reqBrokersJoined:"риелтор(ов) приняли",
     brokerPerks:"Ранним риелторам: запросы клиентов <b>БЕСПЛАТНО</b> + значок проверенного и приоритет.",
     agentSectionTitle:"Кабинет риелтора", agentSectionSub:"Работать риелтором и видеть запросы клиентов",
     agentStatusVerified:"Проверенный риелтор ✓", agentStatusPending:"Верификация на проверке",
@@ -1740,7 +1747,8 @@ const I18N = {
     reqTitle:"Request to brokers", reqSub:"Describe what you're looking for — matching brokers will reach out.",
     reqRegionLabel:"Which area", reqBudgetLabel:"Budget (up to)", reqNoteLabel:"Extra note", reqNotePh:"e.g. near metro, renovated...",
     reqSubmit:"Send request", reqSent:"Request sent! Brokers will contact you soon.", reqAnyBudget:"Budget not specified",
-    agentRequestsTitle:"Client requests", agentRequestsSub:"Requests left by clients. Reach out and offer a match.", noRequests:"No new requests yet",
+    agentRequestsTitle:"Client requests", agentRequestsSub:"Requests left by clients. If it fits, tap \"Accept\" — the phone opens afterwards.", noRequests:"No new requests yet",
+    reqAcceptBtn:"✅ Accept", reqAcceptedYou:"✓ You accepted", reqTaken:"Request full", reqYourArea:"Your area", reqAcceptedToast:"Accepted! Contact the client.", reqAcceptFullToast:"Enough brokers already accepted this request.", reqBrokersJoined:"broker(s) joined",
     brokerPerks:"Early brokers: client requests <b>FREE</b> + verified badge and priority.",
     agentSectionTitle:"Broker cabinet", agentSectionSub:"Work as a broker and see client requests",
     agentStatusVerified:"Verified broker ✓", agentStatusPending:"Verification in review",
@@ -3079,6 +3087,8 @@ $('submitRequestBtn').addEventListener('click', async ()=>{
       note: $('reqNote').value.trim(),
       phone,
       status: 'open',
+      acceptedBy: [],
+      acceptCount: 0,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     // save phone to profile for convenience
@@ -3090,39 +3100,111 @@ $('submitRequestBtn').addEventListener('click', async ()=>{
   finally{ setLoading(btn, false); }
 });
 
+// Bitta so'rovni maksimal shuncha makler qabul qila oladi (spam oldini olish)
+const ACCEPT_LIMIT = 3;
+
+// Makler hududi so'rov hududiga mosligini tekshiradi (birinchi so'z bo'yicha)
+function requestMatchesMyArea(r){
+  const myArea = (userDoc && userDoc.agentDistrict || '').toLowerCase().trim();
+  if(!myArea) return false;
+  const reg = (r.region||'').toLowerCase();
+  const key = myArea.split(/[\s,]+/)[0];
+  return key.length>2 && (reg.includes(key) || myArea.includes((reg.split(/[\s,]+/)[0]||'\u0000')));
+}
+
 async function loadAgentRequests(){
   const box = $('agentRequests'); if(!box) return;
   box.innerHTML = `<div class="center-note">${t('loading')}</div>`;
   try{
-    const snap = await db.collection('requests').orderBy('createdAt','desc').limit(40).get();
-    const reqs = [];
-    snap.forEach(d=>{ const r = d.data(); if(r.status==='open') reqs.push({ id:d.id, ...r }); });
+    const snap = await db.collection('requests').orderBy('createdAt','desc').limit(60).get();
+    const uid = currentUser && currentUser.uid;
+    let reqs = [];
+    snap.forEach(d=>{
+      const r = { id:d.id, ...d.data() };
+      const accepted = Array.isArray(r.acceptedBy) ? r.acceptedBy : [];
+      const count = r.acceptCount || accepted.length;
+      const iAccepted = uid && accepted.includes(uid);
+      // Ko'rsatamiz: hali bo'sh (limitga yetmagan) YOKI men qabul qilgan so'rovlar
+      if(count < ACCEPT_LIMIT || iAccepted){
+        reqs.push({ ...r, _count:count, _iAccepted:iAccepted, _match:requestMatchesMyArea(r) });
+      }
+    });
+    // Mos hudud + men qabul qilganlar yuqorida
+    reqs.sort((a,b)=> (b._match?1:0)-(a._match?1:0) || (b._iAccepted?1:0)-(a._iAccepted?1:0));
     if(reqs.length === 0){ box.innerHTML = `<div class="center-note">${t('noRequests')}</div>`; return; }
     box.innerHTML = '';
     reqs.forEach(r=>{
       const dealLabel = r.dealType==='sale' ? t('dealSale') : t('dealRent');
       const propKey = 'prop'+(r.propertyType||'apartment').charAt(0).toUpperCase()+(r.propertyType||'apartment').slice(1);
       const budget = r.budget ? fmtPrice(r.budget) : t('reqAnyBudget');
+      const full = r._count >= ACCEPT_LIMIT;
       const card = document.createElement('div'); card.className='req-card';
+
+      // Amal tugmasi: qabul qilingan bo'lsa telefon ochiladi; aks holda "Qabul qilaman"
+      let actionHtml;
+      if(r._iAccepted){
+        actionHtml = `<div class="rc-accepted">${t('reqAcceptedYou')}</div>
+          <button class="btn btn-secondary btn-sm rq-call"><span class="btn-label">📞 ${t('contactBtn')}</span></button>`;
+      }else if(full){
+        actionHtml = `<button class="btn btn-outline btn-sm" disabled><span class="btn-label">${t('reqTaken')}</span></button>`;
+      }else{
+        actionHtml = `<button class="btn btn-primary btn-sm rq-accept"><span class="btn-label">${t('reqAcceptBtn')}</span></button>`;
+      }
+      const countHtml = r._count>0 ? `<div class="rc-count">👤 ${r._count} ${t('reqBrokersJoined')}</div>` : '';
+
       card.innerHTML = `
         <div class="rc-top">
           <div class="rc-badges">
             <span class="badge ${r.dealType==='sale'?'badge-sale':'badge-rent'}">${dealLabel}</span>
             <span class="badge badge-owner">${propIcon(r.propertyType)} ${t(propKey)}</span>
+            ${r._match?`<span class="badge badge-verified">📍 ${t('reqYourArea')}</span>`:''}
           </div>
           <span class="rc-budget">${budget}</span>
         </div>
         <div class="rc-meta">📍 ${esc(r.region)} ${r.rooms?('· '+r.rooms+t('roomsSuffix')):''} · <span class="rc-time">${timeAgo(r.createdAt)}</span></div>
         ${r.note ? `<div class="rc-note">${esc(r.note)}</div>` : ''}
-        <button class="btn btn-secondary btn-sm rq-call"><span class="btn-label">📞 ${t('contactBtn')}</span></button>`;
-      card.querySelector('.rq-call').addEventListener('click', ()=>{
+        ${countHtml}
+        <div class="rc-actions">${actionHtml}</div>`;
+
+      const callBtn = card.querySelector('.rq-call');
+      if(callBtn) callBtn.addEventListener('click', ()=>{
         contactPhone = r.phone || '';
         $('contactPhoneDisplay').textContent = contactPhone;
         openSheet('contactSheet');
       });
+      const acceptBtn = card.querySelector('.rq-accept');
+      if(acceptBtn) acceptBtn.addEventListener('click', ()=> acceptRequest(r.id, acceptBtn));
+
       box.appendChild(card);
     });
   }catch(err){ console.error(err); box.innerHTML = `<div class="center-note">${t('loadError')}${esc(err.message)}</div>`; }
+}
+
+// Makler so'rovni qabul qiladi — xavfsiz tranzaksiya bilan (limit nazorati)
+async function acceptRequest(id, btn){
+  if(!currentUser){ requireLogin('profile'); return; }
+  setLoading(btn, true);
+  try{
+    const ref = db.collection('requests').doc(id);
+    await db.runTransaction(async (tx)=>{
+      const doc = await tx.get(ref);
+      if(!doc.exists) throw new Error('gone');
+      const d = doc.data();
+      const arr = Array.isArray(d.acceptedBy) ? d.acceptedBy : [];
+      if(arr.includes(currentUser.uid)) return;      // allaqachon qabul qilgan
+      if(arr.length >= ACCEPT_LIMIT) throw new Error('FULL');
+      tx.update(ref, {
+        acceptedBy: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
+        acceptCount: (d.acceptCount || arr.length) + 1,
+        status: 'accepted'
+      });
+    });
+    toast(t('reqAcceptedToast'), 'success');
+    loadAgentRequests();
+  }catch(err){
+    if(err.message === 'FULL'){ toast(t('reqAcceptFullToast'),'error'); loadAgentRequests(); }
+    else{ console.error(err); toast(t('error')+err.message,'error'); }
+  }finally{ setLoading(btn, false); }
 }
 
 /* ============ INIT ============ */
