@@ -115,12 +115,24 @@ service cloud.firestore {
     match /agents/{agentId} {
       allow read: if true;
       allow create: if isOwner(agentId);
-      // Egasi tahrirlaydi, lekin 'verified' ni o'zi o'zgartira olmaydi.
-      // 'verified' ni faqat admin o'rnatadi (verifikatsiyani tasdiqlaganda).
+      // Egasi tahrirlaydi (verified'dan tashqari); admin verified'ni o'rnatadi;
+      // baholovchi faqat rating yig'indisini (ratingSum/ratingCount) yangilaydi.
       allow update: if
         (isOwner(agentId) && request.resource.data.verified == resource.data.verified)
-        || isAdmin();
+        || isAdmin()
+        || (
+          isSignedIn()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ratingSum','ratingCount'])
+          && request.resource.data.verified == resource.data.verified
+        );
       allow delete: if isOwner(agentId) || isAdmin();
+
+      // Sharhlar: har foydalanuvchi bitta sharh (hujjat IDsi = baholovchi uid).
+      match /reviews/{reviewerId} {
+        allow read: if true;
+        allow create, update: if isSignedIn() && request.auth.uid == reviewerId;
+        allow delete: if isSignedIn() && (request.auth.uid == reviewerId || isAdmin());
+      }
     }
 
     // ---- Config (ishonch telefoni va boshqa umumiy sozlamalar) ----
