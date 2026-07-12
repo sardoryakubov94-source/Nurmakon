@@ -382,6 +382,25 @@
   .deal-toggle{display:flex;gap:4px;background:var(--surface-2);border-radius:13px;padding:4px;margin-bottom:11px;}
   .deal-toggle .filter-chip{flex:1;text-align:center;background:transparent;border:none;margin:0;padding:9px 4px;}
   .deal-toggle .filter-chip.active{background:var(--grad-gold);color:#241505;box-shadow:0 3px 10px -3px rgba(240,168,60,0.5);}
+
+  /* ===== Broker-help mode selector (bosh sahifada ko'rinadi) ===== */
+  .mode-switch{display:flex;gap:8px;margin-bottom:11px;}
+  .mode-opt{
+    flex:1;min-width:0;display:flex;align-items:center;gap:9px;text-align:left;
+    background:var(--surface-2);border:1.5px solid var(--line);border-radius:13px;
+    padding:10px 11px;cursor:pointer;
+    transition:border-color .15s ease, background .15s ease, transform .12s ease;
+  }
+  .mode-opt:active{transform:scale(0.98);}
+  .mode-opt .mo-ic{font-size:20px;flex-shrink:0;line-height:1;}
+  .mode-opt .mo-tx{display:flex;flex-direction:column;min-width:0;}
+  .mode-opt .mo-tx b{font-size:12.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mode-opt .mo-tx small{font-size:10px;color:var(--text-dim);line-height:1.25;margin-top:1px;}
+  .mode-opt.active{border-color:var(--gold);background:var(--gold-soft);}
+  .mode-opt.active .mo-ic{filter:drop-shadow(0 0 6px rgba(240,168,60,0.5));}
+  .mode-opt.active .mo-tx b{color:var(--gold);}
+  .mode-hint{font-size:11.5px;color:var(--text-dim);text-align:center;margin:0 0 12px;line-height:1.4;}
+  .mode-hint b{color:var(--teal);}
   .search-row{display:flex;gap:8px;}
   .search-input-wrap{flex:1;position:relative;}
   .search-input-wrap .search-ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-faint);font-size:15px;pointer-events:none;}
@@ -988,6 +1007,17 @@
     </div>
   </div>
   <div class="search-float">
+    <div class="mode-switch" id="modeSwitch">
+      <button class="mode-opt active" data-mode="independent" type="button">
+        <span class="mo-ic">🔍</span>
+        <span class="mo-tx"><b data-i18n="modeIndepTitle">Mustaqil</b><small data-i18n="modeIndepDesc">Komissiyasiz, to'g'ridan-to'g'ri</small></span>
+      </button>
+      <button class="mode-opt" data-mode="assisted" type="button">
+        <span class="mo-ic">🤝</span>
+        <span class="mo-tx"><b data-i18n="modeAssistTitle">Makler yordamida</b><small data-i18n="modeAssistDesc">Makler mos uy topadi</small></span>
+      </button>
+    </div>
+    <p class="mode-hint" id="modeHint"></p>
     <div class="deal-toggle">
       <div class="filter-chip active" data-filter="all" data-i18n="filterAll">Hammasi</div>
       <div class="filter-chip" data-filter="sale" data-i18n="filterSale">Sotiladi</div>
@@ -1021,6 +1051,7 @@
     <option value="owner" data-i18n="postWhoOwner">Mulk egasiman (mustaqil)</option>
     <option value="agent" data-i18n="postWhoAgent">Makler sifatida joylayapman</option>
   </select>
+  <p class="center-note hidden" id="postOwnerNote" style="text-align:left;margin-top:7px;" data-i18n="postAgentLockNote">Makler sifatida joylash uchun avval profilda makler bo'lib ro'yxatdan o'ting.</p>
 
   <div class="field-row">
     <div>
@@ -1276,6 +1307,7 @@ let favoriteIds = new Set();
 let pendingAuthTarget = 'feed';
 let onboardingChoice = null;
 let currentDealFilter = 'all';
+let currentMode = localStorage.getItem('nm_mode') || 'independent'; // 'independent' | 'assisted'
 let currentSort = 'new';
 let advFilters = { propType:'', rooms:'', priceMin:'', priceMax:'' };
 let detailContext = null;  // listing currently in detail view
@@ -1368,6 +1400,13 @@ const I18N = {
     contactBtn:"Bog'lanish", contactTitle:"Bog'lanish", contactCall:"📞 Qo'ng'iroq qilish", contactCopy:"📋 Raqamni nusxalash",
     copied:"Raqam nusxalandi", shareBtn:"Ulashish", shareUnsupported:"Ulashish qo'llab-quvvatlanmaydi",
     modeAssisted:"Rejim: Makler yordamida", modeIndependent:"Rejim: Mustaqil qidiruv",
+    modeIndepTitle:"Mustaqil", modeIndepDesc:"Komissiyasiz, to'g'ridan-to'g'ri",
+    modeAssistTitle:"Makler yordamida", modeAssistDesc:"Makler mos uy topadi",
+    modeHintIndep:"To'g'ridan-to'g'ri mulk egalari — <b>komissiyasiz</b>, arzonroq.",
+    modeHintAssist:"Tekshirilgan maklerlar sizga mos uy topishda yordam beradi.",
+    modeAppliedIndep:"Mustaqil rejim — to'g'ridan-to'g'ri egasi bilan", modeAppliedAssist:"Makler rejimi yoqildi",
+    postAgentLockNote:"Makler sifatida joylash uchun avval profilda makler bo'lib ro'yxatdan o'ting.",
+    noCommission:"Komissiyasiz", noListingsMode:"Bu rejimda hozircha e'lon yo'q. Ikkinchi rejimni tanlab ko'ring.",
     activeListingsSuffix:" ta faol e'lon", error:"Xatolik: ",
     detailDesc:"Tavsif", detailInfo:"Ma'lumot", detailNoDesc:"Tavsif kiritilmagan.",
     views:"ko'rishlar", edit:"Tahrirlash", delete:"O'chirish", deleteConfirm:"E'lonni o'chirishni tasdiqlaysizmi?",
@@ -1444,6 +1483,13 @@ const I18N = {
     contactBtn:"Связаться", contactTitle:"Связаться", contactCall:"📞 Позвонить", contactCopy:"📋 Скопировать номер",
     copied:"Номер скопирован", shareBtn:"Поделиться", shareUnsupported:"Поделиться не поддерживается",
     modeAssisted:"Режим: с помощью риелтора", modeIndependent:"Режим: самостоятельный поиск",
+    modeIndepTitle:"Самостоятельно", modeIndepDesc:"Без комиссии, напрямую",
+    modeAssistTitle:"С риелтором", modeAssistDesc:"Риелтор подберёт жильё",
+    modeHintIndep:"Напрямую от собственников — <b>без комиссии</b>, дешевле.",
+    modeHintAssist:"Проверенные риелторы помогут подобрать жильё.",
+    modeAppliedIndep:"Самостоятельный режим — напрямую с владельцем", modeAppliedAssist:"Режим риелтора включён",
+    postAgentLockNote:"Чтобы размещать как риелтор, сначала зарегистрируйтесь риелтором в профиле.",
+    noCommission:"Без комиссии", noListingsMode:"В этом режиме пока нет объявлений. Попробуйте другой режим.",
     activeListingsSuffix:" активных объявлений", error:"Ошибка: ",
     detailDesc:"Описание", detailInfo:"Информация", detailNoDesc:"Описание не указано.",
     views:"просмотров", edit:"Изменить", delete:"Удалить", deleteConfirm:"Удалить объявление?",
@@ -1520,6 +1566,13 @@ const I18N = {
     contactBtn:"Contact", contactTitle:"Contact", contactCall:"📞 Call", contactCopy:"📋 Copy number",
     copied:"Number copied", shareBtn:"Share", shareUnsupported:"Sharing not supported",
     modeAssisted:"Mode: With broker's help", modeIndependent:"Mode: Independent search",
+    modeIndepTitle:"On my own", modeIndepDesc:"No commission, direct",
+    modeAssistTitle:"With a broker", modeAssistDesc:"A broker finds a home",
+    modeHintIndep:"Directly from owners — <b>no commission</b>, cheaper.",
+    modeHintAssist:"Verified brokers help you find a suitable home.",
+    modeAppliedIndep:"Independent mode — directly with the owner", modeAppliedAssist:"Broker mode enabled",
+    postAgentLockNote:"To post as a broker, first register as a broker in your profile.",
+    noCommission:"No commission", noListingsMode:"No listings in this mode yet. Try the other mode.",
     activeListingsSuffix:" active listings", error:"Error: ",
     detailDesc:"Description", detailInfo:"Details", detailNoDesc:"No description provided.",
     views:"views", edit:"Edit", delete:"Delete", deleteConfirm:"Delete this listing?",
@@ -1563,6 +1616,7 @@ function applyLanguage(lang){
   if($('screen-profile').classList.contains('active')) refreshProfileScreen();
   if($('screen-chat').classList.contains('active') && typeof refreshChatScreen==='function') refreshChatScreen();
   if(typeof renderPostLocReadout==='function') renderPostLocReadout();
+  if(typeof syncModeUI==='function') syncModeUI();
 }
 
 /* ============ LANGUAGE / CURRENCY SWITCHER UI (bitta tema) ============ */
@@ -1770,6 +1824,7 @@ auth.onAuthStateChanged(async (user)=>{
       if(!userDoc.mode) showScreen('onboarding');
       else { showScreen(pendingAuthTarget||'feed'); pendingAuthTarget='feed'; }
     }
+    if(userDoc && userDoc.mode){ currentMode = userDoc.mode; localStorage.setItem('nm_mode', currentMode); syncModeUI(); }
     await loadFavoriteIds();
     refreshProfileScreen(); refreshFavoritesScreen();
     subscribeConversations();
@@ -1800,8 +1855,9 @@ $('onboardingContinueBtn').addEventListener('click', async ()=>{
   try{
     await db.collection('users').doc(currentUser.uid).update({ mode:onboardingChoice });
     userDoc.mode = onboardingChoice;
+    currentMode = onboardingChoice; localStorage.setItem('nm_mode', currentMode); syncModeUI();
     showScreen(pendingAuthTarget||'feed'); pendingAuthTarget='feed';
-    refreshProfileScreen();
+    loadListings(); refreshProfileScreen();
   }finally{ setLoading(btn, false); }
 });
 
@@ -1873,6 +1929,16 @@ function resetPostForm(){
   $('cancelEditBtn').classList.add('hidden');
   if(userDoc && userDoc.phone) $('postPhone').value = userDoc.phone;
   pickedLat = null; pickedLng = null; renderPostLocReadout();
+  setupPostOwnerType();
+}
+// Faqat ro'yxatdan o'tgan maklerlar "makler sifatida" joylay oladi (aralashuvga cheklov)
+function setupPostOwnerType(){
+  const sel = $('postOwnerType'); if(!sel) return;
+  const agentOpt = sel.querySelector('option[value="agent"]');
+  const isAgent = !!(userDoc && userDoc.isAgent);
+  if(agentOpt){ agentOpt.disabled = !isAgent; agentOpt.hidden = !isAgent; }
+  if(!isAgent && sel.value === 'agent') sel.value = 'owner';
+  const note = $('postOwnerNote'); if(note) note.classList.toggle('hidden', isAgent);
 }
 $('cancelEditBtn').addEventListener('click', ()=>{ resetPostForm(); showScreen('feed'); });
 
@@ -1919,7 +1985,7 @@ $('submitListingBtn').addEventListener('click', async ()=>{
     const photos = existingPhotos.concat(newUrls);
     statusEl.textContent = t('savingListing');
     const payload = {
-      ownerType: $('postOwnerType').value,
+      ownerType: (userDoc && userDoc.isAgent) ? $('postOwnerType').value : 'owner',
       dealType: $('postDealType').value,
       propertyType: $('postPropertyType').value,
       region, district,
@@ -1961,6 +2027,31 @@ $('districtFilter').addEventListener('input', debounce(renderListings, 300));
 $('searchGoBtn').addEventListener('click', renderListings);
 function debounce(fn, d){ let tmr; return (...a)=>{ clearTimeout(tmr); tmr=setTimeout(()=>fn(...a), d); }; }
 
+/* ============ BROKER-HELP MODE (bosh sahifadagi tanlov) ============ */
+function syncModeUI(){
+  document.querySelectorAll('.mode-opt').forEach(o=>o.classList.toggle('active', o.dataset.mode===currentMode));
+  const hint = $('modeHint');
+  if(hint) hint.innerHTML = (currentMode==='assisted') ? t('modeHintAssist') : t('modeHintIndep');
+}
+function setMode(mode, persist){
+  currentMode = (mode==='assisted') ? 'assisted' : 'independent';
+  localStorage.setItem('nm_mode', currentMode);
+  syncModeUI();
+  if(persist && currentUser && userDoc){
+    userDoc.mode = currentMode;
+    db.collection('users').doc(currentUser.uid).update({ mode: currentMode }).catch(()=>{});
+  }
+  renderListings();
+  if($('screen-profile').classList.contains('active')) refreshProfileScreen();
+}
+document.querySelectorAll('.mode-opt').forEach(o=>{
+  o.addEventListener('click', ()=>{
+    if(o.dataset.mode===currentMode) return;
+    setMode(o.dataset.mode, true);
+    toast(currentMode==='assisted' ? t('modeAppliedAssist') : t('modeAppliedIndep'), 'success');
+  });
+});
+
 function showSkeletons(){
   const c = $('listingsContainer');
   c.innerHTML = Array(3).fill(0).map(()=>`
@@ -1984,6 +2075,9 @@ async function loadListings(){
 
 function getFilteredListings(){
   let list = allListings.slice();
+  // Broker-help rejimi: mustaqil -> faqat mulk egasi (to'g'ridan-to'g'ri, komissiyasiz); makler -> makler e'lonlari
+  if(currentMode === 'independent') list = list.filter(l => (l.ownerType||'owner') === 'owner');
+  else if(currentMode === 'assisted') list = list.filter(l => l.ownerType === 'agent');
   if(currentDealFilter !== 'all') list = list.filter(l=>l.dealType===currentDealFilter);
   const q = $('districtFilter').value.trim().toLowerCase();
   if(q) list = list.filter(l=>(l.district||'').toLowerCase().includes(q) || (l.region||'').toLowerCase().includes(q));
@@ -2009,7 +2103,7 @@ function renderListings(){
   $('resultsCount').innerHTML = list.length ? `<b>${list.length}</b> ${t('resultsFound')}` : '';
   if(list.length === 0){
     container.innerHTML = `<div class="empty-state"><div class="ic">🏠</div>
-      <div class="title">${t('noListings')}</div><div class="sub">${t('noListingsSub')}</div>
+      <div class="title">${t('noListings')}</div><div class="sub">${t('noListingsMode')}</div>
       <button class="btn btn-primary" id="emptyPostBtn"><span class="btn-label">＋ ${t('navPost')}</span></button></div>`;
     const b = $('emptyPostBtn');
     if(b) b.addEventListener('click', ()=>{ if(!currentUser){requireLogin('post');return;} resetPostForm(); showScreen('post'); });
@@ -2103,7 +2197,7 @@ async function openDetail(l){
     <div class="detail-owner">
       <div class="avatar">${l.ownerType==='agent'?'👔':'🔑'}</div>
       <div class="oinfo"><h4>${l.ownerType==='agent'?t('ownerAgent'):t('ownerOwner')}</h4>
-        <p>${l.ownerType==='agent'?t('agentContact'):t('ownerContact')} · 👁 ${l.views||0} ${t('views')}</p></div>
+        <p>${l.ownerType==='agent'?t('agentContact'):t('ownerContact')}${l.ownerType!=='agent' ? ' · ✅ '+t('noCommission') : ''} · 👁 ${l.views||0} ${t('views')}</p></div>
     </div>
     ${(typeof l.lat==='number' && typeof l.lng==='number') ? `
       <div class="detail-section-title">${t('detailLocation')}</div>
@@ -2336,8 +2430,7 @@ $('savePhoneBtn').addEventListener('click', async ()=>{
 
 $('changeModeBtn').addEventListener('click', async ()=>{
   const newMode = userDoc.mode==='assisted' ? 'independent' : 'assisted';
-  await db.collection('users').doc(currentUser.uid).update({ mode:newMode });
-  userDoc.mode = newMode; refreshProfileScreen();
+  setMode(newMode, true);
   toast(newMode==='assisted'?t('modeAssisted'):t('modeIndependent'),'success');
 });
 
@@ -2732,6 +2825,7 @@ function requestNotifPermission(){
 applyLanguage(currentLang);
 setCurrency(currentCurrency);
 renderPostLocReadout();
+syncModeUI();
 showScreen('feed');
 loadListings();
 loadHeroStats();
