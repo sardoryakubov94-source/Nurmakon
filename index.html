@@ -1370,11 +1370,13 @@
   <!-- IS a broker: status + client requests -->
   <div id="agentPanelView" class="hidden">
     <div class="card">
-      <h3 style="margin:0 0 6px;font-size:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><span data-i18n="agentPanelTitle">Makler paneli</span> <span class="badge" id="agentStatusBadge"></span></h3>
+      <h3 style="margin:0 0 6px;font-size:17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><span data-i18n="agentPanelTitle">Makler paneli</span> <span class="badge" id="agentStatusBadge"></span></h3>
       <p class="center-note" style="text-align:left;margin:0;" id="agentPanelStatusText"></p>
-      <button class="btn btn-outline btn-sm" id="viewMyProfileBtn" style="margin-top:10px;width:auto;"><span class="btn-label" data-i18n="viewMyProfileBtn">⭐ Ochiq profilim va reytingim</span></button>
     </div>
+
+    <!-- 1) Balans -->
     <div class="card" id="brokerWalletCard">
+      <h4 style="margin:0 0 10px;font-size:15px;">💳 <span data-i18n="walletSectionTitle">Balans</span></h4>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
         <div>
           <div style="font-size:13px;color:var(--text-dim);" data-i18n="walletBalance">Lead balansi</div>
@@ -1385,6 +1387,15 @@
       </div>
       <p class="center-note" style="text-align:left;margin:10px 0 0;" data-i18n="walletNote">Har bir mijoz so'rovini qabul qilish — 1 kredit. Premium obunada cheksiz.</p>
     </div>
+
+    <!-- 2) Reyting -->
+    <div class="card">
+      <h4 style="margin:0 0 12px;font-size:15px;">⭐ <span data-i18n="ratingSectionTitle">Reyting</span></h4>
+      <div id="brokerRatingSummary"></div>
+      <button class="btn btn-outline btn-sm" id="viewMyProfileBtn" style="margin-top:12px;width:auto;"><span class="btn-label" data-i18n="viewMyProfileBtn">Ochiq profilni ko'rish</span></button>
+    </div>
+
+    <!-- 3) Mijoz so'rovlari -->
     <div class="card">
       <h4 style="margin:0 0 4px;font-size:15px;">📨 <span data-i18n="agentRequestsTitle">Mijoz so'rovlari</span></h4>
       <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="agentRequestsSub">Mijozlar qoldirgan so'rovlar. Bog'lanib, mos variant taklif qiling.</p>
@@ -1685,7 +1696,7 @@ const I18N = {
     topupTitle:"Balansni to'ldirish", topupSub:"Lead kreditini sotib oling yoki premium obunaga o'ting.", topupBuyBtn:"So'rov yuborish", topupSent:"So'rov yuborildi! Admin tasdiqlagach balans yangilanadi.", topupPremiumTitle:"Premium obuna", topupPremiumDesc:"Cheksiz lead qabul qilish + so'rovlarda ustuvor ko'rsatish.", topupPremiumBtn:"Premiumga o'tish", topupPayNote:"Hozircha to'lov admin tomonidan qo'lda tasdiqlanadi. Payme/Click keyingi bosqichda ulanadi.",
     admTopupsTitle:"To'lov so'rovlari", admTopupsSub:"Maklerlarning balans to'ldirish so'rovlari.", admNoTopups:"To'lov so'rovlari yo'q", admTopupApprove:"✓ Tasdiqlash", admTopupApproved:"To'lov tasdiqlandi — balans yangilandi",
     postPromoLabel:"E'lon turi", tierStandard:"Oddiy", tierTop:"TOP", tierVip:"VIP", tierStandardCost:"1-si bepul", postUrgentLabel:"⚡ Shoshilinch belgisi (+2 kredit)", postPromoInfo:"Birinchi {free} ta e'lon bepul, keyingisi {extra} kredit.", urgentBadge:"Shoshilinch", promoteBtn:"Reklama", promoteTitle:"E'lonni reklama qilish", promoteBalance:"Balans: {n} kredit", promoteNote:"Reklama darhol yoqiladi; balansdan kredit yechiladi. Kredit yetmasa avval balansni to'ldiring.", promoBump:"Ko'tarish (tepaga)", promoteDone:"Reklama yoqildi!", promoSkippedLowCredit:"Kredit yetmadi — oddiy e'lon sifatida joylandi.", needCreditToPost:"Kredit yetarli emas. Balansni to'ldiring.", listingPostedPaid:"E'lon joylandi! {n} kredit yechildi.",
-    brokerProfileTitle:"Makler profili", reviewsTitle:"Sharhlar", reviewsCount:"baho", dealsLabel:"bitimlar", noReviews:"Hozircha sharhlar yo'q", brokerNotFound:"Makler topilmadi", viewBrokerBtn:"Makler profili →", viewMyProfileBtn:"⭐ Ochiq profilim va reytingim", rateBtn:"⭐ Baholash", rateTitle:"Maklerni baholang", rateCommentPh:"Izoh (ixtiyoriy)...", rateSubmit:"Yuborish", rateSelf:"O'zingizni baholay olmaysiz", rateChoose:"Iltimos, yulduz tanlang", rateThanks:"Bahoyingiz uchun rahmat!",
+    brokerProfileTitle:"Makler profili", reviewsTitle:"Sharhlar", reviewsCount:"baho", dealsLabel:"bitimlar", noReviews:"Hozircha sharhlar yo'q", brokerNotFound:"Makler topilmadi", viewBrokerBtn:"Makler profili →", viewMyProfileBtn:"Ochiq profilni ko'rish", walletSectionTitle:"Balans", ratingSectionTitle:"Reyting", rateBtn:"⭐ Baholash", rateTitle:"Maklerni baholang", rateCommentPh:"Izoh (ixtiyoriy)...", rateSubmit:"Yuborish", rateSelf:"O'zingizni baholay olmaysiz", rateChoose:"Iltimos, yulduz tanlang", rateThanks:"Bahoyingiz uchun rahmat!",
     googleSignIn:"Google orqali davom etish", or:"yoki",
     tabLogin:"Kirish", tabRegister:"Ro'yxatdan o'tish",
     email:"Email", password:"Parol", forgotPassword:"Parolni unutdingizmi?",
@@ -1791,7 +1802,7 @@ const I18N = {
     topupTitle:"Пополнить баланс", topupSub:"Купите кредиты для лидов или перейдите на премиум.", topupBuyBtn:"Отправить запрос", topupSent:"Запрос отправлен! Баланс обновится после подтверждения администратором.", topupPremiumTitle:"Премиум-подписка", topupPremiumDesc:"Безлимитный приём лидов + приоритет в запросах.", topupPremiumBtn:"Перейти на премиум", topupPayNote:"Пока оплата подтверждается администратором вручную. Payme/Click подключим на следующем этапе.",
     admTopupsTitle:"Запросы на оплату", admTopupsSub:"Запросы риелторов на пополнение баланса.", admNoTopups:"Нет запросов на оплату", admTopupApprove:"✓ Подтвердить", admTopupApproved:"Оплата подтверждена — баланс обновлён",
     postPromoLabel:"Тип объявления", tierStandard:"Обычное", tierTop:"ТОП", tierVip:"VIP", tierStandardCost:"1-е бесплатно", postUrgentLabel:"⚡ Метка «Срочно» (+2 кредита)", postPromoInfo:"Первые {free} объявл. бесплатно, следующее — {extra} кредит.", urgentBadge:"Срочно", promoteBtn:"Продвижение", promoteTitle:"Продвижение объявления", promoteBalance:"Баланс: {n} кредитов", promoteNote:"Продвижение включается сразу; кредиты списываются с баланса. Если не хватает — сначала пополните.", promoBump:"Поднять (вверх)", promoteDone:"Продвижение включено!", promoSkippedLowCredit:"Не хватило кредитов — размещено как обычное.", needCreditToPost:"Недостаточно кредитов. Пополните баланс.", listingPostedPaid:"Объявление размещено! Списано {n} кредитов.",
-    brokerProfileTitle:"Профиль риелтора", reviewsTitle:"Отзывы", reviewsCount:"оценок", dealsLabel:"сделки", noReviews:"Пока нет отзывов", brokerNotFound:"Риелтор не найден", viewBrokerBtn:"Профиль риелтора →", viewMyProfileBtn:"⭐ Мой профиль и рейтинг", rateBtn:"⭐ Оценить", rateTitle:"Оцените риелтора", rateCommentPh:"Комментарий (необязательно)...", rateSubmit:"Отправить", rateSelf:"Нельзя оценить самого себя", rateChoose:"Пожалуйста, выберите звёзды", rateThanks:"Спасибо за оценку!",
+    brokerProfileTitle:"Профиль риелтора", reviewsTitle:"Отзывы", reviewsCount:"оценок", dealsLabel:"сделки", noReviews:"Пока нет отзывов", brokerNotFound:"Риелтор не найден", viewBrokerBtn:"Профиль риелтора →", viewMyProfileBtn:"Открыть публичный профиль", walletSectionTitle:"Баланс", ratingSectionTitle:"Рейтинг", rateBtn:"⭐ Оценить", rateTitle:"Оцените риелтора", rateCommentPh:"Комментарий (необязательно)...", rateSubmit:"Отправить", rateSelf:"Нельзя оценить самого себя", rateChoose:"Пожалуйста, выберите звёзды", rateThanks:"Спасибо за оценку!",
     googleSignIn:"Продолжить через Google", or:"или",
     tabLogin:"Вход", tabRegister:"Регистрация",
     email:"Email", password:"Пароль", forgotPassword:"Забыли пароль?",
@@ -1897,7 +1908,7 @@ const I18N = {
     topupTitle:"Top up balance", topupSub:"Buy lead credits or upgrade to Premium.", topupBuyBtn:"Send request", topupSent:"Request sent! Balance updates after admin approval.", topupPremiumTitle:"Premium subscription", topupPremiumDesc:"Unlimited lead accepts + priority in requests.", topupPremiumBtn:"Go Premium", topupPayNote:"For now payments are approved manually by admin. Payme/Click will be connected next.",
     admTopupsTitle:"Payment requests", admTopupsSub:"Brokers' balance top-up requests.", admNoTopups:"No payment requests", admTopupApprove:"✓ Approve", admTopupApproved:"Payment approved — balance updated",
     postPromoLabel:"Listing type", tierStandard:"Standard", tierTop:"TOP", tierVip:"VIP", tierStandardCost:"1st free", postUrgentLabel:"⚡ Urgent badge (+2 credits)", postPromoInfo:"First {free} listing(s) free, next one {extra} credit.", urgentBadge:"Urgent", promoteBtn:"Promote", promoteTitle:"Promote listing", promoteBalance:"Balance: {n} credits", promoteNote:"Promotion activates instantly; credits are deducted. If not enough, top up first.", promoBump:"Bump (to top)", promoteDone:"Promotion activated!", promoSkippedLowCredit:"Not enough credits — posted as standard.", needCreditToPost:"Not enough credits. Please top up.", listingPostedPaid:"Listing posted! {n} credits deducted.",
-    brokerProfileTitle:"Broker profile", reviewsTitle:"Reviews", reviewsCount:"ratings", dealsLabel:"deals", noReviews:"No reviews yet", brokerNotFound:"Broker not found", viewBrokerBtn:"Broker profile →", viewMyProfileBtn:"⭐ My public profile & rating", rateBtn:"⭐ Rate", rateTitle:"Rate the broker", rateCommentPh:"Comment (optional)...", rateSubmit:"Submit", rateSelf:"You can't rate yourself", rateChoose:"Please pick stars", rateThanks:"Thanks for your rating!",
+    brokerProfileTitle:"Broker profile", reviewsTitle:"Reviews", reviewsCount:"ratings", dealsLabel:"deals", noReviews:"No reviews yet", brokerNotFound:"Broker not found", viewBrokerBtn:"Broker profile →", viewMyProfileBtn:"Open public profile", walletSectionTitle:"Balance", ratingSectionTitle:"Rating", rateBtn:"⭐ Rate", rateTitle:"Rate the broker", rateCommentPh:"Comment (optional)...", rateSubmit:"Submit", rateSelf:"You can't rate yourself", rateChoose:"Please pick stars", rateThanks:"Thanks for your rating!",
     googleSignIn:"Continue with Google", or:"or",
     tabLogin:"Log in", tabRegister:"Sign up",
     email:"Email", password:"Password", forgotPassword:"Forgot password?",
@@ -2929,6 +2940,7 @@ function refreshAgentScreen(){
     if(st==='verified'){ badge.textContent = '✓ '+t('verified'); badge.className='badge badge-verified'; $('agentPanelStatusText').textContent = t('agentPanelVerifiedText'); }
     else{ badge.textContent = '⏳ '+t('verifyPending'); badge.className='badge badge-pending'; $('agentPanelStatusText').textContent = t('agentPanelPendingText'); }
     renderBrokerWallet();
+    loadBrokerRatingSummary();
     loadAgentRequests();
   }else{
     // prefill known info
@@ -3081,6 +3093,23 @@ function renderStars(avg){
   const full = Math.round(avg||0);
   let s=''; for(let i=1;i<=5;i++){ s += `<span class="${i<=full?'':'dim'}">★</span>`; }
   return `<span class="stars">${s}</span>`;
+}
+
+// Makler kabinetidagi "Reyting" bo'limi uchun o'z reytingini yuklaydi
+async function loadBrokerRatingSummary(){
+  const el = $('brokerRatingSummary'); if(!el || !currentUser) return;
+  el.innerHTML = `<div class="center-note" style="text-align:left;">${t('loading')}</div>`;
+  try{
+    const doc = await db.collection('agents').doc(currentUser.uid).get();
+    const a = doc.exists ? doc.data() : {};
+    const cnt = a.ratingCount||0; const avg = cnt ? (a.ratingSum||0)/cnt : 0;
+    el.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        ${renderStars(avg)}
+        <span style="font-size:22px;font-weight:800;font-family:'Space Grotesk',sans-serif;">${avg.toFixed(1)}</span>
+        <span style="font-size:13px;color:var(--text-dim);">· ${cnt} ${t('reviewsCount')} · ${a.dealsCount||0} ${t('dealsLabel')}</span>
+      </div>`;
+  }catch(e){ el.innerHTML = `<div class="center-note" style="text-align:left;">${t('noReviews')}</div>`; }
 }
 
 async function openBrokerProfile(agentUid){
