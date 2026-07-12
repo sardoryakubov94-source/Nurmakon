@@ -49,13 +49,14 @@
     --grad-teal:linear-gradient(180deg, #3fb89a 0%, var(--teal) 55%, var(--teal-2) 100%);
     --nav-h:76px;
     --safe-b:env(safe-area-inset-bottom, 0px);
-    /* To'q ko'k 3D yorqin fon (deep-blue 3D glow) */
+    /* To'q ko'k fon + ko'k naqsh (tepasi yorqin, pasti xira - to'liq pastgacha) */
+    --net:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%235aa6ff' stroke-opacity='0.20' stroke-width='1'%3E%3Crect x='10' y='10' width='60' height='60'/%3E%3Crect x='10' y='10' width='60' height='60' transform='rotate(45 40 40)'/%3E%3Ccircle cx='40' cy='40' r='14'/%3E%3C/g%3E%3C/svg%3E");
     --app-bg:
-      radial-gradient(1100px 640px at 12% -6%, rgba(78,146,255,0.34), transparent 58%),
-      radial-gradient(980px 660px at 112% 8%, rgba(140,96,255,0.24), transparent 55%),
-      radial-gradient(880px 600px at 50% 120%, rgba(38,206,232,0.18), transparent 60%),
-      radial-gradient(700px 520px at 88% 82%, rgba(58,120,255,0.16), transparent 62%),
-      linear-gradient(158deg, #0c1d44 0%, #0a1430 44%, #070c1c 100%);
+      radial-gradient(1160px 600px at 15% -8%, rgba(96,166,255,0.30), transparent 56%),
+      radial-gradient(960px 560px at 110% 2%, rgba(146,116,255,0.20), transparent 54%),
+      linear-gradient(to top, rgba(7,12,30,0.62), transparent 38%),
+      var(--net) 0 0 / 80px 80px repeat,
+      linear-gradient(161deg, #11295f 0%, #0d1f47 34%, #0b1838 66%, #0a1533 100%);
     --bar-bg:rgba(11,26,60,0.68);
   }
   /* ===== Light theme ===== */
@@ -74,10 +75,11 @@
     --teal-soft:rgba(31,122,99,0.12);
     --shadow-1:0 1px 2px rgba(20,30,45,0.06), 0 8px 24px -14px rgba(20,30,45,0.18);
     --shadow-2:0 2px 8px rgba(20,30,45,0.1), 0 18px 44px -18px rgba(20,30,45,0.28);
+    --net:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%233a74d8' stroke-opacity='0.12' stroke-width='1'%3E%3Crect x='10' y='10' width='60' height='60'/%3E%3Crect x='10' y='10' width='60' height='60' transform='rotate(45 40 40)'/%3E%3Ccircle cx='40' cy='40' r='14'/%3E%3C/g%3E%3C/svg%3E");
     --app-bg:
-      radial-gradient(1000px 580px at 14% -6%, rgba(96,156,255,0.22), transparent 58%),
-      radial-gradient(860px 580px at 110% 6%, rgba(150,120,255,0.16), transparent 55%),
-      radial-gradient(760px 520px at 50% 118%, rgba(70,200,230,0.12), transparent 60%),
+      radial-gradient(1000px 580px at 14% -6%, rgba(96,156,255,0.20), transparent 58%),
+      radial-gradient(860px 580px at 110% 6%, rgba(150,120,255,0.14), transparent 55%),
+      var(--net) 0 0 / 80px 80px repeat,
       linear-gradient(160deg, #dfe8fb 0%, #e7ecf6 50%, #eef1f8 100%);
     --bar-bg:rgba(223,232,251,0.72);
   }
@@ -86,7 +88,6 @@
   body{
     background:var(--app-bg);
     background-attachment:fixed;
-    background-size:cover;
     color:var(--text);
     font-family:'Inter',system-ui,sans-serif;
     padding-bottom:calc(var(--nav-h) + var(--safe-b));
@@ -323,6 +324,56 @@
   .hero-stat{display:flex;flex-direction:column;align-items:center;}
   .hero-stat b{font-family:'Fraunces',serif;font-size:19px;color:var(--gold);}
   .hero-stat small{font-size:10.5px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;}
+
+  /* ===== Animated house logo (chiziqlar tushib uycha quriladi) ===== */
+  .hero-anim{position:relative;width:150px;height:132px;margin:0 auto 6px;}
+  .hero-anim .rain{position:absolute;inset:-12px 0 0 0;overflow:hidden;border-radius:14px;}
+  .hero-anim .rain span{
+    position:absolute;top:-46px;width:2px;height:42px;border-radius:2px;
+    background:linear-gradient(to bottom, rgba(240,168,60,0), rgba(240,168,60,0.85), rgba(240,168,60,0));
+    animation:rainFall 2.2s linear infinite;
+  }
+  .hero-anim .rain span:nth-child(1){left:20%;animation-delay:0s;}
+  .hero-anim .rain span:nth-child(2){left:38%;animation-delay:0.5s;height:34px;}
+  .hero-anim .rain span:nth-child(3){left:52%;animation-delay:1.0s;}
+  .hero-anim .rain span:nth-child(4){left:68%;animation-delay:0.3s;height:36px;}
+  .hero-anim .rain span:nth-child(5){left:82%;animation-delay:0.8s;}
+  @keyframes rainFall{
+    0%{transform:translateY(0);opacity:0;}
+    12%{opacity:0.9;}
+    88%{opacity:0.75;}
+    100%{transform:translateY(184px);opacity:0;}
+  }
+  .house-svg{position:relative;width:100%;height:100%;display:block;overflow:visible;
+    filter:drop-shadow(0 6px 16px rgba(240,168,60,0.28));}
+  .house-svg .hp{
+    fill:none;stroke:url(#hg);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:1;stroke-dashoffset:1;
+  }
+  .house-svg .glow-dot{fill:#ffd98a;opacity:0;}
+  .house-group{animation:houseGroup 5.6s ease-in-out infinite;}
+  @keyframes houseGroup{
+    0%{opacity:0;} 5%{opacity:1;} 72%{opacity:1;} 86%{opacity:0;} 100%{opacity:0;}
+  }
+  .house-svg .roof   {animation:drawRoof   5.6s linear infinite;}
+  .house-svg .wall   {animation:drawWall   5.6s linear infinite;}
+  .house-svg .door   {animation:drawDoor   5.6s linear infinite;}
+  .house-svg .window {animation:drawWindow 5.6s linear infinite;}
+  .house-svg .chimney{animation:drawChimney 5.6s linear infinite;}
+  .house-svg .ground {animation:drawGround 5.6s linear infinite;}
+  .house-svg .apex   {animation:apexPulse  5.6s ease-in-out infinite;}
+  @keyframes drawRoof   {0%{stroke-dashoffset:1;}5%{stroke-dashoffset:1;}22%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
+  @keyframes drawChimney{0%{stroke-dashoffset:1;}20%{stroke-dashoffset:1;}30%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
+  @keyframes drawWall   {0%{stroke-dashoffset:1;}22%{stroke-dashoffset:1;}42%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
+  @keyframes drawDoor   {0%{stroke-dashoffset:1;}42%{stroke-dashoffset:1;}54%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
+  @keyframes drawWindow {0%{stroke-dashoffset:1;}52%{stroke-dashoffset:1;}62%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
+  @keyframes drawGround {0%{stroke-dashoffset:1;}60%{stroke-dashoffset:1;}70%{stroke-dashoffset:0;}100%{stroke-dashoffset:0;}}
+  @keyframes apexPulse  {0%,18%{opacity:0;}24%{opacity:1;}30%{opacity:0;}100%{opacity:0;}}
+  @media (prefers-reduced-motion: reduce){
+    .hero-anim .rain{display:none;}
+    .house-svg .hp{stroke-dashoffset:0;} .house-group{animation:none;opacity:1;}
+    .house-svg .roof,.house-svg .wall,.house-svg .door,.house-svg .window,.house-svg .chimney,.house-svg .ground,.house-svg .apex{animation:none;}
+  }
 
   /* ===== Search float ===== */
   .search-float{
@@ -900,6 +951,27 @@
 <!-- ===================== FEED SCREEN ===================== -->
 <div class="screen active" id="screen-feed" style="padding-top:0;">
   <div class="hero-banner">
+    <div class="hero-anim" aria-hidden="true">
+      <div class="rain"><span></span><span></span><span></span><span></span><span></span></div>
+      <svg class="house-svg" viewBox="0 0 120 116" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffd98a"/>
+            <stop offset="0.5" stop-color="#f0a83c"/>
+            <stop offset="1" stop-color="#d68a1f"/>
+          </linearGradient>
+        </defs>
+        <g class="house-group">
+          <path class="hp roof"    pathLength="1" d="M16 58 L60 22 L104 58"/>
+          <path class="hp chimney" pathLength="1" d="M84 41 L84 30 L92 30 L92 49"/>
+          <path class="hp wall"    pathLength="1" d="M26 58 L26 98 L94 98 L94 58"/>
+          <path class="hp door"    pathLength="1" d="M54 98 L54 74 L70 74 L70 98"/>
+          <path class="hp window"  pathLength="1" d="M34 70 L46 70 L46 82 L34 82 Z"/>
+          <path class="hp ground"  pathLength="1" d="M12 98 L108 98"/>
+          <circle class="glow-dot apex" cx="60" cy="22" r="3.6"/>
+        </g>
+      </svg>
+    </div>
     <div class="brand">Nur<span>Makon</span></div>
     <p class="hero-sub" data-i18n="heroSub">Uy-joy izlashning oson va ishonchli yo'li</p>
     <div class="hero-stats">
