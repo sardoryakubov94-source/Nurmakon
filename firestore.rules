@@ -23,6 +23,39 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/users/$(request.auth.uid))
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
+    // ---- User self-update guards (tekin himoya; to'liq himoya keyin Cloud Functions) ----
+    // Egasi o'zining balansini (credits) OSHIRA olmaydi — faqat kamaytira oladi
+    // (spendCredits). Yagona istisno: yangi maklerga birinchi marta beriladigan
+    // xush kelibsiz krediti (WELCOME_CREDITS == 5).
+    // MUHIM: credits FieldValue.increment() bilan yozilsa, u request.resource.data
+    // ichida ko'rinmaydi. Shuning uchun egasi uchun credits DOIM oddiy son bo'lishi
+    // shart qilinadi — bu increment orqali chetlab o'tishni ham bloklaydi.
+    // (Ilovada spendCredits() endi absolyut son yozadi, increment emas.)
+    function ownerCreditsOk() {
+      return (
+        // Ilgari credits bo'lmagan: yoki hech qachon yo'q, yoki birinchi marta 5 (welcome)
+        !('credits' in resource.data)
+          && (!('credits' in request.resource.data) || request.resource.data.credits == 5)
+      ) || (
+        // Ilgari credits bo'lgan: DOIM son bo'lib qolishi va faqat kamayishi/teng bo'lishi kerak
+        ('credits' in resource.data)
+          && ('credits' in request.resource.data)
+          && request.resource.data.credits is number
+          && request.resource.data.credits <= resource.data.credits
+      );
+    }
+    // Egasi o'zini 'premium' qila olmaydi — buni faqat admin (to'lov tasdiqlangач) qiladi.
+    function ownerPlanOk() {
+      return !('plan' in request.resource.data)
+        || request.resource.data.plan != 'premium'
+        || ('plan' in resource.data && resource.data.plan == 'premium');
+    }
+    // Egasi o'zini admin qila olmaydi (imtiyoz oshirishni bloklaymiz).
+    function ownerAdminOk() {
+      return (('isAdmin' in resource.data) ? resource.data.isAdmin : false)
+          == (('isAdmin' in request.resource.data) ? request.resource.data.isAdmin : false);
+    }
+
     // Basic listing payload validation
     function validListing() {
       let d = request.resource.data;
@@ -38,8 +71,15 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
       allow create: if isOwner(userId);
-      // Egasi o'zgartiradi; admin verifikatsiya holatini boshqaradi.
-      allow update: if isOwner(userId) || isAdmin();
+      // Admin hamma narsani o'zgartiradi. Egasi esa o'z hujjatini o'zgartiradi,
+      // LEKIN balans (credits), reja (plan) va admin huquqini (isAdmin) o'zi
+      // ko'tara olmaydi — bu firibgarlik va imtiyoz oshirishning oldini oladi.
+      allow update: if isAdmin() || (
+        isOwner(userId)
+        && ownerCreditsOk()
+        && ownerPlanOk()
+        && ownerAdminOk()
+      );
       allow delete: if false;
 
       // Sevimlilar: faqat egasiga tegishli.
@@ -88,6 +128,13 @@ service cloud.firestore {
     match /config/{docId} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // ---- Admin config (push bildirishnoma tokenlari va h.k.) ----
+    // Faqat admin o'qiydi/yozadi. Push yuboruvchi server (Cloudflare Worker)
+    // bu hujjatni service account orqali o'qiydi (qoidalarni chetlab o'tadi).
+    match /adminConfig/{docId} {
+      allow read, write: if isAdmin();
     }
 
     // ---- Support messages (foydalanuvchi murojaatlari) ----
