@@ -1284,10 +1284,11 @@
       <div class="lock-chevron">›</div>
     </div>
 
-    <div class="lock-card hidden" id="openAdminBtn" style="margin-top:0;">
+    <div class="lock-card hidden" id="openAdminBtn" style="margin-top:0;position:relative;">
       <div class="lock-ic">🛠️</div>
       <div class="lock-txt"><h3 data-i18n="adminTitle">Admin panel</h3>
         <p data-i18n="adminEntrySub">Statistika, verifikatsiya va sozlamalarni boshqarish</p></div>
+      <span id="adminTopupBadge" style="display:none;position:absolute;top:10px;right:34px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#e53935;color:#fff;font-size:12px;font-weight:700;line-height:20px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.25);"></span>
       <div class="lock-chevron">›</div>
     </div>
 
@@ -1554,6 +1555,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
@@ -1598,6 +1600,8 @@ let pickerMap = null, pickerMarker = null, detailMapObj = null;
 let deferredInstallPrompt = null;         // PWA install event
 let chatUnsub = null;                     // conversation list listener
 let threadUnsub = null;                   // active thread listener
+let adminTopupsUnsub = null;              // admin: pending topup so'rovlari listeneri
+let adminTopupsLoaded = false;            // birinchi yuklanish tugadimi (yangi so'rovni ajratish uchun)
 let activeChatId = null;                  // open conversation
 let totalUnread = 0;                      // unread badge count
 let convCache = {};                       // chatId -> conversation data
@@ -2175,12 +2179,16 @@ auth.onAuthStateChanged(async (user)=>{
     await loadFavoriteIds();
     refreshProfileScreen(); refreshFavoritesScreen();
     subscribeConversations();
+    subscribeAdminTopups();   // admin bo'lsa — to'lov so'rovlarini real-time kuzatadi
+    initAdminPush();          // admin bo'lsa — FCM push tokenini ro'yxatdan o'tkazadi
   }else{
     currentUser = null; userDoc = null; favoriteIds.clear();
     $('logoutBtn').style.display = 'none';
     $('topbarLoginBtn').style.display = 'flex';
     if(chatUnsub){ chatUnsub(); chatUnsub=null; }
     if(threadUnsub){ threadUnsub(); threadUnsub=null; }
+    if(adminTopupsUnsub){ adminTopupsUnsub(); adminTopupsUnsub=null; }
+    updateAdminTopupBadge(0);
     totalUnread = 0; updateChatBadge();
     refreshProfileScreen(); refreshFavoritesScreen();
   }
@@ -3226,6 +3234,103 @@ async function adminApproveTopup(u, approve, btn){
 }
 
 /* ============================================================
+   TO'LOV SO'ROVLARI — REAL-TIME BILDIRISHNOMA (admin uchun)
+   4-variant: ilova ochiq/fonda bo'lsa — ovoz + belgi (badge) + toast
+   ============================================================ */
+function subscribeAdminTopups(){
+  if(adminTopupsUnsub){ adminTopupsUnsub(); adminTopupsUnsub=null; }
+  adminTopupsLoaded = false;
+  if(!isAdminUser()){ updateAdminTopupBadge(0); return; }
+  adminTopupsUnsub = db.collection('topups').where('status','==','pending')
+    .onSnapshot((snap)=>{
+      updateAdminTopupBadge(snap.size);
+      if(adminTopupsLoaded){
+        snap.docChanges().forEach(ch=>{
+          if(ch.type === 'added') notifyNewTopup(ch.doc.data());
+        });
+      }
+      adminTopupsLoaded = true;
+      const adm = $('screen-admin');
+      if(adm && adm.classList.contains('active')) loadAdminTopups();
+    }, (err)=>console.warn('adminTopups:', err));
+}
+
+function updateAdminTopupBadge(n){
+  const b = $('adminTopupBadge');
+  if(!b) return;
+  if(n>0){ b.textContent = n>99?'99+':n; b.style.display='block'; }
+  else b.style.display='none';
+}
+
+function notifyNewTopup(d){
+  const who = d.brokerName || t('admTopupsTitle');
+  const what = d.premium ? ('⭐ '+t('brokerPlanPremium')) : ((d.credits||0)+' '+t('creditsUnit'));
+  const amount = d.amount ? (' · '+d.amount+' '+t('priceSom')) : '';
+  playPing();
+  if(document.hidden && 'Notification' in window && Notification.permission==='granted'){
+    try{ new Notification('💳 '+t('admTopupsTitle'), { body: who+' — '+what+amount, icon:'icon.svg', tag:'nm-topup' }); }catch(e){}
+  }else{
+    toast('💳 '+who+' — '+what+amount, 'success');
+  }
+}
+
+// Qisqa "ding" ovozi — tashqi fayl kerak emas (WebAudio orqali generatsiya)
+let _audioCtx = null;
+function playPing(){
+  try{
+    _audioCtx = _audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    if(_audioCtx.state === 'suspended') _audioCtx.resume();
+    const o = _audioCtx.createOscillator(), g = _audioCtx.createGain();
+    o.connect(g); g.connect(_audioCtx.destination);
+    o.type='sine'; o.frequency.value=880;
+    const now=_audioCtx.currentTime;
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.25, now+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, now+0.4);
+    o.start(now); o.stop(now+0.42);
+  }catch(e){}
+}
+
+/* ============================================================
+   FCM PUSH — ilova YOPIQ bo'lsa ham telefonga bildirishnoma (1-variant)
+   Ishlashi uchun:
+     1) PUSH_VAPID_KEY ni to'ldiring — Firebase Console → Project settings →
+        Cloud Messaging → "Web Push certificates" → Key pair.
+     2) Push YUBORISH uchun tekin server (Cloudflare Worker) kerak —
+        to'liq yo'riqnoma: PUSH-SETUP.md.
+   Sozlanmagan bo'lsa, kod jim turadi (ilovaga ta'sir qilmaydi).
+   ============================================================ */
+const PUSH_VAPID_KEY = ""; // <-- Firebase VAPID kalitini shu yerga qo'ying
+
+async function initAdminPush(){
+  try{
+    if(!isAdminUser() || !PUSH_VAPID_KEY) return;
+    if(!('serviceWorker' in navigator)) return;
+    if(!firebase.messaging || (firebase.messaging.isSupported && !firebase.messaging.isSupported())) return;
+    let perm = Notification.permission;
+    if(perm === 'default') perm = await Notification.requestPermission();
+    if(perm !== 'granted') return;
+    // Firebase 'firebase-messaging-sw.js' ni o'z maxsus scope'ida avtomatik
+    // ro'yxatdan o'tkazadi (asosiy sw.js bilan to'qnashmaydi).
+    const messaging = firebase.messaging();
+    const token = await messaging.getToken({ vapidKey: PUSH_VAPID_KEY });
+    if(token){
+      await db.collection('adminConfig').doc('push').set({
+        tokens: firebase.firestore.FieldValue.arrayUnion(token),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge:true });
+    }
+    messaging.onMessage((payload)=>{
+      const n = (payload && (payload.notification||payload.data)) || {};
+      playPing();
+      toast('💳 ' + (n.title||t('admTopupsTitle')) + (n.body?(' — '+n.body):''), 'success');
+      const adm = $('screen-admin');
+      if(adm && adm.classList.contains('active')) loadAdminTopups();
+    });
+  }catch(e){ console.warn('initAdminPush:', e); }
+}
+
+/* ============================================================
    MAP LOCATION PICKER (Leaflet + OpenStreetMap)
    ============================================================ */
 const DEFAULT_CENTER = [40.7821, 72.3442]; // Andijon (fallback)
@@ -3626,11 +3731,14 @@ function tierRank(tr){ return tr==='vip'?2 : tr==='top'?1 : 0; }
 function effTier(l){ return (l.tierUntil && l.tierUntil > Date.now()) ? (l.tier||'standard') : 'standard'; }
 function effUrgent(l){ return !!(l.urgentUntil && l.urgentUntil > Date.now()); }
 function listingSortTime(l){ return Math.max((((l.createdAt&&l.createdAt.seconds)||0)*1000), l.bumpedAt||0); }
-// Balansdan kredit yechish (client-side; haqiqiy himoya keyin Cloud Functions bilan)
+// Balansdan kredit yechish. Absolyut son yoziladi (increment EMAS) — shunda
+// Firestore qoidasi "credits faqat kamayishi mumkin" cheklovini kuchga kiritadi
+// va foydalanuvchi o'ziga balans qo'shib olishining oldi olinadi.
 async function spendCredits(cost){
   if(cost<=0) return;
-  await db.collection('users').doc(currentUser.uid).update({ credits: firebase.firestore.FieldValue.increment(-cost) });
-  if(userDoc) userDoc.credits = userCredits() - cost;
+  const next = Math.max(0, userCredits() - cost);
+  await db.collection('users').doc(currentUser.uid).update({ credits: next });
+  if(userDoc) userDoc.credits = next;
 }
 // Bepul e'lon sloti bormi? Ayni hisob + shu telefon raqamiga bog'liq (boshqa gmail bilan aylanib o'tishni cheklaydi)
 async function hasFreeListingSlot(phone){

@@ -1,0 +1,7 @@
+name = "nurmakon-topup-push"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# Har daqiqada yangi to'lov so'rovlarini tekshiradi (Cloudflare Free rejada ham ishlaydi)
+[triggers]
+crons = ["* * * * *"]
