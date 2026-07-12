@@ -401,6 +401,26 @@
   .mode-opt.active .mo-tx b{color:var(--gold);}
   .mode-hint{font-size:11.5px;color:var(--text-dim);text-align:center;margin:0 0 12px;line-height:1.4;}
   .mode-hint b{color:var(--teal);}
+
+  /* ===== Broker leads: client-request CTA + request cards + perks ===== */
+  .broker-cta{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;
+    background:linear-gradient(135deg, var(--teal-soft), var(--gold-soft));
+    border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:14px;}
+  .broker-cta .bc-ic{width:44px;height:44px;border-radius:12px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+  .broker-cta .bc-tx{flex:1;min-width:150px;}
+  .broker-cta .bc-tx b{font-size:14px;}
+  .broker-cta .bc-tx p{margin:2px 0 0;font-size:12px;color:var(--text-dim);line-height:1.35;}
+  .broker-cta .btn{width:auto;flex-shrink:0;}
+  .req-card{background:var(--surface-2);border:1px solid var(--line-soft);border-radius:12px;padding:12px;margin-bottom:10px;}
+  .req-card .rc-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .req-card .rc-badges{display:flex;gap:6px;flex-wrap:wrap;}
+  .req-card .rc-budget{font-weight:700;color:var(--gold);font-size:14.5px;white-space:nowrap;}
+  .req-card .rc-meta{font-size:12.5px;color:var(--text-dim);margin-top:6px;}
+  .req-card .rc-note{font-size:13px;margin-top:6px;color:var(--text);white-space:pre-wrap;}
+  .req-card .rc-time{font-size:11px;color:var(--text-faint);}
+  .perk-note{display:flex;align-items:flex-start;gap:9px;background:var(--gold-soft);border:1px solid transparent;border-radius:11px;padding:11px 13px;margin-top:12px;font-size:12.5px;color:var(--text);line-height:1.45;}
+  .perk-note .pn-ic{font-size:18px;flex-shrink:0;}
+  .perk-note b{color:var(--gold);}
   .search-row{display:flex;gap:8px;}
   .search-input-wrap{flex:1;position:relative;}
   .search-input-wrap .search-ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-faint);font-size:15px;pointer-events:none;}
@@ -1035,6 +1055,12 @@
       <button class="tool-btn" id="openSortBtn">↕️ <span data-i18n="sortTitle">Saralash</span></button>
     </div>
   </div>
+  <div class="broker-cta hidden" id="brokerCta">
+    <div class="bc-ic">📝</div>
+    <div class="bc-tx"><b data-i18n="ctaTitle">Aniq nima kerakligini yozib qoldiring</b>
+      <p data-i18n="ctaSub">Mos maklerlar so'rovingizni ko'rib, siz bilan bog'lanadi</p></div>
+    <button class="btn btn-primary btn-sm" id="openRequestBtn"><span class="btn-label" data-i18n="ctaBtn">So'rov qoldirish</span></button>
+  </div>
   <div class="results-bar">
     <div class="count" id="resultsCount"></div>
   </div>
@@ -1185,7 +1211,8 @@
 
     <div class="card" id="agentRegisterCard">
       <h3 style="margin:0 0 4px;font-size:16px;" data-i18n="agentRegisterTitle">Makler sifatida ro'yxatdan o'tish</h3>
-      <p class="center-note" style="text-align:left;margin-bottom:14px;" data-i18n="agentRegisterSub">Ism va ish hududingizni kiriting — darhol ishlay boshlaysiz.</p>
+      <p class="center-note" style="text-align:left;margin-bottom:8px;" data-i18n="agentRegisterSub">Ism va ish hududingizni kiriting — darhol ishlay boshlaysiz.</p>
+      <div class="perk-note" style="margin-bottom:14px;"><span class="pn-ic">🎁</span><span data-i18n-html="brokerPerks">Erta qo'shilgan maklerlarga: mijoz so'rovlari <b>BEPUL</b> + tasdiqlangan belgi va ustuvor ko'rsatish.</span></div>
       <label data-i18n="agentNameLabel">Ism-familiya</label>
       <input type="text" id="agentName" placeholder="Ism Familiya">
       <label data-i18n="agentDistrictLabel">Asosiy ish hududi</label>
@@ -1196,6 +1223,10 @@
     <div class="card hidden" id="agentPanelCard">
       <h3 style="margin:0 0 6px;font-size:16px;display:flex;align-items:center;gap:8px;"><span data-i18n="agentPanelTitle">Makler paneli</span> <span class="badge badge-verified" id="agentVerifyBadge" style="display:none;">✓ <span data-i18n="verified">Tasdiqlangan</span></span></h3>
       <p class="center-note" style="text-align:left;" data-i18n="agentPanelSub">Siz makler sifatida ro'yxatdasiz. Mijozlar sizning e'lonlaringizni ko'ra oladi.</p>
+      <div class="perk-note"><span class="pn-ic">🎁</span><span data-i18n-html="brokerPerks">Erta qo'shilgan maklerlarga: mijoz so'rovlari <b>BEPUL</b> + tasdiqlangan belgi va ustuvor ko'rsatish.</span></div>
+      <h4 style="margin:18px 0 4px;font-size:14px;">📨 <span data-i18n="agentRequestsTitle">Mijoz so'rovlari</span></h4>
+      <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="agentRequestsSub">Mijozlar qoldirgan so'rovlar. Bog'lanib, mos variant taklif qiling.</p>
+      <div id="agentRequests"></div>
     </div>
 
     <button class="btn btn-danger-soft" id="profileLogoutBtn" style="margin-top:6px;"><span class="btn-label" data-i18n="logoutBtnLabel">Tizimdan chiqish</span></button>
@@ -1257,6 +1288,52 @@
   <div class="ib-txt"><b data-i18n="installTitle">Ilovani o'rnating</b><p data-i18n="installHint">NurMakon'ni telefon ekraningizga qo'shing</p></div>
   <button class="btn btn-primary btn-sm" id="installBtn" style="width:auto;flex-shrink:0;"><span class="btn-label" data-i18n="installBtn">O'rnatish</span></button>
   <button class="ib-close" id="installCloseBtn">✕</button>
+</div>
+
+<!-- ===================== CLIENT REQUEST MODAL (broker lead) ===================== -->
+<div class="modal-overlay" id="requestModal">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <div class="modal-head"><h2 data-i18n="reqTitle">Makler uchun so'rov</h2>
+      <button class="modal-close" id="reqCloseX" type="button">✕</button></div>
+    <p class="center-note" style="text-align:left;margin-top:0;" data-i18n="reqSub">Nima izlayotganingizni yozing — mos maklerlar bog'lanadi.</p>
+    <div class="field-row">
+      <div>
+        <label data-i18n="postDealTypeLabel">Bitim turi</label>
+        <select id="reqDealType">
+          <option value="sale" data-i18n="filterSale">Sotiladi</option>
+          <option value="rent" data-i18n="postDealRent">Ijaraga beriladi</option>
+        </select>
+      </div>
+      <div>
+        <label data-i18n="postPropertyTypeLabel">Mulk turi</label>
+        <select id="reqPropType">
+          <option value="apartment" data-i18n="propApartment">Kvartira</option>
+          <option value="house" data-i18n="propHouse">Hovli uy</option>
+          <option value="commercial" data-i18n="propCommercial">Tijorat obyekti</option>
+          <option value="land" data-i18n="propLand">Yer uchastkasi</option>
+        </select>
+      </div>
+    </div>
+    <label data-i18n="reqRegionLabel">Qaysi hudud</label>
+    <input type="text" id="reqRegion" placeholder="Andijon, shahar markazi">
+    <div class="field-row">
+      <div>
+        <label data-i18n="reqBudgetLabel">Byudjet (gacha)</label>
+        <input type="number" id="reqBudget" placeholder="300000000">
+      </div>
+      <div>
+        <label data-i18n="postRoomsLabel">Xonalar soni</label>
+        <input type="number" id="reqRooms" placeholder="2">
+      </div>
+    </div>
+    <label data-i18n="reqNoteLabel">Qo'shimcha izoh</label>
+    <textarea id="reqNote" placeholder="Masalan: metroga yaqin, ta'mirli..." data-i18n-placeholder="reqNotePh"></textarea>
+    <label data-i18n="postPhoneLabel">Bog'lanish uchun telefon</label>
+    <input type="tel" id="reqPhone" placeholder="+998 90 123 45 67">
+    <button class="btn btn-secondary" id="submitRequestBtn" style="margin-top:16px;"><span class="btn-label" data-i18n="reqSubmit">So'rovni yuborish</span></button>
+    <p class="center-note" id="reqStatus"></p>
+  </div>
 </div>
 
 <!-- ===================== BOTTOM NAV ===================== -->
@@ -1405,6 +1482,12 @@ const I18N = {
     modeHintIndep:"To'g'ridan-to'g'ri mulk egalari — <b>komissiyasiz</b>, arzonroq.",
     modeHintAssist:"Tekshirilgan maklerlar sizga mos uy topishda yordam beradi.",
     modeAppliedIndep:"Mustaqil rejim — to'g'ridan-to'g'ri egasi bilan", modeAppliedAssist:"Makler rejimi yoqildi",
+    ctaTitle:"Aniq nima kerakligini yozib qoldiring", ctaSub:"Mos maklerlar so'rovingizni ko'rib, siz bilan bog'lanadi", ctaBtn:"So'rov qoldirish",
+    reqTitle:"Makler uchun so'rov", reqSub:"Nima izlayotganingizni yozing — mos maklerlar bog'lanadi.",
+    reqRegionLabel:"Qaysi hudud", reqBudgetLabel:"Byudjet (gacha)", reqNoteLabel:"Qo'shimcha izoh", reqNotePh:"Masalan: metroga yaqin, ta'mirli...",
+    reqSubmit:"So'rovni yuborish", reqSent:"So'rovingiz yuborildi! Maklerlar tez orada bog'lanadi.", reqAnyBudget:"Byudjet ko'rsatilmagan",
+    agentRequestsTitle:"Mijoz so'rovlari", agentRequestsSub:"Mijozlar qoldirgan so'rovlar. Bog'lanib, mos variant taklif qiling.", noRequests:"Hozircha yangi so'rovlar yo'q",
+    brokerPerks:"Erta qo'shilgan maklerlarga: mijoz so'rovlari <b>BEPUL</b> + tasdiqlangan belgi va ustuvor ko'rsatish.",
     postAgentLockNote:"Makler sifatida joylash uchun avval profilda makler bo'lib ro'yxatdan o'ting.",
     noCommission:"Komissiyasiz", noListingsMode:"Bu rejimda hozircha e'lon yo'q. Ikkinchi rejimni tanlab ko'ring.",
     activeListingsSuffix:" ta faol e'lon", error:"Xatolik: ",
@@ -1488,6 +1571,12 @@ const I18N = {
     modeHintIndep:"Напрямую от собственников — <b>без комиссии</b>, дешевле.",
     modeHintAssist:"Проверенные риелторы помогут подобрать жильё.",
     modeAppliedIndep:"Самостоятельный режим — напрямую с владельцем", modeAppliedAssist:"Режим риелтора включён",
+    ctaTitle:"Опишите, что именно вам нужно", ctaSub:"Подходящие риелторы увидят запрос и свяжутся с вами", ctaBtn:"Оставить запрос",
+    reqTitle:"Запрос риелтору", reqSub:"Опишите, что ищете — подходящие риелторы свяжутся.",
+    reqRegionLabel:"Район", reqBudgetLabel:"Бюджет (до)", reqNoteLabel:"Дополнительно", reqNotePh:"Например: рядом метро, с ремонтом...",
+    reqSubmit:"Отправить запрос", reqSent:"Запрос отправлен! Риелторы скоро свяжутся.", reqAnyBudget:"Бюджет не указан",
+    agentRequestsTitle:"Запросы клиентов", agentRequestsSub:"Запросы от клиентов. Свяжитесь и предложите вариант.", noRequests:"Пока нет новых запросов",
+    brokerPerks:"Ранним риелторам: запросы клиентов <b>БЕСПЛАТНО</b> + значок проверенного и приоритет.",
     postAgentLockNote:"Чтобы размещать как риелтор, сначала зарегистрируйтесь риелтором в профиле.",
     noCommission:"Без комиссии", noListingsMode:"В этом режиме пока нет объявлений. Попробуйте другой режим.",
     activeListingsSuffix:" активных объявлений", error:"Ошибка: ",
@@ -1571,6 +1660,12 @@ const I18N = {
     modeHintIndep:"Directly from owners — <b>no commission</b>, cheaper.",
     modeHintAssist:"Verified brokers help you find a suitable home.",
     modeAppliedIndep:"Independent mode — directly with the owner", modeAppliedAssist:"Broker mode enabled",
+    ctaTitle:"Tell us exactly what you need", ctaSub:"Matching brokers will see your request and contact you", ctaBtn:"Leave a request",
+    reqTitle:"Request to brokers", reqSub:"Describe what you're looking for — matching brokers will reach out.",
+    reqRegionLabel:"Which area", reqBudgetLabel:"Budget (up to)", reqNoteLabel:"Extra note", reqNotePh:"e.g. near metro, renovated...",
+    reqSubmit:"Send request", reqSent:"Request sent! Brokers will contact you soon.", reqAnyBudget:"Budget not specified",
+    agentRequestsTitle:"Client requests", agentRequestsSub:"Requests left by clients. Reach out and offer a match.", noRequests:"No new requests yet",
+    brokerPerks:"Early brokers: client requests <b>FREE</b> + verified badge and priority.",
     postAgentLockNote:"To post as a broker, first register as a broker in your profile.",
     noCommission:"No commission", noListingsMode:"No listings in this mode yet. Try the other mode.",
     activeListingsSuffix:" active listings", error:"Error: ",
@@ -2032,6 +2127,7 @@ function syncModeUI(){
   document.querySelectorAll('.mode-opt').forEach(o=>o.classList.toggle('active', o.dataset.mode===currentMode));
   const hint = $('modeHint');
   if(hint) hint.innerHTML = (currentMode==='assisted') ? t('modeHintAssist') : t('modeHintIndep');
+  const cta = $('brokerCta'); if(cta) cta.classList.toggle('hidden', currentMode!=='assisted');
 }
 function setMode(mode, persist){
   currentMode = (mode==='assisted') ? 'assisted' : 'independent';
@@ -2410,6 +2506,7 @@ function refreshProfileScreen(){
   if(userDoc && userDoc.isAgent){
     $('agentRegisterCard').classList.add('hidden');
     $('agentPanelCard').classList.remove('hidden');
+    loadAgentRequests();
   }else{
     $('agentRegisterCard').classList.remove('hidden');
     $('agentPanelCard').classList.add('hidden');
@@ -2819,6 +2916,80 @@ function requestNotifPermission(){
   if('Notification' in window && Notification.permission==='default'){
     Notification.requestPermission().catch(()=>{});
   }
+}
+
+/* ============ CLIENT REQUESTS (broker leads) ============ */
+$('openRequestBtn').addEventListener('click', ()=>{
+  if(!currentUser){ toast(t('needLoginToast')); requireLogin('feed'); return; }
+  $('reqPhone').value = (userDoc && userDoc.phone) ? userDoc.phone : '';
+  $('reqStatus').textContent = '';
+  openSheet('requestModal');
+});
+$('reqCloseX').addEventListener('click', ()=>closeSheet('requestModal'));
+
+$('submitRequestBtn').addEventListener('click', async ()=>{
+  if(!currentUser){ toast(t('needLoginToast')); requireLogin('feed'); return; }
+  const btn = $('submitRequestBtn');
+  const region = $('reqRegion').value.trim();
+  let phone = $('reqPhone').value.trim();
+  if(!region){ toast(t('fillRequired'),'error'); return; }
+  if(phone.length < 7){ toast(t('postPhoneLabel'),'error'); return; }
+  setLoading(btn, true);
+  try{
+    await db.collection('requests').add({
+      requesterUid: currentUser.uid,
+      dealType: $('reqDealType').value,
+      propertyType: $('reqPropType').value,
+      region,
+      budget: Number($('reqBudget').value) || null,
+      rooms: Number($('reqRooms').value) || null,
+      note: $('reqNote').value.trim(),
+      phone,
+      status: 'open',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    // save phone to profile for convenience
+    if(userDoc && !userDoc.phone){ userDoc.phone = phone; db.collection('users').doc(currentUser.uid).update({ phone }).catch(()=>{}); }
+    closeSheet('requestModal');
+    toast(t('reqSent'),'success');
+    document.querySelectorAll('#requestModal input, #requestModal textarea').forEach(el=>el.value='');
+  }catch(err){ console.error(err); $('reqStatus').textContent = t('error')+err.message; }
+  finally{ setLoading(btn, false); }
+});
+
+async function loadAgentRequests(){
+  const box = $('agentRequests'); if(!box) return;
+  box.innerHTML = `<div class="center-note">${t('loading')}</div>`;
+  try{
+    const snap = await db.collection('requests').orderBy('createdAt','desc').limit(40).get();
+    const reqs = [];
+    snap.forEach(d=>{ const r = d.data(); if(r.status==='open') reqs.push({ id:d.id, ...r }); });
+    if(reqs.length === 0){ box.innerHTML = `<div class="center-note">${t('noRequests')}</div>`; return; }
+    box.innerHTML = '';
+    reqs.forEach(r=>{
+      const dealLabel = r.dealType==='sale' ? t('dealSale') : t('dealRent');
+      const propKey = 'prop'+(r.propertyType||'apartment').charAt(0).toUpperCase()+(r.propertyType||'apartment').slice(1);
+      const budget = r.budget ? fmtPrice(r.budget) : t('reqAnyBudget');
+      const card = document.createElement('div'); card.className='req-card';
+      card.innerHTML = `
+        <div class="rc-top">
+          <div class="rc-badges">
+            <span class="badge ${r.dealType==='sale'?'badge-sale':'badge-rent'}">${dealLabel}</span>
+            <span class="badge badge-owner">${propIcon(r.propertyType)} ${t(propKey)}</span>
+          </div>
+          <span class="rc-budget">${budget}</span>
+        </div>
+        <div class="rc-meta">📍 ${esc(r.region)} ${r.rooms?('· '+r.rooms+t('roomsSuffix')):''} · <span class="rc-time">${timeAgo(r.createdAt)}</span></div>
+        ${r.note ? `<div class="rc-note">${esc(r.note)}</div>` : ''}
+        <button class="btn btn-secondary btn-sm rq-call"><span class="btn-label">📞 ${t('contactBtn')}</span></button>`;
+      card.querySelector('.rq-call').addEventListener('click', ()=>{
+        contactPhone = r.phone || '';
+        $('contactPhoneDisplay').textContent = contactPhone;
+        openSheet('contactSheet');
+      });
+      box.appendChild(card);
+    });
+  }catch(err){ console.error(err); box.innerHTML = `<div class="center-note">${t('loadError')}${esc(err.message)}</div>`; }
 }
 
 /* ============ INIT ============ */
