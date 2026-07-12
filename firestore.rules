@@ -16,6 +16,13 @@ service cloud.firestore {
     function isOwner(uid) {
       return isSignedIn() && request.auth.uid == uid;
     }
+    // Admin: users/{uid} hujjatida isAdmin == true bo'lsa.
+    // Buni faqat Firebase Console orqali qo'lda o'rnatasiz.
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
     // Basic listing payload validation
     function validListing() {
       let d = request.resource.data;
@@ -29,9 +36,10 @@ service cloud.firestore {
     // ---- Users ----
     // Har bir foydalanuvchi faqat o'z hujjatini o'qiy/yozadi.
     match /users/{userId} {
-      allow read: if isOwner(userId);
+      allow read: if isOwner(userId) || isAdmin();
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
+      // Egasi o'zgartiradi; admin verifikatsiya holatini boshqaradi.
+      allow update: if isOwner(userId) || isAdmin();
       allow delete: if false;
 
       // Sevimlilar: faqat egasiga tegishli.
@@ -66,11 +74,28 @@ service cloud.firestore {
     // ---- Agents ----
     match /agents/{agentId} {
       allow read: if true;
-      allow create, update: if isOwner(agentId);
-      // 'verified' maydonini foydalanuvchi o'zi o'zgartira olmaydi.
-      allow update: if isOwner(agentId)
-        && request.resource.data.verified == resource.data.verified;
-      allow delete: if isOwner(agentId);
+      allow create: if isOwner(agentId);
+      // Egasi tahrirlaydi, lekin 'verified' ni o'zi o'zgartira olmaydi.
+      // 'verified' ni faqat admin o'rnatadi (verifikatsiyani tasdiqlaganda).
+      allow update: if
+        (isOwner(agentId) && request.resource.data.verified == resource.data.verified)
+        || isAdmin();
+      allow delete: if isOwner(agentId) || isAdmin();
+    }
+
+    // ---- Config (ishonch telefoni va boshqa umumiy sozlamalar) ----
+    // Hamma o'qiy oladi (masalan, ishonch telefoni); faqat admin yozadi.
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---- Support messages (foydalanuvchi murojaatlari) ----
+    // Kirgan foydalanuvchi o'z nomidan yozadi; faqat admin o'qiydi/boshqaradi.
+    match /supportMessages/{msgId} {
+      allow create: if isSignedIn()
+        && request.resource.data.senderUid == request.auth.uid;
+      allow read, update, delete: if isAdmin();
     }
 
     // ---- Chats ----
@@ -114,7 +139,7 @@ service cloud.firestore {
       allow create: if isSignedIn()
         && request.resource.data.requesterUid == request.auth.uid;
       allow read: if isSignedIn()
-        && (resource.data.requesterUid == request.auth.uid || isAgentUser());
+        && (resource.data.requesterUid == request.auth.uid || isAgentUser() || isAdmin());
       allow update, delete: if isSignedIn()
         && resource.data.requesterUid == request.auth.uid;
     }
