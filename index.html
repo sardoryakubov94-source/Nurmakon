@@ -222,12 +222,10 @@
     transition:color .15s ease;
     position:relative;
   }
-  .nav-item .ic{font-size:20px;line-height:1;transition:transform .18s ease;}
+  .nav-item .ic{font-size:20px;line-height:1;transition:transform .18s ease;display:flex;align-items:center;justify-content:center;}
+  .nav-item .ic svg{width:25px;height:25px;display:block;}
   .nav-item.active{color:var(--gold);}
-  .nav-item.active .ic{transform:translateY(-1px) scale(1.08);}
-  .nav-item.active::before{
-    content:"";position:absolute;top:6px;width:22px;height:3px;border-radius:3px;background:var(--gold);
-  }
+  .nav-item.active .ic{transform:translateY(-1px) scale(1.06);}
   /* center post button: dedicated column so labels never overlap */
   .nav-item-center{overflow:visible;}
   .nav-item-center .ic{
@@ -240,6 +238,7 @@
     box-shadow:0 8px 18px -4px rgba(212,164,74,0.6);
     transition:transform .16s ease;
   }
+  .nav-item-center .ic svg{width:27px;height:27px;}
   .nav-item-center:active .ic{transform:scale(0.9);}
   .nav-item-center span{margin-top:2px;color:var(--text-faint);}
   .nav-item-center.active span{color:var(--gold);}
@@ -1193,11 +1192,11 @@
 
 <!-- ===================== BOTTOM NAV ===================== -->
 <div class="bottomnav" id="bottomnav">
-  <button class="nav-item active" data-screen="feed"><div class="ic">🏠</div><span data-i18n="navSearch">Qidirish</span></button>
-  <button class="nav-item" data-screen="favorites"><div class="ic">♡</div><span data-i18n="navFavorites">Sevimli</span></button>
-  <button class="nav-item nav-item-center" data-screen="post"><div class="ic">＋</div><span data-i18n="navPost">E'lon</span></button>
-  <button class="nav-item" data-screen="chat"><div class="ic">💬</div><span data-i18n="navMessages">Xabarlar</span><span class="nav-badge" id="chatNavBadge">0</span></button>
-  <button class="nav-item" data-screen="profile"><div class="ic">👤</div><span data-i18n="navProfile">Profil</span></button>
+  <button class="nav-item active" data-screen="feed"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3.5l9 7.2"/><path d="M5.2 9.4V20a1 1 0 0 0 1 1h11.6a1 1 0 0 0 1-1V9.4"/><path d="M9.5 21v-6.2h5V21"/></svg></div><span data-i18n="navSearch">Qidirish</span></button>
+  <button class="nav-item" data-screen="favorites"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.3s-7.2-4.4-9.6-8.7C1 8.4 2.7 5.3 6 5.3c2 0 3.3 1.2 4 2.4.7-1.2 2-2.4 4-2.4 3.3 0 5 3.1 3.6 6.3-2.4 4.3-9.6 8.7-9.6 8.7Z"/></svg></div><span data-i18n="navFavorites">Sevimli</span></button>
+  <button class="nav-item nav-item-center" data-screen="post"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></div><span data-i18n="navPost">E'lon</span></button>
+  <button class="nav-item" data-screen="chat"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11.4a8 8 0 0 1-11.6 7.1L4 20l1.5-4.7A8 8 0 1 1 20.5 11.4Z"/></svg></div><span data-i18n="navMessages">Xabarlar</span><span class="nav-badge" id="chatNavBadge">0</span></button>
+  <button class="nav-item" data-screen="profile"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c0-3.9 3.4-6.3 7.5-6.3s7.5 2.4 7.5 6.3"/></svg></div><span data-i18n="navProfile">Profil</span></button>
 </div>
 
 <div class="toast" id="toast"></div>
