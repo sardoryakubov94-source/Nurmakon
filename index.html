@@ -4123,11 +4123,13 @@ async function loadAgentRequests(){
       let actionHtml;
       if(r._iAccepted){
         const cancelHtml = pendingCancels.has(r.id)
-          ? `<div class="rc-cancel-pending" style="color:#e6a23c;font-size:12.5px;font-weight:600;">⏳ ${t('cancelPending')}</div>`
-          : `<button class="btn btn-outline btn-sm rq-cancel"><span class="btn-label">🚫 ${t('cancelReqBtn')}</span></button>`;
+          ? `<div class="rc-cancel-pending" style="flex:1;text-align:center;color:#e6a23c;font-size:12.5px;font-weight:600;">⏳ ${t('cancelPending')}</div>`
+          : `<button class="btn btn-outline btn-sm rq-cancel" style="flex:1;"><span class="btn-label">🚫 ${t('cancelReqBtn')}</span></button>`;
         actionHtml = `<div class="rc-accepted">${t('reqAcceptedYou')}</div>
-          <button class="btn btn-secondary btn-sm rq-call"><span class="btn-label">📞 ${t('contactBtn')}</span></button>
-          ${cancelHtml}`;
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="btn btn-secondary btn-sm rq-call" style="flex:1;"><span class="btn-label">📞 ${t('contactBtn')}</span></button>
+            ${cancelHtml}
+          </div>`;
       }else if(full){
         actionHtml = `<button class="btn btn-outline btn-sm" disabled><span class="btn-label">${t('reqTaken')}</span></button>`;
       }else{
