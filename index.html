@@ -956,6 +956,19 @@
   </div>
 </div>
 
+<!-- ===================== CANCEL REQUEST SHEET ===================== -->
+<div class="modal-overlay" id="cancelReqSheet">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <div class="modal-head"><h2 data-i18n="cancelSheetTitle">So'rovni bekor qilish</h2>
+      <button class="modal-close" id="cancelReqCloseX" type="button">✕</button></div>
+    <p class="center-note" style="text-align:left;margin:0 0 10px;color:#e6a23c;" data-i18n="cancelWarn">Diqqat: bekor qilish so'rovi adminga yuboriladi. Tasdiqlansa, reytingingiz pasayadi.</p>
+    <label data-i18n="cancelReasonLabel">Bekor qilish sababi</label>
+    <textarea id="cancelReqReason" rows="3" data-i18n-placeholder="cancelReasonPh" placeholder="Masalan: mijoz javob bermayapti, boshqa shahardan..."></textarea>
+    <button class="btn btn-danger-soft" id="cancelReqSubmitBtn" style="margin-top:12px;"><span class="btn-label" data-i18n="cancelSubmit">Bekor qilishni so'rash</span></button>
+  </div>
+</div>
+
 <!-- ===================== RATE BROKER SHEET ===================== -->
 <div class="modal-overlay" id="rateSheet">
   <div class="modal">
@@ -1401,6 +1414,13 @@
       <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="agentRequestsSub">Mijozlar qoldirgan so'rovlar. Bog'lanib, mos variant taklif qiling.</p>
       <div id="agentRequests"></div>
     </div>
+
+    <!-- 4) Bekor qilingan so'rovlar -->
+    <div class="card">
+      <h4 style="margin:0 0 4px;font-size:15px;">🚫 <span data-i18n="cancelTitle">Bekor qilingan so'rovlar</span></h4>
+      <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="cancelSectionSub">Bu yerda bekor qilish so'rovlaringiz va holati ko'rinadi (ma'lumot uchun).</p>
+      <div id="agentCancellations"></div>
+    </div>
   </div>
 </div>
 
@@ -1457,6 +1477,12 @@
     <h3 style="margin:0 0 4px;font-size:16px;">💳 <span data-i18n="admTopupsTitle">To'lov so'rovlari</span></h3>
     <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="admTopupsSub">Maklerlarning balans to'ldirish so'rovlari.</p>
     <div id="adminTopups"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 4px;font-size:16px;">🚫 <span data-i18n="admCancelsTitle">Bekor qilish so'rovlari</span></h3>
+    <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="admCancelsSub">Maklerlarning mijoz so'rovini bekor qilish so'rovlari. Tasdiqlansa, so'rov qayta ochiladi va makler reytingi pasayadi.</p>
+    <div id="adminCancellations"></div>
   </div>
 </div>
 
@@ -1660,6 +1686,10 @@ let chatUnsub = null;                     // conversation list listener
 let threadUnsub = null;                   // active thread listener
 let adminTopupsUnsub = null;              // admin: pending topup so'rovlari listeneri
 let adminTopupsLoaded = false;            // birinchi yuklanish tugadimi (yangi so'rovni ajratish uchun)
+let adminCancelUnsub = null;              // admin: pending bekor qilish so'rovlari listeneri
+let adminCancelLoaded = false;
+let _pendTopups = 0, _pendCancels = 0;    // admin badge uchun hisoblagichlar
+let cancelTarget = null;                  // bekor qilinayotgan so'rov (modal uchun)
 let activeChatId = null;                  // open conversation
 let totalUnread = 0;                      // unread badge count
 let convCache = {};                       // chatId -> conversation data
@@ -1695,6 +1725,8 @@ const I18N = {
     walletBalance:"Lead balansi", creditsUnit:"kredit", brokerPlanFree:"Oddiy reja", brokerPlanPremium:"Premium", topupBtn:"Balansni to'ldirish", walletNote:"Har bir mijoz so'rovini qabul qilish — 1 kredit. Premium obunada cheksiz.", creditEmpty:"Lead krediti tugadi. Balansni to'ldiring.", priceSom:"so'm",
     topupTitle:"Balansni to'ldirish", topupSub:"Lead kreditini sotib oling yoki premium obunaga o'ting.", topupBuyBtn:"So'rov yuborish", topupSent:"So'rov yuborildi! Admin tasdiqlagach balans yangilanadi.", topupPremiumTitle:"Premium obuna", topupPremiumDesc:"Cheksiz lead qabul qilish + so'rovlarda ustuvor ko'rsatish.", topupPremiumBtn:"Premiumga o'tish", topupPayNote:"Hozircha to'lov admin tomonidan qo'lda tasdiqlanadi. Payme/Click keyingi bosqichda ulanadi.",
     admTopupsTitle:"To'lov so'rovlari", admTopupsSub:"Maklerlarning balans to'ldirish so'rovlari.", admNoTopups:"To'lov so'rovlari yo'q", admTopupApprove:"✓ Tasdiqlash", admTopupApproved:"To'lov tasdiqlandi — balans yangilandi",
+    cancelReqBtn:"Bekor qilish", cancelPending:"Bekor qilish so'ralgan (kutilmoqda)", cancelSheetTitle:"So'rovni bekor qilish", cancelWarn:"Diqqat: bekor qilish so'rovi adminga yuboriladi. Tasdiqlansa, reytingingiz pasayadi.", cancelReasonLabel:"Bekor qilish sababi", cancelReasonPh:"Masalan: mijoz javob bermayapti, boshqa shahardan...", cancelSubmit:"Bekor qilishni so'rash", cancelReasonRequired:"Iltimos, bekor qilish sababini yozing", cancelSent:"Bekor qilish so'rovi yuborildi. Admin ko'rib chiqadi.", cancelTitle:"Bekor qilingan so'rovlar", cancelSectionSub:"Bu yerda bekor qilish so'rovlaringiz va holati ko'rinadi (ma'lumot uchun).", cancelNone:"Bekor qilish so'rovlari yo'q", cancelStPending:"Kutilmoqda", cancelStApproved:"Tasdiqlangan", cancelStRejected:"Rad etilgan",
+    admCancelsTitle:"Bekor qilish so'rovlari", admCancelsSub:"Maklerlarning mijoz so'rovini bekor qilish so'rovlari. Tasdiqlansa, so'rov qayta ochiladi va makler reytingi pasayadi.", admNoCancels:"Bekor qilish so'rovlari yo'q", admCancelApprove:"✓ Bekor qilishni tasdiqlash", admCancelApproved:"Bekor qilindi — so'rov qayta ochildi, reyting yangilandi", admRejected:"Rad etildi",
     postPromoLabel:"E'lon turi", tierStandard:"Oddiy", tierTop:"TOP", tierVip:"VIP", tierStandardCost:"1-si bepul", postUrgentLabel:"⚡ Shoshilinch belgisi (+2 kredit)", postPromoInfo:"Birinchi {free} ta e'lon bepul, keyingisi {extra} kredit.", urgentBadge:"Shoshilinch", promoteBtn:"Reklama", promoteTitle:"E'lonni reklama qilish", promoteBalance:"Balans: {n} kredit", promoteNote:"Reklama darhol yoqiladi; balansdan kredit yechiladi. Kredit yetmasa avval balansni to'ldiring.", promoBump:"Ko'tarish (tepaga)", promoteDone:"Reklama yoqildi!", promoSkippedLowCredit:"Kredit yetmadi — oddiy e'lon sifatida joylandi.", needCreditToPost:"Kredit yetarli emas. Balansni to'ldiring.", listingPostedPaid:"E'lon joylandi! {n} kredit yechildi.",
     brokerProfileTitle:"Makler profili", reviewsTitle:"Sharhlar", reviewsCount:"baho", dealsLabel:"bitimlar", noReviews:"Hozircha sharhlar yo'q", brokerNotFound:"Makler topilmadi", viewBrokerBtn:"Makler profili →", viewMyProfileBtn:"Ochiq profilni ko'rish", walletSectionTitle:"Balans", ratingSectionTitle:"Reyting", rateBtn:"⭐ Baholash", rateTitle:"Maklerni baholang", rateCommentPh:"Izoh (ixtiyoriy)...", rateSubmit:"Yuborish", rateSelf:"O'zingizni baholay olmaysiz", rateChoose:"Iltimos, yulduz tanlang", rateThanks:"Bahoyingiz uchun rahmat!",
     googleSignIn:"Google orqali davom etish", or:"yoki",
@@ -1801,6 +1833,8 @@ const I18N = {
     walletBalance:"Баланс лидов", creditsUnit:"кредит", brokerPlanFree:"Обычный план", brokerPlanPremium:"Премиум", topupBtn:"Пополнить баланс", walletNote:"Приём каждого запроса — 1 кредит. В премиум-подписке безлимитно.", creditEmpty:"Кредиты закончились. Пополните баланс.", priceSom:"сум",
     topupTitle:"Пополнить баланс", topupSub:"Купите кредиты для лидов или перейдите на премиум.", topupBuyBtn:"Отправить запрос", topupSent:"Запрос отправлен! Баланс обновится после подтверждения администратором.", topupPremiumTitle:"Премиум-подписка", topupPremiumDesc:"Безлимитный приём лидов + приоритет в запросах.", topupPremiumBtn:"Перейти на премиум", topupPayNote:"Пока оплата подтверждается администратором вручную. Payme/Click подключим на следующем этапе.",
     admTopupsTitle:"Запросы на оплату", admTopupsSub:"Запросы риелторов на пополнение баланса.", admNoTopups:"Нет запросов на оплату", admTopupApprove:"✓ Подтвердить", admTopupApproved:"Оплата подтверждена — баланс обновлён",
+    cancelReqBtn:"Отменить", cancelPending:"Отмена запрошена (ожидает)", cancelSheetTitle:"Отмена запроса", cancelWarn:"Внимание: запрос на отмену отправляется администратору. При одобрении ваш рейтинг снизится.", cancelReasonLabel:"Причина отмены", cancelReasonPh:"Например: клиент не отвечает, из другого города...", cancelSubmit:"Запросить отмену", cancelReasonRequired:"Пожалуйста, укажите причину отмены", cancelSent:"Запрос на отмену отправлен. Администратор рассмотрит.", cancelTitle:"Отменённые запросы", cancelSectionSub:"Здесь отображаются ваши запросы на отмену и их статус (для информации).", cancelNone:"Нет запросов на отмену", cancelStPending:"Ожидает", cancelStApproved:"Одобрено", cancelStRejected:"Отклонено",
+    admCancelsTitle:"Запросы на отмену", admCancelsSub:"Запросы риелторов на отмену запроса клиента. При одобрении запрос снова открывается, а рейтинг риелтора снижается.", admNoCancels:"Нет запросов на отмену", admCancelApprove:"✓ Подтвердить отмену", admCancelApproved:"Отменено — запрос снова открыт, рейтинг обновлён", admRejected:"Отклонено",
     postPromoLabel:"Тип объявления", tierStandard:"Обычное", tierTop:"ТОП", tierVip:"VIP", tierStandardCost:"1-е бесплатно", postUrgentLabel:"⚡ Метка «Срочно» (+2 кредита)", postPromoInfo:"Первые {free} объявл. бесплатно, следующее — {extra} кредит.", urgentBadge:"Срочно", promoteBtn:"Продвижение", promoteTitle:"Продвижение объявления", promoteBalance:"Баланс: {n} кредитов", promoteNote:"Продвижение включается сразу; кредиты списываются с баланса. Если не хватает — сначала пополните.", promoBump:"Поднять (вверх)", promoteDone:"Продвижение включено!", promoSkippedLowCredit:"Не хватило кредитов — размещено как обычное.", needCreditToPost:"Недостаточно кредитов. Пополните баланс.", listingPostedPaid:"Объявление размещено! Списано {n} кредитов.",
     brokerProfileTitle:"Профиль риелтора", reviewsTitle:"Отзывы", reviewsCount:"оценок", dealsLabel:"сделки", noReviews:"Пока нет отзывов", brokerNotFound:"Риелтор не найден", viewBrokerBtn:"Профиль риелтора →", viewMyProfileBtn:"Открыть публичный профиль", walletSectionTitle:"Баланс", ratingSectionTitle:"Рейтинг", rateBtn:"⭐ Оценить", rateTitle:"Оцените риелтора", rateCommentPh:"Комментарий (необязательно)...", rateSubmit:"Отправить", rateSelf:"Нельзя оценить самого себя", rateChoose:"Пожалуйста, выберите звёзды", rateThanks:"Спасибо за оценку!",
     googleSignIn:"Продолжить через Google", or:"или",
@@ -1907,6 +1941,8 @@ const I18N = {
     walletBalance:"Lead balance", creditsUnit:"credits", brokerPlanFree:"Free plan", brokerPlanPremium:"Premium", topupBtn:"Top up balance", walletNote:"Accepting each client request costs 1 credit. Unlimited with Premium.", creditEmpty:"Out of lead credits. Please top up.", priceSom:"UZS",
     topupTitle:"Top up balance", topupSub:"Buy lead credits or upgrade to Premium.", topupBuyBtn:"Send request", topupSent:"Request sent! Balance updates after admin approval.", topupPremiumTitle:"Premium subscription", topupPremiumDesc:"Unlimited lead accepts + priority in requests.", topupPremiumBtn:"Go Premium", topupPayNote:"For now payments are approved manually by admin. Payme/Click will be connected next.",
     admTopupsTitle:"Payment requests", admTopupsSub:"Brokers' balance top-up requests.", admNoTopups:"No payment requests", admTopupApprove:"✓ Approve", admTopupApproved:"Payment approved — balance updated",
+    cancelReqBtn:"Cancel", cancelPending:"Cancellation requested (pending)", cancelSheetTitle:"Cancel request", cancelWarn:"Note: the cancellation request is sent to the admin. If approved, your rating will drop.", cancelReasonLabel:"Reason for cancellation", cancelReasonPh:"e.g. client not responding, from another city...", cancelSubmit:"Request cancellation", cancelReasonRequired:"Please provide a reason for cancellation", cancelSent:"Cancellation request sent. The admin will review it.", cancelTitle:"Cancelled requests", cancelSectionSub:"Your cancellation requests and their status appear here (for information).", cancelNone:"No cancellation requests", cancelStPending:"Pending", cancelStApproved:"Approved", cancelStRejected:"Rejected",
+    admCancelsTitle:"Cancellation requests", admCancelsSub:"Brokers' requests to cancel a client request. If approved, the request reopens and the broker's rating drops.", admNoCancels:"No cancellation requests", admCancelApprove:"✓ Approve cancellation", admCancelApproved:"Cancelled — request reopened, rating updated", admRejected:"Rejected",
     postPromoLabel:"Listing type", tierStandard:"Standard", tierTop:"TOP", tierVip:"VIP", tierStandardCost:"1st free", postUrgentLabel:"⚡ Urgent badge (+2 credits)", postPromoInfo:"First {free} listing(s) free, next one {extra} credit.", urgentBadge:"Urgent", promoteBtn:"Promote", promoteTitle:"Promote listing", promoteBalance:"Balance: {n} credits", promoteNote:"Promotion activates instantly; credits are deducted. If not enough, top up first.", promoBump:"Bump (to top)", promoteDone:"Promotion activated!", promoSkippedLowCredit:"Not enough credits — posted as standard.", needCreditToPost:"Not enough credits. Please top up.", listingPostedPaid:"Listing posted! {n} credits deducted.",
     brokerProfileTitle:"Broker profile", reviewsTitle:"Reviews", reviewsCount:"ratings", dealsLabel:"deals", noReviews:"No reviews yet", brokerNotFound:"Broker not found", viewBrokerBtn:"Broker profile →", viewMyProfileBtn:"Open public profile", walletSectionTitle:"Balance", ratingSectionTitle:"Rating", rateBtn:"⭐ Rate", rateTitle:"Rate the broker", rateCommentPh:"Comment (optional)...", rateSubmit:"Submit", rateSelf:"You can't rate yourself", rateChoose:"Please pick stars", rateThanks:"Thanks for your rating!",
     googleSignIn:"Continue with Google", or:"or",
@@ -2240,8 +2276,9 @@ auth.onAuthStateChanged(async (user)=>{
     await loadFavoriteIds();
     refreshProfileScreen(); refreshFavoritesScreen();
     subscribeConversations();
-    subscribeAdminTopups();   // admin bo'lsa — to'lov so'rovlarini real-time kuzatadi
-    initAdminPush();          // admin bo'lsa — FCM push tokenini ro'yxatdan o'tkazadi
+    subscribeAdminTopups();       // admin bo'lsa — to'lov so'rovlarini real-time kuzatadi
+    subscribeAdminCancellations();// admin bo'lsa — bekor qilish so'rovlarini kuzatadi
+    initAdminPush();              // admin bo'lsa — FCM push tokenini ro'yxatdan o'tkazadi
   }else{
     currentUser = null; userDoc = null; favoriteIds.clear();
     $('logoutBtn').style.display = 'none';
@@ -2249,7 +2286,8 @@ auth.onAuthStateChanged(async (user)=>{
     if(chatUnsub){ chatUnsub(); chatUnsub=null; }
     if(threadUnsub){ threadUnsub(); threadUnsub=null; }
     if(adminTopupsUnsub){ adminTopupsUnsub(); adminTopupsUnsub=null; }
-    updateAdminTopupBadge(0);
+    if(adminCancelUnsub){ adminCancelUnsub(); adminCancelUnsub=null; }
+    _pendTopups=0; _pendCancels=0; refreshAdminBadge();
     totalUnread = 0; updateChatBadge();
     refreshProfileScreen(); refreshFavoritesScreen();
   }
@@ -2942,6 +2980,7 @@ function refreshAgentScreen(){
     renderBrokerWallet();
     loadBrokerRatingSummary();
     loadAgentRequests();
+    loadAgentCancellations();
   }else{
     // prefill known info
     if(userDoc){
@@ -3250,6 +3289,7 @@ function refreshAdminScreen(){
   loadAdminStats();
   loadPendingVerifications();
   loadAdminTopups();
+  loadAdminCancellations();
 }
 
 async function loadAdminStats(){
@@ -3412,6 +3452,69 @@ async function adminApproveTopup(u, approve, btn){
   finally{ setLoading(btn, false); }
 }
 
+/* ============ ADMIN: bekor qilish so'rovlari ============ */
+async function loadAdminCancellations(){
+  const el = $('adminCancellations'); if(!el) return;
+  el.innerHTML = `<div class="center-note">${t('loading')}</div>`;
+  try{
+    const snap = await db.collection('cancellations').where('status','==','pending').limit(50).get();
+    const items = []; snap.forEach(d=>items.push({ id:d.id, ...d.data() }));
+    if(items.length===0){ el.innerHTML = `<div class="center-note">${t('admNoCancels')}</div>`; return; }
+    el.innerHTML = '';
+    items.forEach(c=>{
+      const card = document.createElement('div'); card.className='req-card';
+      card.innerHTML = `
+        <div style="font-weight:600;">${esc(c.brokerName||c.brokerUid)}</div>
+        <div class="rc-meta">${esc(c.requestSummary||'—')}</div>
+        <div class="rc-note">💬 ${esc(c.reason||'')}</div>
+        <div class="rc-actions" style="display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm ac-approve"><span class="btn-label">${t('admCancelApprove')}</span></button>
+          <button class="btn btn-outline btn-sm ac-reject"><span class="btn-label">${t('admReject')}</span></button>
+        </div>`;
+      card.querySelector('.ac-approve').addEventListener('click', e=>adminResolveCancellation(c, true, e.currentTarget));
+      card.querySelector('.ac-reject').addEventListener('click', e=>adminResolveCancellation(c, false, e.currentTarget));
+      el.appendChild(card);
+    });
+  }catch(err){ el.innerHTML = `<div class="center-note">${t('error')}${esc(err.message)}</div>`; }
+}
+
+// Admin bekor qilishni hal qiladi. Tasdiqlansa: brokerni so'rovdan olib tashlaydi,
+// so'rovni qayta ochadi va broker reytingiga jarima qo'yadi (1 yulduzli baho + cancelCount).
+async function adminResolveCancellation(c, approve, btn){
+  if(!isAdminUser()) return;
+  setLoading(btn, true);
+  try{
+    const cRef = db.collection('cancellations').doc(c.id);
+    if(approve){
+      const reqRef = db.collection('requests').doc(c.requestId);
+      const aRef = db.collection('agents').doc(c.brokerUid);
+      await db.runTransaction(async (tx)=>{
+        const cdoc = await tx.get(cRef);
+        if(!cdoc.exists || cdoc.data().status !== 'pending') return; // allaqachon hal qilingan
+        const rdoc = await tx.get(reqRef);
+        if(rdoc.exists){
+          const d = rdoc.data();
+          const arr = (Array.isArray(d.acceptedBy)?d.acceptedBy:[]).filter(x=>x!==c.brokerUid);
+          const newCount = Math.max(0, (typeof d.acceptCount==='number'?d.acceptCount:arr.length+1) - 1);
+          tx.update(reqRef, { acceptedBy: arr, acceptCount: newCount, status: arr.length>0 ? 'accepted' : 'open' });
+        }
+        // Reyting jarimasi: 1 yulduzli baho (o'rtacha pasayadi) + bekor hisobi
+        tx.set(aRef, {
+          ratingSum: firebase.firestore.FieldValue.increment(1),
+          ratingCount: firebase.firestore.FieldValue.increment(1),
+          cancelCount: firebase.firestore.FieldValue.increment(1)
+        }, { merge:true });
+        tx.update(cRef, { status:'approved', resolvedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      });
+    }else{
+      await cRef.update({ status:'rejected', resolvedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    }
+    toast(approve ? t('admCancelApproved') : t('admRejected'), 'success');
+    loadAdminCancellations();
+  }catch(err){ toast(t('error')+err.message, 'error'); }
+  finally{ setLoading(btn, false); }
+}
+
 /* ============================================================
    TO'LOV SO'ROVLARI — REAL-TIME BILDIRISHNOMA (admin uchun)
    4-variant: ilova ochiq/fonda bo'lsa — ovoz + belgi (badge) + toast
@@ -3419,10 +3522,10 @@ async function adminApproveTopup(u, approve, btn){
 function subscribeAdminTopups(){
   if(adminTopupsUnsub){ adminTopupsUnsub(); adminTopupsUnsub=null; }
   adminTopupsLoaded = false;
-  if(!isAdminUser()){ updateAdminTopupBadge(0); return; }
+  if(!isAdminUser()){ _pendTopups=0; refreshAdminBadge(); return; }
   adminTopupsUnsub = db.collection('topups').where('status','==','pending')
     .onSnapshot((snap)=>{
-      updateAdminTopupBadge(snap.size);
+      _pendTopups = snap.size; refreshAdminBadge();
       if(adminTopupsLoaded){
         snap.docChanges().forEach(ch=>{
           if(ch.type === 'added') notifyNewTopup(ch.doc.data());
@@ -3434,11 +3537,41 @@ function subscribeAdminTopups(){
     }, (err)=>console.warn('adminTopups:', err));
 }
 
-function updateAdminTopupBadge(n){
+// Birlashgan admin belgisi: kutilayotgan to'lov + bekor qilish so'rovlari yig'indisi
+function refreshAdminBadge(){
   const b = $('adminTopupBadge');
   if(!b) return;
+  const n = (_pendTopups||0) + (_pendCancels||0);
   if(n>0){ b.textContent = n>99?'99+':n; b.style.display='block'; }
   else b.style.display='none';
+}
+
+/* ============ ADMIN: bekor qilish so'rovlari — real-time bildirishnoma ============ */
+function subscribeAdminCancellations(){
+  if(adminCancelUnsub){ adminCancelUnsub(); adminCancelUnsub=null; }
+  adminCancelLoaded = false;
+  if(!isAdminUser()){ _pendCancels=0; refreshAdminBadge(); return; }
+  adminCancelUnsub = db.collection('cancellations').where('status','==','pending')
+    .onSnapshot((snap)=>{
+      _pendCancels = snap.size; refreshAdminBadge();
+      if(adminCancelLoaded){
+        snap.docChanges().forEach(ch=>{ if(ch.type === 'added') notifyNewCancellation(ch.doc.data()); });
+      }
+      adminCancelLoaded = true;
+      const adm = $('screen-admin');
+      if(adm && adm.classList.contains('active')) loadAdminCancellations();
+    }, (err)=>console.warn('adminCancels:', err));
+}
+
+function notifyNewCancellation(d){
+  const who = d.brokerName || t('admCancelsTitle');
+  const msg = who + ' — ' + (d.requestSummary||'') + (d.reason ? (' · ' + d.reason) : '');
+  playPing();
+  if(document.hidden && 'Notification' in window && Notification.permission==='granted'){
+    try{ new Notification('🚫 '+t('admCancelsTitle'), { body: msg, icon:'icon.svg', tag:'nm-cancel' }); }catch(e){}
+  }else{
+    toast('🚫 '+msg, 'error');
+  }
 }
 
 function notifyNewTopup(d){
@@ -3956,6 +4089,14 @@ async function loadAgentRequests(){
   try{
     const snap = await db.collection('requests').orderBy('createdAt','desc').limit(60).get();
     const uid = currentUser && currentUser.uid;
+    // Men yuborgan, hali kutilayotgan bekor qilish so'rovlari (qaysi so'rovlarga)
+    const pendingCancels = new Set();
+    if(uid){
+      try{
+        const cs = await db.collection('cancellations').where('brokerUid','==',uid).get();
+        cs.forEach(d=>{ const c=d.data(); if(c.status==='pending' && c.requestId) pendingCancels.add(c.requestId); });
+      }catch(e){}
+    }
     let reqs = [];
     snap.forEach(d=>{
       const r = { id:d.id, ...d.data() };
@@ -3981,8 +4122,12 @@ async function loadAgentRequests(){
       // Amal tugmasi: qabul qilingan bo'lsa telefon ochiladi; aks holda "Qabul qilaman"
       let actionHtml;
       if(r._iAccepted){
+        const cancelHtml = pendingCancels.has(r.id)
+          ? `<div class="rc-cancel-pending" style="color:#e6a23c;font-size:12.5px;font-weight:600;">⏳ ${t('cancelPending')}</div>`
+          : `<button class="btn btn-outline btn-sm rq-cancel"><span class="btn-label">🚫 ${t('cancelReqBtn')}</span></button>`;
         actionHtml = `<div class="rc-accepted">${t('reqAcceptedYou')}</div>
-          <button class="btn btn-secondary btn-sm rq-call"><span class="btn-label">📞 ${t('contactBtn')}</span></button>`;
+          <button class="btn btn-secondary btn-sm rq-call"><span class="btn-label">📞 ${t('contactBtn')}</span></button>
+          ${cancelHtml}`;
       }else if(full){
         actionHtml = `<button class="btn btn-outline btn-sm" disabled><span class="btn-label">${t('reqTaken')}</span></button>`;
       }else{
@@ -4012,11 +4157,80 @@ async function loadAgentRequests(){
       });
       const acceptBtn = card.querySelector('.rq-accept');
       if(acceptBtn) acceptBtn.addEventListener('click', ()=> acceptRequest(r.id, acceptBtn));
+      const cancelBtn = card.querySelector('.rq-cancel');
+      if(cancelBtn) cancelBtn.addEventListener('click', ()=> openCancelSheet(r));
 
       box.appendChild(card);
     });
   }catch(err){ console.error(err); box.innerHTML = `<div class="center-note">${t('loadError')}${esc(err.message)}</div>`; }
 }
+
+/* ============ MAKLER: SO'ROVNI BEKOR QILISH ============ */
+// Makler bekor qilishni bossa — sabab yozadi, admin tasdiqlaydi (darhol bekor bo'lmaydi).
+function openCancelSheet(r){
+  cancelTarget = r;
+  const ta = $('cancelReqReason'); if(ta) ta.value = '';
+  openSheet('cancelReqSheet');
+}
+
+async function submitCancellation(btn){
+  if(!currentUser){ requireLogin('profile'); return; }
+  if(!cancelTarget){ closeSheet('cancelReqSheet'); return; }
+  const reason = ($('cancelReqReason').value || '').trim();
+  if(reason.length < 3){ toast(t('cancelReasonRequired'), 'error'); return; }
+  setLoading(btn, true);
+  try{
+    const r = cancelTarget;
+    const summary = (r.dealType==='sale'?t('dealSale'):t('dealRent')) + ' · ' + (r.region || '');
+    await db.collection('cancellations').add({
+      requestId: r.id,
+      brokerUid: currentUser.uid,
+      brokerName: (userDoc && userDoc.agentName) || (currentUser && currentUser.email) || '',
+      reason,
+      requestSummary: summary,
+      status: 'pending',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    closeSheet('cancelReqSheet');
+    cancelTarget = null;
+    toast(t('cancelSent'), 'success');
+    loadAgentRequests();
+    loadAgentCancellations();
+  }catch(err){ toast(t('error')+err.message, 'error'); }
+  finally{ setLoading(btn, false); }
+}
+
+// Makler bo'limida bekor qilingan so'rovlar paneli (ma'lumot uchun)
+async function loadAgentCancellations(){
+  const box = $('agentCancellations'); if(!box || !currentUser) return;
+  box.innerHTML = `<div class="center-note">${t('loading')}</div>`;
+  try{
+    const snap = await db.collection('cancellations').where('brokerUid','==',currentUser.uid).limit(50).get();
+    const items = []; snap.forEach(d=>items.push({ id:d.id, ...d.data() }));
+    items.sort((a,b)=> ((b.createdAt&&b.createdAt.seconds)||0) - ((a.createdAt&&a.createdAt.seconds)||0));
+    if(items.length === 0){ box.innerHTML = `<div class="center-note">${t('cancelNone')}</div>`; return; }
+    box.innerHTML = '';
+    items.forEach(c=>{
+      const stKey = c.status==='approved' ? 'cancelStApproved' : c.status==='rejected' ? 'cancelStRejected' : 'cancelStPending';
+      const stCls = c.status==='approved' ? 'badge-verified' : c.status==='rejected' ? 'badge-sale' : 'badge-pending';
+      const card = document.createElement('div'); card.className='req-card';
+      card.innerHTML = `
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
+          <div style="font-weight:600;">${esc(c.requestSummary||'—')}</div>
+          <span class="badge ${stCls}">${t(stKey)}</span>
+        </div>
+        <div class="rc-note">💬 ${esc(c.reason||'')}</div>
+        <div class="rc-meta">${timeAgo(c.createdAt)}</div>`;
+      box.appendChild(card);
+    });
+  }catch(err){ box.innerHTML = `<div class="center-note">${t('error')}${esc(err.message)}</div>`; }
+}
+
+// Bekor qilish modali tugmalari
+(function(){
+  const x = $('cancelReqCloseX'); if(x) x.addEventListener('click', ()=>closeSheet('cancelReqSheet'));
+  const sb = $('cancelReqSubmitBtn'); if(sb) sb.addEventListener('click', e=>submitCancellation(e.currentTarget));
+})();
 
 // Makler so'rovni qabul qiladi — xavfsiz tranzaksiya bilan (limit nazorati)
 async function acceptRequest(id, btn){
