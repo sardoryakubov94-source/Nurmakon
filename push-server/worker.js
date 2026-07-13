@@ -5,11 +5,16 @@
    tekshiradi va admin(lar)ning FCM tokenlariga push bildirishnoma yuboradi.
    Yuborilgach, so'rovni 'notified: true' deb belgilaydi (takror yubormaslik uchun).
 
+   Ilovadagi topups hujjati maydonlari (tekshirilgan):
+     brokerUid (string), brokerName (string), credits (number),
+     premium (boolean), amount (string), status ('pending'|'approved'|'rejected')
+
    Kerakli maxfiy o'zgaruvchi (secret):
      FIREBASE_SA  — Firebase service account JSON (butun matn)
 
+   TEST: Worker URL'ini brauzerda ochsangiz, JSON diagnostika qaytaradi
+         (nechta admin token, nechta pending so'rov, nechta yuborildi).
    BEPUL: Cloudflare Workers Free reja + Cron Triggers yetarli.
-   Sozlash yo'riqnomasi: ../PUSH-SETUP.md
    ============================================================ */
 
 export default {
@@ -17,32 +22,50 @@ export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil(run(env));
   },
-  // Qo'lda tekshirish uchun HTTP trigger (ixtiyoriy): worker URL ni brauzerda ochsangiz ishlaydi
+  // Qo'lda tekshirish uchun HTTP trigger: worker URL ni brauzerda ochsangiz ishlaydi
   async fetch(req, env) {
-    try { const n = await run(env); return new Response('OK, yuborildi: ' + n); }
-    catch (e) { return new Response('Xato: ' + e.message, { status: 500 }); }
+    const out = await run(env, true);
+    return new Response(JSON.stringify(out, null, 2), {
+      status: out.error ? 500 : 200,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' }
+    });
   }
 };
 
-async function run(env) {
-  const sa = JSON.parse(env.FIREBASE_SA);
-  const projectId = sa.project_id;
-  const accessToken = await getAccessToken(sa);
+async function run(env, verbose = false) {
+  const log = { adminTokens: 0, pending: 0, sent: 0 };
+  try {
+    if (!env.FIREBASE_SA) throw new Error("FIREBASE_SA secret o'rnatilmagan");
+    const sa = JSON.parse(env.FIREBASE_SA);
+    const projectId = sa.project_id;
+    const accessToken = await getAccessToken(sa);
 
-  const adminTokens = await getAdminTokens(projectId, accessToken);
-  if (!adminTokens.length) return 0;
-
-  const topups = await getPendingTopups(projectId, accessToken);
-  let sent = 0;
-  for (const tp of topups) {
-    const body = buildBody(tp.fields);
-    for (const fcmToken of adminTokens) {
-      await sendPush(projectId, accessToken, fcmToken, body);
+    const adminTokens = await getAdminTokens(projectId, accessToken);
+    log.adminTokens = adminTokens.length;
+    if (!adminTokens.length) {
+      if (verbose) log.note = "adminConfig/push da token yo'q — admin ilovaga kirib, bildirishnomaga ruxsat berishi kerak";
+      return verbose ? log : 0;
     }
-    await markNotified(projectId, accessToken, tp.name);
-    sent++;
+
+    const topups = await getPendingTopups(projectId, accessToken);
+    log.pending = topups.length;
+
+    const results = [];
+    for (const tp of topups) {
+      const body = buildBody(tp.fields);
+      for (const fcmToken of adminTokens) {
+        const r = await sendPush(projectId, accessToken, fcmToken, body);
+        if (verbose) results.push({ body, ok: r.ok, error: r.error });
+      }
+      await markNotified(projectId, accessToken, tp.name);
+      log.sent++;
+    }
+    if (verbose) log.results = results;
+    return verbose ? log : log.sent;
+  } catch (e) {
+    if (verbose) { log.error = e.message; return log; }
+    throw e;
   }
-  return sent;
 }
 
 /* ---- Service account -> OAuth access token (RS256 JWT) ---- */
@@ -67,7 +90,7 @@ async function getAccessToken(sa) {
     body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=' + jwt
   });
   const j = await res.json();
-  if (!j.access_token) throw new Error('token olinmadi: ' + JSON.stringify(j));
+  if (!j.access_token) throw new Error('OAuth token olinmadi: ' + JSON.stringify(j));
   return j.access_token;
 }
 
@@ -88,7 +111,7 @@ async function getPendingTopups(projectId, accessToken) {
     structuredQuery: {
       from: [{ collectionId: 'topups' }],
       where: { fieldFilter: { field: { fieldPath: 'status' }, op: 'EQUAL', value: { stringValue: 'pending' } } },
-      limit: 20
+      limit: 25
     }
   };
   const res = await fetch(url, {
@@ -107,9 +130,11 @@ async function getPendingTopups(projectId, accessToken) {
   return out;
 }
 
+/* ---- topups maydonlaridan bildirishnoma matnini yasash (ilovaga mos) ---- */
 function buildBody(f) {
   const name = (f.brokerName && f.brokerName.stringValue) || 'Makler';
   const premium = f.premium && f.premium.booleanValue === true;
+  // Firestore REST: butun son integerValue (string), kasr doubleValue
   const credits = (f.credits && (f.credits.integerValue || f.credits.doubleValue)) || 0;
   const amount = (f.amount && f.amount.stringValue) || '';
   const what = premium ? 'Premium obuna' : (credits + ' kredit');
@@ -125,7 +150,7 @@ async function sendPush(projectId, accessToken, fcmToken, body) {
       token: fcmToken,
       notification: { title, body },
       webpush: {
-        notification: { title, body, icon: 'icon.svg', badge: 'icon.svg', tag: 'nm-topup' },
+        notification: { title, body, icon: 'icon.svg', badge: 'icon.svg', tag: 'nm-topup', requireInteraction: true },
         fcm_options: { link: '/' }
       }
     }
@@ -135,7 +160,10 @@ async function sendPush(projectId, accessToken, fcmToken, body) {
     headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
     body: JSON.stringify(msg)
   });
-  return res.ok;
+  if (res.ok) return { ok: true };
+  let err = '';
+  try { err = JSON.stringify(await res.json()); } catch (e) { err = 'HTTP ' + res.status; }
+  return { ok: false, error: err };
 }
 
 /* ---- so'rovni notified:true deb belgilash ---- */
@@ -148,7 +176,7 @@ async function markNotified(projectId, accessToken, docName) {
   });
 }
 
-/* ---- Yordamchi: base64url ---- */
+/* ---- Yordamchi: base64url + RSA kalit ---- */
 function b64url(str) {
   return btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
