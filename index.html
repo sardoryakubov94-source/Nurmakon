@@ -430,6 +430,20 @@
   .req-card .rc-actions .btn{width:auto;}
   .req-card .rc-accepted{display:inline-block;font-size:12px;font-weight:700;color:var(--teal);
     background:var(--teal-soft);border-radius:8px;padding:4px 10px;margin-bottom:8px;}
+  .req-card .rc-accepted.rc-pending-offer{color:#e6a23c;background:rgba(230,162,60,0.12);}
+  /* ===== Kelishuv / taklif (bitim) ===== */
+  .offer-cap-note{background:var(--gold-soft);border-radius:10px;padding:9px 12px;font-size:12.5px;
+    color:var(--text);line-height:1.4;margin-bottom:12px;}
+  .offer-cap-note b{color:var(--gold);}
+  .offer-fee-preview{font-size:13px;color:var(--text-dim);margin:8px 0 2px;min-height:18px;}
+  .offer-fee-preview b{color:var(--gold);font-size:14.5px;}
+  .offer-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+    background:var(--surface-2);border:1px solid var(--line-soft);border-radius:11px;padding:11px 12px;margin-top:9px;}
+  .offer-row > div{min-width:0;}
+  .offer-row b{font-size:14px;}
+  .offer-row .btn{width:auto;flex-shrink:0;}
+  .offer-row.offer-matched{border-color:var(--teal);background:var(--teal-soft);}
+  .mr-offers{margin-top:10px;}
   .perk-note{display:flex;align-items:flex-start;gap:9px;background:var(--gold-soft);border:1px solid transparent;border-radius:11px;padding:11px 13px;margin-top:12px;font-size:12.5px;color:var(--text);line-height:1.45;}
   .perk-note .pn-ic{font-size:18px;flex-shrink:0;}
   .perk-note b{color:var(--gold);}
@@ -969,6 +983,28 @@
   </div>
 </div>
 
+<!-- ===================== TAKLIF (OFFER) SHEET ===================== -->
+<div class="modal-overlay" id="offerSheet">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <div class="modal-head"><h2 data-i18n="offerSheetTitle">Mijozga taklif yuborish</h2>
+      <button class="modal-close" id="offerCloseX" type="button">✕</button></div>
+    <p class="center-note" style="text-align:left;margin:0 0 12px;" data-i18n="offerSheetSub">Ish haqi foizingizni belgilang. Mijoz rozi bo'lsagina bog'lanish ochiladi.</p>
+    <div id="offerReqSummary" class="req-card" style="margin-bottom:12px;"></div>
+    <div class="offer-cap-note" id="offerCapNote"></div>
+    <label data-i18n="offerPctLabel">Ish haqi (%)</label>
+    <div class="input-wrap">
+      <input type="number" id="offerPct" step="0.5" min="1" inputmode="decimal" placeholder="30">
+      <span class="input-suffix">%</span>
+    </div>
+    <div class="offer-fee-preview" id="offerFeePreview"></div>
+    <label data-i18n="offerNoteLabel">Izoh (ixtiyoriy)</label>
+    <textarea id="offerNote" rows="2" data-i18n-placeholder="offerNotePh" placeholder="Masalan: shartnoma tuzamiz, ko'rsatish xizmati..."></textarea>
+    <button class="btn btn-primary" id="offerSubmitBtn" style="margin-top:14px;"><span class="btn-label" data-i18n="offerSubmit">Taklif yuborish</span></button>
+    <p class="center-note" style="text-align:left;margin-top:10px;font-size:11.5px;color:var(--text-faint);" data-i18n="offerCreditNote">Taklif yuborish — 1 lead krediti (premiumda bepul).</p>
+  </div>
+</div>
+
 <!-- ===================== RATE BROKER SHEET ===================== -->
 <div class="modal-overlay" id="rateSheet">
   <div class="modal">
@@ -1320,6 +1356,14 @@
       <div id="myListingsList"></div>
     </div>
 
+    <div class="lock-card" id="openMyReqBtn" style="margin-top:0;position:relative;">
+      <div class="lock-ic">🤝</div>
+      <div class="lock-txt"><h3 data-i18n="myReqTitle">Mening so'rovlarim</h3>
+        <p data-i18n="myReqEntrySub">Maklerlar takliflarini ko'ring va rozilik bering</p></div>
+      <span id="myReqBadge" style="display:none;position:absolute;top:10px;right:34px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#e53935;color:#fff;font-size:12px;font-weight:700;line-height:20px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.25);"></span>
+      <div class="lock-chevron">›</div>
+    </div>
+
     <div class="lock-card" id="openAgentBtn" style="margin-top:0;">
       <div class="lock-ic">👔</div>
       <div class="lock-txt"><h3 data-i18n="agentSectionTitle">Makler kabineti</h3>
@@ -1422,6 +1466,16 @@
       <div id="agentCancellations"></div>
     </div>
   </div>
+</div>
+
+<!-- ===================== MENING SO'ROVLARIM (CLIENT) SCREEN ===================== -->
+<div class="screen" id="screen-myreq">
+  <div class="screen-head">
+    <button class="back-btn" id="myReqBackBtn" type="button">‹</button>
+    <h2 class="section-title" style="margin:0;" data-i18n="myReqTitle">Mening so'rovlarim</h2>
+  </div>
+  <p class="center-note" style="text-align:left;margin:0 0 14px;" data-i18n="myReqSub">Qoldirgan so'rovlaringizga maklerlar taklif yuboradi. Ish haqi foizini ko'rib, bittasiga rozilik bering — shundan keyingina bog'lanish ochiladi.</p>
+  <div id="myReqList"></div>
 </div>
 
 <!-- ===================== SUPPORT (YORDAM) SCREEN ===================== -->
@@ -1790,9 +1844,11 @@ const I18N = {
     ctaTitle:"Aniq nima kerakligini yozib qoldiring", ctaSub:"Mos maklerlar so'rovingizni ko'rib, siz bilan bog'lanadi", ctaBtn:"So'rov qoldirish",
     reqTitle:"Makler uchun so'rov", reqSub:"Nima izlayotganingizni yozing — mos maklerlar bog'lanadi.",
     reqRegionLabel:"Qaysi hudud", reqBudgetLabel:"Byudjet (gacha)", reqNoteLabel:"Qo'shimcha izoh", reqNotePh:"Masalan: metroga yaqin, ta'mirli...",
-    reqSubmit:"So'rovni yuborish", reqSent:"So'rovingiz yuborildi! Maklerlar tez orada bog'lanadi.", reqAnyBudget:"Byudjet ko'rsatilmagan",
-    agentRequestsTitle:"Mijoz so'rovlari", agentRequestsSub:"Mijozlar qoldirgan so'rovlar. Mos bo'lsa \"Qabul qilaman\" bosing — shundan keyin telefon ochiladi.", noRequests:"Hozircha yangi so'rovlar yo'q",
+    reqSubmit:"So'rovni yuborish", reqSent:"So'rovingiz yuborildi! Maklerlar taklif yuboradi — 'Mening so'rovlarim'da ko'ring.", reqAnyBudget:"Byudjet ko'rsatilmagan",
+    agentRequestsTitle:"Mijoz so'rovlari", agentRequestsSub:"Mijoz so'rovlari. Ish haqi foizingizni taklif qiling — mijoz rozi bo'lsagina telefon ochiladi.", noRequests:"Hozircha yangi so'rovlar yo'q",
     reqAcceptBtn:"✅ Qabul qilaman", reqAcceptedYou:"✓ Siz qabul qildingiz", reqTaken:"So'rov to'ldi", reqYourArea:"Sizning hududingiz", reqAcceptedToast:"Qabul qilindi! Endi mijoz bilan bog'laning.", reqAcceptFullToast:"Bu so'rovga yetarlicha makler qabul qilgan.", reqBrokersJoined:"makler qabul qildi",
+    reqSendOfferBtn:"💼 Taklif yuborish", offerSheetTitle:"Mijozga taklif yuborish", offerSheetSub:"Ish haqi foizingizni belgilang. Mijoz rozi bo'lsagina bog'lanish ochiladi.", offerMaxNote:"Bu so'rov uchun ruxsat etilgan <b>maksimal ish haqi — {pct}%</b>. Undan past taklif qilsangiz, tanlanish ehtimoli oshadi.", offerPctLabel:"Ish haqi (%)", offerNoteLabel:"Izoh (ixtiyoriy)", offerNotePh:"Masalan: shartnoma tuzamiz, ko'rsatish xizmati...", offerSubmit:"Taklif yuborish", offerCreditNote:"Taklif yuborish — 1 lead krediti (premiumda bepul).", offerFeePreview:"Taxminiy ish haqi", offerPctRequired:"Iltimos, ish haqi foizini kiriting.", offerPctInvalid:"Ruxsat etilgan maksimal — {pct}%. Undan oshirib bo'lmaydi.", offerSentToast:"Taklif yuborildi! Mijoz javobini kuting.", offerPending:"Taklif yuborildi — mijoz javobini kuting", offerMatchedBroker:"Mijoz sizni tanladi! Bog'laning", offerClosed:"So'rov yopildi",
+    myReqTitle:"Mening so'rovlarim", myReqEntrySub:"Maklerlar takliflarini ko'ring va rozilik bering", myReqSub:"Qoldirgan so'rovlaringizga maklerlar taklif yuboradi. Ish haqi foizini ko'rib, bittasiga rozilik bering — shundan keyingina bog'lanish ochiladi.", myReqEmpty:"Hali so'rov qoldirmagansiz.", myReqWaiting:"Takliflar kutilmoqda...", myReqStatusOpen:"Ochiq", myReqStatusMatched:"Kelishildi", myReqApproveBtn:"Rozi bo'lish", myReqMatched:"Siz bu maklerni tanladingiz", myReqAgreedFee:"Kelishilgan ish haqi", agreeConfirm:"Ushbu maklerni {pct}% ish haqi bilan tanlaysizmi? Rozilik bergach, bog'lanish ochiladi.", dealDoneToast:"Kelishuv tuzildi! Endi makler bilan bog'lanishingiz mumkin.", dealAlready:"Bu so'rov bo'yicha allaqachon kelishuvga erishilgan.",
     brokerPerks:"Erta qo'shilgan maklerlarga: mijoz so'rovlari <b>BEPUL</b> + tasdiqlangan belgi va ustuvor ko'rsatish.",
     agentSectionTitle:"Makler kabineti", agentSectionSub:"Makler bo'lib ishlash va mijoz so'rovlarini ko'rish",
     agentStatusVerified:"Tasdiqlangan makler ✓", agentStatusPending:"Verifikatsiya tekshiruvda",
@@ -1898,9 +1954,11 @@ const I18N = {
     ctaTitle:"Опишите, что именно вам нужно", ctaSub:"Подходящие риелторы увидят запрос и свяжутся с вами", ctaBtn:"Оставить запрос",
     reqTitle:"Запрос риелтору", reqSub:"Опишите, что ищете — подходящие риелторы свяжутся.",
     reqRegionLabel:"Район", reqBudgetLabel:"Бюджет (до)", reqNoteLabel:"Дополнительно", reqNotePh:"Например: рядом метро, с ремонтом...",
-    reqSubmit:"Отправить запрос", reqSent:"Запрос отправлен! Риелторы скоро свяжутся.", reqAnyBudget:"Бюджет не указан",
-    agentRequestsTitle:"Запросы клиентов", agentRequestsSub:"Запросы от клиентов. Если подходит — нажмите \"Принять\", после этого откроется телефон.", noRequests:"Пока нет новых запросов",
+    reqSubmit:"Отправить запрос", reqSent:"Запрос отправлен! Риелторы пришлют предложения — смотрите в «Мои запросы».", reqAnyBudget:"Бюджет не указан",
+    agentRequestsTitle:"Запросы клиентов", agentRequestsSub:"Запросы клиентов. Предложите свой процент вознаграждения — телефон откроется только после согласия клиента.", noRequests:"Пока нет новых запросов",
     reqAcceptBtn:"✅ Принять", reqAcceptedYou:"✓ Вы приняли", reqTaken:"Запрос заполнен", reqYourArea:"Ваш район", reqAcceptedToast:"Принято! Свяжитесь с клиентом.", reqAcceptFullToast:"Этот запрос уже приняли достаточно риелторов.", reqBrokersJoined:"риелтор(ов) приняли",
+    reqSendOfferBtn:"💼 Отправить предложение", offerSheetTitle:"Отправить предложение клиенту", offerSheetSub:"Укажите свой процент вознаграждения. Контакт откроется только после согласия клиента.", offerMaxNote:"Для этого запроса максимально допустимое <b>вознаграждение — {pct}%</b>. Предложив меньше, вы повысите шанс быть выбранным.", offerPctLabel:"Вознаграждение (%)", offerNoteLabel:"Комментарий (необязательно)", offerNotePh:"Например: заключим договор, услуга показа...", offerSubmit:"Отправить предложение", offerCreditNote:"Отправка предложения — 1 лид-кредит (в премиуме бесплатно).", offerFeePreview:"Примерное вознаграждение", offerPctRequired:"Пожалуйста, укажите процент вознаграждения.", offerPctInvalid:"Максимум — {pct}%. Больше нельзя.", offerSentToast:"Предложение отправлено! Ждите ответа клиента.", offerPending:"Предложение отправлено — ждите ответа клиента", offerMatchedBroker:"Клиент выбрал вас! Свяжитесь", offerClosed:"Запрос закрыт",
+    myReqTitle:"Мои запросы", myReqEntrySub:"Смотрите предложения риелторов и подтверждайте", myReqSub:"Риелторы отправляют предложения на ваши запросы. Посмотрите процент вознаграждения и подтвердите одно — только после этого откроется контакт.", myReqEmpty:"Вы ещё не оставляли запросов.", myReqWaiting:"Ожидаются предложения...", myReqStatusOpen:"Открыт", myReqStatusMatched:"Согласовано", myReqApproveBtn:"Согласиться", myReqMatched:"Вы выбрали этого риелтора", myReqAgreedFee:"Согласованное вознаграждение", agreeConfirm:"Выбрать этого риелтора с вознаграждением {pct}%? После согласия откроется контакт.", dealDoneToast:"Сделка заключена! Теперь вы можете связаться с риелтором.", dealAlready:"По этому запросу уже достигнута договорённость.",
     brokerPerks:"Ранним риелторам: запросы клиентов <b>БЕСПЛАТНО</b> + значок проверенного и приоритет.",
     agentSectionTitle:"Кабинет риелтора", agentSectionSub:"Работать риелтором и видеть запросы клиентов",
     agentStatusVerified:"Проверенный риелтор ✓", agentStatusPending:"Верификация на проверке",
@@ -2006,9 +2064,11 @@ const I18N = {
     ctaTitle:"Tell us exactly what you need", ctaSub:"Matching brokers will see your request and contact you", ctaBtn:"Leave a request",
     reqTitle:"Request to brokers", reqSub:"Describe what you're looking for — matching brokers will reach out.",
     reqRegionLabel:"Which area", reqBudgetLabel:"Budget (up to)", reqNoteLabel:"Extra note", reqNotePh:"e.g. near metro, renovated...",
-    reqSubmit:"Send request", reqSent:"Request sent! Brokers will contact you soon.", reqAnyBudget:"Budget not specified",
-    agentRequestsTitle:"Client requests", agentRequestsSub:"Requests left by clients. If it fits, tap \"Accept\" — the phone opens afterwards.", noRequests:"No new requests yet",
+    reqSubmit:"Send request", reqSent:"Request sent! Brokers will send offers — see them in 'My requests'.", reqAnyBudget:"Budget not specified",
+    agentRequestsTitle:"Client requests", agentRequestsSub:"Client requests. Offer your commission — the phone opens only after the client agrees.", noRequests:"No new requests yet",
     reqAcceptBtn:"✅ Accept", reqAcceptedYou:"✓ You accepted", reqTaken:"Request full", reqYourArea:"Your area", reqAcceptedToast:"Accepted! Contact the client.", reqAcceptFullToast:"Enough brokers already accepted this request.", reqBrokersJoined:"broker(s) joined",
+    reqSendOfferBtn:"💼 Send offer", offerSheetTitle:"Send offer to client", offerSheetSub:"Set your commission percentage. Contact opens only after the client agrees.", offerMaxNote:"For this request the maximum allowed <b>commission is {pct}%</b>. Offering less increases your chance of being chosen.", offerPctLabel:"Commission (%)", offerNoteLabel:"Note (optional)", offerNotePh:"e.g. we'll sign a contract, viewing service...", offerSubmit:"Send offer", offerCreditNote:"Sending an offer costs 1 lead credit (free on Premium).", offerFeePreview:"Estimated commission", offerPctRequired:"Please enter your commission percentage.", offerPctInvalid:"Maximum is {pct}%. You can't exceed it.", offerSentToast:"Offer sent! Wait for the client's response.", offerPending:"Offer sent — waiting for client's response", offerMatchedBroker:"The client chose you! Get in touch", offerClosed:"Request closed",
+    myReqTitle:"My requests", myReqEntrySub:"See broker offers and approve", myReqSub:"Brokers send offers to your requests. Review the commission and approve one — contact opens only after that.", myReqEmpty:"You haven't left any requests yet.", myReqWaiting:"Waiting for offers...", myReqStatusOpen:"Open", myReqStatusMatched:"Agreed", myReqApproveBtn:"Agree", myReqMatched:"You chose this broker", myReqAgreedFee:"Agreed commission", agreeConfirm:"Choose this broker with a {pct}% commission? Contact opens after you agree.", dealDoneToast:"Deal made! You can now contact the broker.", dealAlready:"A deal has already been made for this request.",
     brokerPerks:"Early brokers: client requests <b>FREE</b> + verified badge and priority.",
     agentSectionTitle:"Broker cabinet", agentSectionSub:"Work as a broker and see client requests",
     agentStatusVerified:"Verified broker ✓", agentStatusPending:"Verification in review",
@@ -2135,6 +2195,8 @@ function showScreen(id){
   const isAuth = (id==='auth' || id==='onboarding');
   $('topbar').style.display = isAuth ? 'none' : 'flex';
   $('bottomnav').style.display = isAuth ? 'none' : 'flex';
+  // "Mening so'rovlarim" ekrani ochilganda takliflarni yuklaymiz (login redirect ham qamrab olinadi)
+  if(id==='myreq' && currentUser && typeof loadMyRequests==='function') loadMyRequests();
   window.scrollTo(0,0);
 }
 
@@ -2940,6 +3002,19 @@ function refreshProfileScreen(){
   const adminBtn = $('openAdminBtn'); if(adminBtn) adminBtn.classList.toggle('hidden', !isAdminUser());
   const pc = $('profileCredits'); if(pc) pc.textContent = userCredits();
   loadMyListings();
+  updateMyReqBadge();
+}
+
+// "Mening so'rovlarim" yonidagi qizil belgi: taklif kelgan va hali kelishilmagan so'rovlar soni
+async function updateMyReqBadge(){
+  const badge = $('myReqBadge'); if(!badge || !currentUser) return;
+  try{
+    const snap = await db.collection('requests').where('requesterUid','==',currentUser.uid).limit(50).get();
+    let n = 0;
+    snap.forEach(d=>{ const r=d.data(); if(!r.matchedBroker && (r.acceptCount||0) > 0) n++; });
+    if(n>0){ badge.textContent = n; badge.style.display='block'; }
+    else{ badge.style.display='none'; }
+  }catch(e){ badge.style.display='none'; }
 }
 
 /* ============ SUPPORT + ADMIN NAV ============ */
@@ -3991,7 +4066,7 @@ $('submitRequestBtn').addEventListener('click', async ()=>{
   if(phone.length < 7){ toast(t('postPhoneLabel'),'error'); return; }
   setLoading(btn, true);
   try{
-    await db.collection('requests').add({
+    const reqRef = await db.collection('requests').add({
       requesterUid: currentUser.uid,
       dealType: $('reqDealType').value,
       propertyType: $('reqPropType').value,
@@ -3999,12 +4074,17 @@ $('submitRequestBtn').addEventListener('click', async ()=>{
       budget: Number($('reqBudget').value) || null,
       rooms: Number($('reqRooms').value) || null,
       note: $('reqNote').value.trim(),
-      phone,
+      hasPhone: !!phone,
       status: 'open',
+      matchedBroker: null,
       acceptedBy: [],
       acceptCount: 0,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
+    // Telefon raqami MAXFIY saqlanadi: faqat egasi, mijoz tanlagan (kelishilgan)
+    // makler va admin ko'ra oladi. Shu tariqa hamma makler raqamni ko'rmaydi.
+    try{ await reqRef.collection('private').doc('contact').set({ phone }); }
+    catch(e){ console.error('private contact save failed', e); }
     // save phone to profile for convenience
     if(userDoc && !userDoc.phone){ userDoc.phone = phone; db.collection('users').doc(currentUser.uid).update({ phone }).catch(()=>{}); }
     closeSheet('requestModal');
@@ -4016,6 +4096,49 @@ $('submitRequestBtn').addEventListener('click', async ()=>{
 
 // Bitta so'rovni maksimal shuncha makler qabul qila oladi (spam oldini olish)
 const ACCEPT_LIMIT = 3;
+
+/* ============ KELISHUV (BITIM): KOMISSIYA ALGORITMI ============
+   Ijara uchun REGRESSIV (kamayuvchi) ish haqi: ijara qimmatlashsa foiz tushadi,
+   lekin maklerning absolyut daromadi baribir oshib boradi. Ko'chadan doim arzon.
+   Tayanch nuqtalar orasida SILLIQ (chiziqli) interpolatsiya:
+      ≤ $200  → 40%      $300 → 35%      $500 → 30%      ≥ $1000 → 25% (eng kam)
+   Sotuv (oldi-sotdi): ko'cha foizi — maksimal 3%.
+   Chegaralar dollarda; summa so'mda bo'lsa, kursda (UZS_PER_USD) o'giriladi.
+================================================================ */
+const RENT_FEE_MIN_PCT = 25;   // eng kam ish haqi foizi (qimmat ijara / tijorat)
+const SALE_FEE_MAX_PCT = 3;    // sotuv: maksimal ish haqi foizi (ko'cha normasi)
+
+// So'mdagi summani dollarga o'giradi (algoritm chegaralari dollarda)
+function feeToUSD(som){ return (Number(som) || 0) / UZS_PER_USD; }
+
+// Ijara summasi (USD) bo'yicha maksimal ish haqi foizini hisoblaydi (regressiv, silliq)
+function rentFeePct(rentUSD){
+  const r = Number(rentUSD) || 0;
+  let p;
+  if(r <= 200)      p = 40;
+  else if(r < 300)  p = 40 - (r - 200) / 100 * 5;   // 40 → 35
+  else if(r < 500)  p = 35 - (r - 300) / 200 * 5;   // 35 → 30
+  else if(r < 1000) p = 30 - (r - 500) / 500 * 5;   // 30 → 25
+  else              p = RENT_FEE_MIN_PCT;           // ≥ $1000
+  return Math.round(p * 2) / 2;                      // 0.5% aniqlikda yaxlitlash
+}
+
+// So'rov bo'yicha maksimal ruxsat etilgan ish haqi foizi (bitim turi + summaga qarab)
+function maxFeePct(req){
+  if(!req) return SALE_FEE_MAX_PCT;
+  if(req.dealType === 'rent'){
+    if(req.propertyType === 'commercial') return RENT_FEE_MIN_PCT; // tijorat/noturar — eng kam
+    return rentFeePct(feeToUSD(req.budget));
+  }
+  return SALE_FEE_MAX_PCT; // sotuv
+}
+
+// Ish haqi summasini hisoblaydi (so'mda). Ijara: 1 oylik ijaradan foiz; sotuv: narxdan foiz.
+function feeAmount(req, pct){
+  const base = Number(req && req.budget) || 0;
+  if(!base) return null;
+  return Math.round(base * (Number(pct) || 0) / 100);
+}
 
 /* ============ MONETIZATSIYA (lead krediti) ============ */
 const WELCOME_CREDITS = 5;   // yangi maklerga bepul lead krediti
@@ -4103,8 +4226,9 @@ async function loadAgentRequests(){
       const accepted = Array.isArray(r.acceptedBy) ? r.acceptedBy : [];
       const count = r.acceptCount || accepted.length;
       const iAccepted = uid && accepted.includes(uid);
-      // Ko'rsatamiz: hali bo'sh (limitga yetmagan) YOKI men qabul qilgan so'rovlar
-      if(count < ACCEPT_LIMIT || iAccepted){
+      // Ko'rsatamiz: men taklif yuborgan; YOKI hali kelishilmagan va bo'sh (limitga yetmagan).
+      // Boshqa maklerga kelishilib bo'lingan so'rovlar (men taklif qilmagan) ko'rsatilmaydi.
+      if(iAccepted || (!r.matchedBroker && count < ACCEPT_LIMIT)){
         reqs.push({ ...r, _count:count, _iAccepted:iAccepted, _match:requestMatchesMyArea(r) });
       }
     });
@@ -4119,21 +4243,33 @@ async function loadAgentRequests(){
       const full = r._count >= ACCEPT_LIMIT;
       const card = document.createElement('div'); card.className='req-card';
 
-      // Amal tugmasi: qabul qilingan bo'lsa telefon ochiladi; aks holda "Qabul qilaman"
+      // Amal tugmasi: mijoz meni tanlagan bo'lsa telefon ochiladi (+ bekor qilish
+      // mumkin, bir qatorda); taklif yuborilgan bo'lsa mijoz javobi kutiladi;
+      // aks holda "Taklif yuborish".
+      const matchedToMe = uid && r.matchedBroker === uid;
+      const matchedToOther = r.matchedBroker && r.matchedBroker !== uid;
       let actionHtml;
-      if(r._iAccepted){
+      if(matchedToMe){
         const cancelHtml = pendingCancels.has(r.id)
           ? `<div class="rc-cancel-pending" style="flex:1;text-align:center;color:#e6a23c;font-size:12.5px;font-weight:600;">⏳ ${t('cancelPending')}</div>`
           : `<button class="btn btn-outline btn-sm rq-cancel" style="flex:1;"><span class="btn-label">🚫 ${t('cancelReqBtn')}</span></button>`;
-        actionHtml = `<div class="rc-accepted">${t('reqAcceptedYou')}</div>
+        actionHtml = `<div class="rc-accepted">✅ ${t('offerMatchedBroker')}${r.agreedFeePct?(' · '+r.agreedFeePct+'%'):''}</div>
           <div style="display:flex;gap:8px;align-items:center;">
             <button class="btn btn-secondary btn-sm rq-call" style="flex:1;"><span class="btn-label">📞 ${t('contactBtn')}</span></button>
             ${cancelHtml}
           </div>`;
+      }else if(r._iAccepted){
+        const cancelHtml = pendingCancels.has(r.id)
+          ? `<div class="rc-cancel-pending" style="color:#e6a23c;font-size:12.5px;font-weight:600;">⏳ ${t('cancelPending')}</div>`
+          : `<button class="btn btn-outline btn-sm rq-cancel"><span class="btn-label">🚫 ${t('cancelReqBtn')}</span></button>`;
+        actionHtml = `<div class="rc-accepted rc-pending-offer">⏳ ${t('offerPending')}</div>
+          ${cancelHtml}`;
+      }else if(matchedToOther){
+        actionHtml = `<button class="btn btn-outline btn-sm" disabled><span class="btn-label">${t('offerClosed')}</span></button>`;
       }else if(full){
         actionHtml = `<button class="btn btn-outline btn-sm" disabled><span class="btn-label">${t('reqTaken')}</span></button>`;
       }else{
-        actionHtml = `<button class="btn btn-primary btn-sm rq-accept"><span class="btn-label">${t('reqAcceptBtn')}</span></button>`;
+        actionHtml = `<button class="btn btn-primary btn-sm rq-offer"><span class="btn-label">${t('reqSendOfferBtn')}</span></button>`;
       }
       const countHtml = r._count>0 ? `<div class="rc-count">👤 ${r._count} ${t('reqBrokersJoined')}</div>` : '';
 
@@ -4152,13 +4288,9 @@ async function loadAgentRequests(){
         <div class="rc-actions">${actionHtml}</div>`;
 
       const callBtn = card.querySelector('.rq-call');
-      if(callBtn) callBtn.addEventListener('click', ()=>{
-        contactPhone = r.phone || '';
-        $('contactPhoneDisplay').textContent = contactPhone;
-        openSheet('contactSheet');
-      });
-      const acceptBtn = card.querySelector('.rq-accept');
-      if(acceptBtn) acceptBtn.addEventListener('click', ()=> acceptRequest(r.id, acceptBtn));
+      if(callBtn) callBtn.addEventListener('click', ()=> openRequestContact(r));
+      const offerBtn = card.querySelector('.rq-offer');
+      if(offerBtn) offerBtn.addEventListener('click', ()=> openOfferSheet(r));
       const cancelBtn = card.querySelector('.rq-cancel');
       if(cancelBtn) cancelBtn.addEventListener('click', ()=> openCancelSheet(r));
 
@@ -4234,45 +4366,234 @@ async function loadAgentCancellations(){
   const sb = $('cancelReqSubmitBtn'); if(sb) sb.addEventListener('click', e=>submitCancellation(e.currentTarget));
 })();
 
-// Makler so'rovni qabul qiladi — xavfsiz tranzaksiya bilan (limit nazorati)
-async function acceptRequest(id, btn){
+/* ============ MAKLER: MIJOZGA TAKLIF YUBORISH (BITIM) ============ */
+let offerTarget = null;   // taklif yuborilayotgan so'rov (modal uchun)
+
+// Kelishilgan (matched) so'rov bo'yicha mijoz raqamini ochadi. Raqam maxfiy
+// (private) subhujjatda; eski so'rovlarda esa asosiy hujjatda bo'lishi mumkin.
+async function openRequestContact(r){
+  let phone = '';
+  try{
+    const snap = await db.collection('requests').doc(r.id).collection('private').doc('contact').get();
+    if(snap.exists) phone = snap.data().phone || '';
+  }catch(e){ /* ruxsat yo'q yoki yo'q */ }
+  if(!phone) phone = r.phone || '';   // eski so'rovlar uchun zaxira
+  contactPhone = phone;
+  $('contactPhoneDisplay').textContent = phone || '—';
+  openSheet('contactSheet');
+}
+
+// Taklif oynasini ochadi va maksimal foizni ko'rsatadi
+function openOfferSheet(r){
+  offerTarget = r;
+  const maxP = maxFeePct(r);
+  const dealLabel = r.dealType==='sale' ? t('dealSale') : t('dealRent');
+  const budget = r.budget ? fmtPrice(r.budget) : t('reqAnyBudget');
+  $('offerReqSummary').innerHTML = `
+    <div class="rc-top">
+      <div class="rc-badges"><span class="badge ${r.dealType==='sale'?'badge-sale':'badge-rent'}">${dealLabel}</span></div>
+      <span class="rc-budget">${budget}</span>
+    </div>
+    <div class="rc-meta">📍 ${esc(r.region||'')}</div>`;
+  $('offerCapNote').innerHTML = t('offerMaxNote').replace('{pct}', maxP);
+  const inp = $('offerPct');
+  inp.max = maxP; inp.value = maxP;
+  updateOfferPreview();
+  openSheet('offerSheet');
+}
+
+// Kiritilgan foiz bo'yicha taxminiy ish haqini ko'rsatadi + chegarani tekshiradi
+function updateOfferPreview(){
+  if(!offerTarget) return;
+  const maxP = maxFeePct(offerTarget);
+  const p = parseFloat($('offerPct').value) || 0;
+  const prev = $('offerFeePreview');
+  if(p > maxP){ prev.innerHTML = `<span style="color:#e6a23c;">${t('offerPctInvalid').replace('{pct}', maxP)}</span>`; return; }
+  const amt = feeAmount(offerTarget, p);
+  prev.innerHTML = (p>0 && amt!=null) ? `${t('offerFeePreview')}: <b>${fmtPrice(amt)}</b>` : '';
+}
+
+// Taklifni yuboradi — xavfsiz tranzaksiya (limit + kredit nazorati). Raqam OCHILMAYDI.
+async function submitOffer(btn){
   if(!currentUser){ requireLogin('profile'); return; }
+  if(!offerTarget){ closeSheet('offerSheet'); return; }
+  const r = offerTarget;
+  const maxP = maxFeePct(r);
+  const pct = Math.round((parseFloat($('offerPct').value) || 0) * 2) / 2;
+  if(!(pct > 0)){ toast(t('offerPctRequired'),'error'); return; }
+  if(pct > maxP){ toast(t('offerPctInvalid').replace('{pct}', maxP),'error'); return; }
+  const note = ($('offerNote').value || '').trim();
   setLoading(btn, true);
   let charged = false;
   try{
-    const ref = db.collection('requests').doc(id);
+    const ref = db.collection('requests').doc(r.id);
     const uref = db.collection('users').doc(currentUser.uid);
+    const offRef = ref.collection('offers').doc(currentUser.uid);
     await db.runTransaction(async (tx)=>{
-      // Barcha o'qishlar yozishdan oldin
       const doc = await tx.get(ref);
       const udoc = await tx.get(uref);
       if(!doc.exists) throw new Error('gone');
       const d = doc.data();
+      if(d.matchedBroker) throw new Error('MATCHED');
       const arr = Array.isArray(d.acceptedBy) ? d.acceptedBy : [];
-      if(arr.includes(currentUser.uid)) return;      // allaqachon qabul qilgan
-      if(arr.length >= ACCEPT_LIMIT) throw new Error('FULL');
-      // Lead krediti: premium — cheksiz; aks holda kredit kerak
+      const already = arr.includes(currentUser.uid);
+      if(!already && arr.length >= ACCEPT_LIMIT) throw new Error('FULL');
       const ud = udoc.exists ? udoc.data() : {};
       const premium = ud.plan === 'premium';
       const credits = (typeof ud.credits === 'number') ? ud.credits : 0;
-      if(!premium && credits < LEAD_COST) throw new Error('NOCREDIT');
-      tx.update(ref, {
-        acceptedBy: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
-        acceptCount: (d.acceptCount || arr.length) + 1,
-        status: 'accepted'
+      if(!already && !premium && credits < LEAD_COST) throw new Error('NOCREDIT');
+      tx.set(offRef, {
+        brokerUid: currentUser.uid,
+        brokerName: (userDoc && userDoc.agentName) || (currentUser && currentUser.email) || '',
+        brokerDistrict: (userDoc && userDoc.agentDistrict) || '',
+        feePct: pct,
+        feeAmount: feeAmount(r, pct),
+        dealType: r.dealType,
+        note,
+        status: 'pending',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-      if(!premium){ tx.update(uref, { credits: credits - LEAD_COST }); charged = true; }
+      if(!already){
+        tx.update(ref, {
+          acceptedBy: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
+          acceptCount: (d.acceptCount || arr.length) + 1,
+          status: 'offered'
+        });
+        if(!premium){ tx.update(uref, { credits: credits - LEAD_COST }); charged = true; }
+      }
     });
     if(charged && userDoc && typeof userDoc.credits==='number'){ userDoc.credits -= LEAD_COST; renderBrokerWallet(); }
-    // Bitimlar hisoblagichini oshiramiz (ochiq profilda ko'rinadi)
-    db.collection('agents').doc(currentUser.uid).update({ dealsCount: firebase.firestore.FieldValue.increment(1) }).catch(()=>{});
-    toast(t('reqAcceptedToast'), 'success');
+    closeSheet('offerSheet'); offerTarget = null;
+    toast(t('offerSentToast'), 'success');
     loadAgentRequests();
   }catch(err){
     if(err.message === 'FULL'){ toast(t('reqAcceptFullToast'),'error'); loadAgentRequests(); }
+    else if(err.message === 'MATCHED'){ toast(t('offerClosed'),'error'); loadAgentRequests(); }
     else if(err.message === 'NOCREDIT'){ toast(t('creditEmpty'),'error'); openTopup(); }
     else{ console.error(err); toast(t('error')+err.message,'error'); }
   }finally{ setLoading(btn, false); }
+}
+
+// Taklif oynasi tugmalari
+(function(){
+  const x = $('offerCloseX'); if(x) x.addEventListener('click', ()=>closeSheet('offerSheet'));
+  const sb = $('offerSubmitBtn'); if(sb) sb.addEventListener('click', e=>submitOffer(e.currentTarget));
+  const inp = $('offerPct'); if(inp) inp.addEventListener('input', updateOfferPreview);
+})();
+
+/* ============ MIJOZ: MENING SO'ROVLARIM + KELISHUV ============ */
+$('openMyReqBtn').addEventListener('click', ()=>{ if(!currentUser){ requireLogin('myreq'); return; } showScreen('myreq'); });
+$('myReqBackBtn').addEventListener('click', ()=>{ showScreen('profile'); refreshProfileScreen(); });
+
+// Mijozning o'z so'rovlari + kelgan takliflar
+async function loadMyRequests(){
+  const box = $('myReqList'); if(!box || !currentUser) return;
+  box.innerHTML = `<div class="center-note">${t('loading')}</div>`;
+  try{
+    const snap = await db.collection('requests').where('requesterUid','==',currentUser.uid).limit(50).get();
+    const reqs = []; snap.forEach(d=>reqs.push({ id:d.id, ...d.data() }));
+    reqs.sort((a,b)=> ((b.createdAt&&b.createdAt.seconds)||0) - ((a.createdAt&&a.createdAt.seconds)||0));
+    if(reqs.length === 0){ box.innerHTML = `<div class="center-note">${t('myReqEmpty')}</div>`; return; }
+    box.innerHTML = '';
+    for(const r of reqs){
+      const dealLabel = r.dealType==='sale' ? t('dealSale') : t('dealRent');
+      const budget = r.budget ? fmtPrice(r.budget) : t('reqAnyBudget');
+      const matched = !!r.matchedBroker;
+      let offersHtml;
+      if(matched){
+        offersHtml = `<div class="offer-row offer-matched">
+          <div><b>✅ ${t('myReqMatched')}</b>
+            <div class="rc-meta">${t('myReqAgreedFee')}: ${r.agreedFeePct||'—'}%${r.agreedFeeAmount?(' · '+fmtPrice(r.agreedFeeAmount)):''}</div></div>
+          <button class="btn btn-secondary btn-sm mr-contact" data-broker="${esc(r.matchedBroker)}"><span class="btn-label">📞 ${t('contactBtn')}</span></button>
+        </div>`;
+      }else{
+        let offers = [];
+        try{
+          const os = await db.collection('requests').doc(r.id).collection('offers').where('status','==','pending').get();
+          os.forEach(d=>offers.push({ id:d.id, ...d.data() }));
+        }catch(e){}
+        offers.sort((a,b)=> (a.feePct||0) - (b.feePct||0));   // arzon taklif yuqorida
+        if(offers.length === 0){
+          offersHtml = `<div class="center-note" style="text-align:left;margin-top:8px;">⏳ ${t('myReqWaiting')}</div>`;
+        }else{
+          offersHtml = offers.map(o=>`
+            <div class="offer-row">
+              <div>
+                <b>${esc(o.brokerName||t('ownerAgent'))}</b>
+                <div class="rc-meta">💼 ${o.feePct}%${o.feeAmount?(' · '+fmtPrice(o.feeAmount)):''}${o.brokerDistrict?(' · 📍 '+esc(o.brokerDistrict)):''}</div>
+                ${o.note?`<div class="rc-note">${esc(o.note)}</div>`:''}
+              </div>
+              <button class="btn btn-primary btn-sm mr-approve" data-broker="${esc(o.brokerUid)}" data-pct="${o.feePct}" data-amt="${o.feeAmount!=null?o.feeAmount:''}"><span class="btn-label">${t('myReqApproveBtn')}</span></button>
+            </div>`).join('');
+        }
+      }
+      const card = document.createElement('div'); card.className='card'; card.style.marginBottom='12px';
+      card.innerHTML = `
+        <div class="rc-top">
+          <div class="rc-badges">
+            <span class="badge ${r.dealType==='sale'?'badge-sale':'badge-rent'}">${dealLabel}</span>
+            ${matched?`<span class="badge badge-verified">${t('myReqStatusMatched')}</span>`:`<span class="badge badge-pending">${t('myReqStatusOpen')}</span>`}
+          </div>
+          <span class="rc-budget">${budget}</span>
+        </div>
+        <div class="rc-meta">📍 ${esc(r.region||'')} ${r.rooms?('· '+r.rooms+t('roomsSuffix')):''} · <span class="rc-time">${timeAgo(r.createdAt)}</span></div>
+        ${r.note?`<div class="rc-note">${esc(r.note)}</div>`:''}
+        <div class="mr-offers">${offersHtml}</div>`;
+      card.querySelectorAll('.mr-approve').forEach(b=>{
+        b.addEventListener('click', ()=>{
+          const brokerUid = b.dataset.broker;
+          const off = { feePct: parseFloat(b.dataset.pct)||0, feeAmount: b.dataset.amt!=='' ? (parseFloat(b.dataset.amt)||null) : null };
+          if(confirm(t('agreeConfirm').replace('{pct}', off.feePct))) confirmDeal(r.id, brokerUid, off, b);
+        });
+      });
+      const cb = card.querySelector('.mr-contact');
+      if(cb) cb.addEventListener('click', ()=> openBrokerContact(cb.dataset.broker));
+      box.appendChild(card);
+    }
+  }catch(err){ console.error(err); box.innerHTML = `<div class="center-note">${t('loadError')}${esc(err.message)}</div>`; }
+}
+
+// Mijoz taklifga rozilik beradi — bitim tuziladi, bog'lanish ochiladi
+async function confirmDeal(reqId, brokerUid, offer, btn){
+  if(!currentUser){ requireLogin('myreq'); return; }
+  setLoading(btn, true);
+  try{
+    const ref = db.collection('requests').doc(reqId);
+    const offRef = ref.collection('offers').doc(brokerUid);
+    await db.runTransaction(async (tx)=>{
+      const doc = await tx.get(ref);
+      if(!doc.exists) throw new Error('gone');
+      const d = doc.data();
+      if(d.requesterUid !== currentUser.uid) throw new Error('denied');
+      if(d.matchedBroker) throw new Error('ALREADY');
+      tx.update(ref, {
+        matchedBroker: brokerUid,
+        agreedFeePct: offer.feePct,
+        agreedFeeAmount: (offer.feeAmount!=null) ? offer.feeAmount : null,
+        matchedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        status: 'matched'
+      });
+      tx.update(offRef, { status: 'accepted' });
+    });
+    toast(t('dealDoneToast'), 'success');
+    loadMyRequests();
+    refreshProfileScreen();
+  }catch(err){
+    if(err.message === 'ALREADY'){ toast(t('dealAlready'),'error'); loadMyRequests(); }
+    else{ console.error(err); toast(t('error')+err.message,'error'); }
+  }finally{ setLoading(btn, false); }
+}
+
+// Kelishilgan makler raqamini ochadi (ochiq 'agents' hujjatidan)
+async function openBrokerContact(brokerUid){
+  let phone = '';
+  try{
+    const snap = await db.collection('agents').doc(brokerUid).get();
+    if(snap.exists) phone = snap.data().phone || '';
+  }catch(e){}
+  contactPhone = phone;
+  $('contactPhoneDisplay').textContent = phone || '—';
+  openSheet('contactSheet');
 }
 
 /* ============ INIT ============ */
