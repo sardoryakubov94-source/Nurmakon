@@ -952,6 +952,8 @@
     <div class="modal-head"><h2 data-i18n="contactTitle">Bog'lanish</h2>
       <button class="modal-close" id="contactCloseX" type="button">✕</button></div>
     <div id="contactPhoneDisplay" style="font-size:22px;font-weight:700;text-align:center;margin:6px 0 18px;font-family:'Space Grotesk',sans-serif;"></div>
+    <p id="contactDemoNote" class="center-note" style="display:none;margin:-8px 0 16px;">Egasi bilan bog'lanish uchun "Yozish" tugmasi orqali xabar qoldiring.</p>
+    <button class="btn btn-secondary" id="contactMsgBtn" style="margin-bottom:10px;display:none;"><span class="btn-label">💬 Yozish</span></button>
     <button class="btn btn-primary" id="contactCallBtn" style="margin-bottom:10px;"><span class="btn-label" data-i18n="contactCall">📞 Qo'ng'iroq qilish</span></button>
     <button class="btn btn-secondary" id="contactTelegramBtn" style="margin-bottom:10px;"><span class="btn-label">✈️ Telegram</span></button>
     <button class="btn btn-outline" id="contactCopyBtn"><span class="btn-label" data-i18n="contactCopy">📋 Raqamni nusxalash</span></button>
@@ -1512,6 +1514,16 @@
   <div class="card">
     <h3 style="margin:0 0 12px;font-size:16px;">📊 <span data-i18n="admStatsTitle">Statistika</span></h3>
     <div class="stat-grid" id="adminStats"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 4px;font-size:16px;">🧪 <span>Namuna e'lonlar</span></h3>
+    <p class="center-note" style="text-align:left;margin:0 0 8px;">Faqat siz (admin) ko'rasiz. Tashqi foydalanuvchilarga bular oddiy e'lon bo'lib ko'rinadi. Bog'lanish faqat "Yozish" orqali — xabar to'g'ridan-to'g'ri sizga tushadi. Telefon raqami yashirin (<b>+998 90 *** ** **</b>).</p>
+    <p class="center-note" style="text-align:left;margin:0 0 12px;">Hozirgi namuna e'lonlar: <b id="adminDemoCount">—</b></p>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="adminSeedDemoBtn"><span class="btn-label">＋ Namuna qo'shish</span></button>
+      <button class="btn btn-danger-soft" id="adminDelDemoBtn"><span class="btn-label">🗑 Barchasini o'chirish</span></button>
+    </div>
   </div>
 
   <div class="card">
@@ -2708,6 +2720,8 @@ function renderListingCard(l){
   const et = effTier(l);
   const tierBadge = et==='vip' ? `<span class="badge badge-vip">💎 VIP</span>` : et==='top' ? `<span class="badge badge-top">🔝 TOP</span>` : '';
   const urgentBadge = effUrgent(l) ? `<span class="badge badge-urgent">⚡ ${t('urgentBadge')}</span>` : '';
+  // "Namuna" belgisi FAQAT adminga ko'rinadi; oddiy foydalanuvchida chiqmaydi
+  const demoBadge = (l.isDemo && isAdminUser()) ? `<span class="badge" style="background:#7c3aed;color:#fff;">🧪 Namuna</span>` : '';
   const isFav = favoriteIds.has(l.id);
   const photoCount = (l.photos && l.photos.length>1) ? `<div class="photo-count">📷 ${l.photos.length}</div>` : '';
   const specs = [];
@@ -2717,7 +2731,7 @@ function renderListingCard(l){
 
   div.innerHTML = `
     <div class="listing-media">
-      <div class="media-badges">${tierBadge}${urgentBadge}${dealBadge}${ownerBadge}${newBadge}</div>
+      <div class="media-badges">${demoBadge}${tierBadge}${urgentBadge}${dealBadge}${ownerBadge}${newBadge}</div>
       <button class="fav-btn ${isFav?'active':''}" data-id="${l.id}" aria-label="fav">${isFav?'♥':'♡'}</button>
       ${photo ? `<img src="${esc(photo)}" alt="" loading="lazy">` : `<div class="no-photo">${propIcon(l.propertyType)}</div>`}
       ${photoCount}
@@ -2767,7 +2781,7 @@ async function openDetail(l){
 
   const isOwn = currentUser && l.ownerUid === currentUser.uid;
   $('detailContent').innerHTML = `
-    <div class="detail-meta-row">${effTier(l)==='vip'?'<span class="badge badge-vip">💎 VIP</span>':effTier(l)==='top'?'<span class="badge badge-top">🔝 TOP</span>':''}${effUrgent(l)?`<span class="badge badge-urgent">⚡ ${t('urgentBadge')}</span>`:''}${dealBadge}${ownerBadge}<span class="listing-time" style="margin-left:auto;">🕐 ${timeAgo(l.createdAt)}</span></div>
+    <div class="detail-meta-row">${(l.isDemo && isAdminUser())?'<span class="badge" style="background:#7c3aed;color:#fff;">🧪 Namuna</span>':''}${effTier(l)==='vip'?'<span class="badge badge-vip">💎 VIP</span>':effTier(l)==='top'?'<span class="badge badge-top">🔝 TOP</span>':''}${effUrgent(l)?`<span class="badge badge-urgent">⚡ ${t('urgentBadge')}</span>`:''}${dealBadge}${ownerBadge}<span class="listing-time" style="margin-left:auto;">🕐 ${timeAgo(l.createdAt)}</span></div>
     <div class="detail-price">${fmtPrice(l.price)} <span class="price-secondary">≈ ${fmtPriceSecondary(l.price)}</span></div>
     <div class="listing-loc" style="margin-top:6px;">📍 ${esc(l.region)}, ${esc(l.district)}</div>
     <div class="detail-spec-grid">${specs.map(s=>`<div class="detail-spec"><div class="k">${s.k}</div><div class="v">${s.v}</div></div>`).join('')}</div>
@@ -2879,13 +2893,35 @@ $('lightbox').addEventListener('click', e=>{ if(e.target.id==='lightbox'){ $('li
 
 /* ============ CONTACT SHEET ============ */
 let contactPhone = '';
+let contactListing = null;
+// Bog'lanish oynasini oddiy (qo'ng'iroq/telegram/nusxa) ko'rinishga qaytaradi
+function showContactDefault(){
+  $('contactCallBtn').style.display = '';
+  $('contactTelegramBtn').style.display = '';
+  $('contactCopyBtn').style.display = '';
+  $('contactMsgBtn').style.display = 'none';
+  const note = $('contactDemoNote'); if(note) note.style.display = 'none';
+}
 function openContact(l){
+  contactListing = l;
   contactPhone = l.phone || '';
-  $('contactPhoneDisplay').textContent = contactPhone;
+  const demo = !!l.isDemo;
+  $('contactPhoneDisplay').textContent = demo ? (l.phone || '+998 90 *** ** **') : contactPhone;
+  if(demo){
+    // Namuna e'lon: raqam yashirin, faqat ilova ichida "Yozish" (xabar adminga tushadi)
+    $('contactCallBtn').style.display = 'none';
+    $('contactTelegramBtn').style.display = 'none';
+    $('contactCopyBtn').style.display = 'none';
+    $('contactMsgBtn').style.display = '';
+    const note = $('contactDemoNote'); if(note) note.style.display = 'block';
+  }else{
+    showContactDefault();
+  }
   openSheet('contactSheet');
   logContact(l.id);
 }
 $('contactCloseX').addEventListener('click', ()=>closeSheet('contactSheet'));
+$('contactMsgBtn').addEventListener('click', ()=>{ const l = contactListing; closeSheet('contactSheet'); if(l) startChatFromListing(l); });
 $('promoteCloseX').addEventListener('click', ()=>closeSheet('promoteSheet'));
 $('contactCallBtn').addEventListener('click', ()=>{ window.location.href = 'tel:'+contactPhone; });
 $('contactTelegramBtn').addEventListener('click', ()=>{
@@ -3025,6 +3061,8 @@ $('supportCallBtn').addEventListener('click', ()=>{ if(hotlineNumber) location.h
 $('openAdminBtn').addEventListener('click', ()=>{ showScreen('admin'); refreshAdminScreen(); });
 $('adminBackBtn').addEventListener('click', ()=>{ showScreen('profile'); refreshProfileScreen(); });
 $('adminSaveHotlineBtn').addEventListener('click', e=>saveHotline(e.currentTarget));
+$('adminSeedDemoBtn').addEventListener('click', e=>seedDemoListings(e.currentTarget));
+$('adminDelDemoBtn').addEventListener('click', e=>deleteDemoListings(e.currentTarget));
 
 /* ============ TOP-UP NAV ============ */
 $('topupBtn').addEventListener('click', openTopup);
@@ -3258,7 +3296,7 @@ async function openBrokerProfile(agentUid){
       </div>
       ${a.phone ? `<button class="btn btn-secondary" id="brokerCallBtn" style="margin-top:14px;"><span class="btn-label">📞 ${t('contactBtn')}</span></button>` : ''}`;
     const cb = $('brokerCallBtn');
-    if(cb) cb.addEventListener('click', ()=>{ contactPhone=a.phone||''; $('contactPhoneDisplay').textContent=contactPhone; openSheet('contactSheet'); });
+    if(cb) cb.addEventListener('click', ()=>{ contactPhone=a.phone||''; contactListing=null; showContactDefault(); $('contactPhoneDisplay').textContent=contactPhone; openSheet('contactSheet'); });
     const rbox = $('brokerReviews');
     if(revSnap.empty){ rbox.innerHTML = `<div class="center-note">${t('noReviews')}</div>`; }
     else{
@@ -3365,6 +3403,7 @@ function refreshAdminScreen(){
   loadPendingVerifications();
   loadAdminTopups();
   loadAdminCancellations();
+  loadAdminDemoCount();
 }
 
 async function loadAdminStats(){
@@ -4379,6 +4418,7 @@ async function openRequestContact(r){
   }catch(e){ /* ruxsat yo'q yoki yo'q */ }
   if(!phone) phone = r.phone || '';   // eski so'rovlar uchun zaxira
   contactPhone = phone;
+  contactListing = null; showContactDefault();
   $('contactPhoneDisplay').textContent = phone || '—';
   openSheet('contactSheet');
 }
@@ -4592,8 +4632,131 @@ async function openBrokerContact(brokerUid){
     if(snap.exists) phone = snap.data().phone || '';
   }catch(e){}
   contactPhone = phone;
+  contactListing = null; showContactDefault();
   $('contactPhoneDisplay').textContent = phone || '—';
   openSheet('contactSheet');
+}
+
+/* ============================================================
+   NAMUNA (DEMO) E'LONLAR — faqat admin boshqaradi
+   ------------------------------------------------------------
+   - Har bir e'londa isDemo:true (faqat adminga "Namuna" belgisi ko'rinadi).
+   - Telefon YASHIRIN: "+998 90 *** ** **" (qo'ng'iroq/nusxa o'chirilgan).
+   - Bog'lanish faqat ilova ichidagi "Yozish" orqali — ownerUid=admin
+     bo'lgani uchun xabar to'g'ridan-to'g'ri admin lichkasiga tushadi.
+   - Rasmlar bepul litsenziyali (Unsplash), boshqa saytlardan olinmagan.
+   ============================================================ */
+const DEMO_PHONE = "+998 90 *** ** **";
+const DEMO_IMG_IDS = [
+  "1568605114967-8130f3a36994","1512917774080-9991f1c4c750","1570129477492-45c003edd2be",
+  "1580587771525-78b9dba3b914","1600585154340-be6161a56a0c","1600596542815-ffad4c1539a9",
+  "1600607687939-ce8a6c25118c","1600566753086-00f18fb6b3ea","1600210492486-724fe5c67fb0",
+  "1600585152220-90363fe7e115","1493809842364-78817add7ffb","1522708323590-d24dbb6b0267",
+  "1484154218962-a197022b5858","1449844908441-8829872d2607","1512918728675-ed5a9ecdebfd",
+  "1560184897-ae75f418493e","1502005229762-cf1b2da7c5d6","1554995207-c18c203602cb",
+  "1560448204-e02f11c3d0e2","1600047509807-ba8f99d2cdde"
+];
+function demoImg(i){ return `https://images.unsplash.com/photo-${DEMO_IMG_IDS[i]}?auto=format&fit=crop&w=900&q=70`; }
+
+const DEMO_LISTINGS = [
+  { dealType:'sale', propertyType:'apartment', region:'Andijon', district:"Bog'ishamol", price:620000000, area:68, rooms:3, floor:'4/9', tier:'vip', imgs:[4,8,18], description:"Bog'ishamol markazida yorug' 3 xonali kvartira. Ta'mirli, mebelli, hujjatlar tayyor. Maktab va bozorga yaqin." },
+  { dealType:'sale', propertyType:'apartment', region:'Andijon', district:"Cho'lpon", price:540000000, area:54, rooms:2, floor:'2/5', imgs:[10,11], description:"Cho'lpon dahasida 2 xonali kvartira. O'rta ta'mir, issiq-sovuq suv doimiy. Transport qulay." },
+  { dealType:'rent', propertyType:'apartment', region:'Andijon', district:"Navoiy shoh ko'chasi", price:3500000, area:60, rooms:2, floor:'3/9', tier:'top', imgs:[17,15], description:"Uzoq muddatga ijaraga. To'liq jihozlangan, kir yuvish mashinasi, konditsioner bor. Oylik to'lov." },
+  { dealType:'sale', propertyType:'house', region:'Andijon', district:"Yangi bozor", price:1250000000, area:180, rooms:5, floor:'2 qavat', tier:'vip', imgs:[2,5,13], description:"2 qavatli hovli uy, 6 sotix yer. Garaj, mevali bog', evroremont. Oila uchun ideal." },
+  { dealType:'rent', propertyType:'house', region:'Andijon', district:"Bo'ston MFY", price:5000000, area:140, rooms:4, floor:'1 qavat', imgs:[1,6], description:"Hovli uy ijaraga. Keng hovli, alohida kirish. Uzoq muddatli ijarachiga beriladi." },
+  { dealType:'sale', propertyType:'apartment', region:'Andijon', district:"Eski shahar", price:480000000, area:50, rooms:2, floor:'1/4', imgs:[16,8], description:"1-qavat, tijoratga ham moslashtirish mumkin. Ko'cha tarafda, yo'l bo'yida. Hujjatlar tayyor." },
+  { dealType:'sale', propertyType:'commercial', region:'Andijon', district:"Sanoat", price:2100000000, area:220, rooms:null, floor:'1/1', tier:'top', imgs:[19,5], description:"Tijorat obyekti — do'kon yoki ofis uchun. Katta vitrina, avtoturargoh. Yo'l bo'yida." },
+  { dealType:'sale', propertyType:'land', region:'Andijon', district:"Qo'rg'ontepa", price:320000000, area:600, rooms:null, floor:null, imgs:[13,2], description:"6 sotix yer uchastkasi. Qurilishga tayyor, kommunikatsiyalar yaqin. Tinch mahalla." },
+  { dealType:'rent', propertyType:'apartment', region:'Andijon', district:"Bog'ishamol", price:2800000, area:45, rooms:1, floor:'5/9', imgs:[15,17], description:"1 xonali kvartira ijaraga. Yosh oila yoki talabalar uchun. Jihozlangan, internet bor." },
+  { dealType:'sale', propertyType:'house', region:'Andijon', district:"Asaka", price:780000000, area:150, rooms:4, floor:'1 qavat', imgs:[3,6,13], description:"Asakada yakkatom hovli uy. 5 sotix, bog'-rog', suv-gaz bor. Toza va shinam." },
+  { dealType:'sale', propertyType:'apartment', region:'Andijon', district:"Cho'lpon", price:700000000, area:75, rooms:3, floor:'7/9', tier:'top', imgs:[4,11], description:"Yangi binoda 3 xonali kvartira. Panjara ayvon, lift ishlaydi. Manzarali ko'rinish." },
+  { dealType:'rent', propertyType:'commercial', region:'Andijon', district:"Navoiy", price:8000000, area:90, rooms:null, floor:'1/5', imgs:[19], description:"Ofis/xizmat ko'rsatish uchun tijorat maydoni ijaraga. Markazda, mijoz oqimi yuqori." },
+  { dealType:'sale', propertyType:'apartment', region:'Andijon', district:"Yangi hayot", price:590000000, area:62, rooms:2, floor:'3/7', imgs:[8,10], description:"O'rta hol ta'mirli 2 xonali kvartira. Bolalar maydonchasi, avtoturargoh mavjud." },
+  { dealType:'sale', propertyType:'house', region:'Andijon', district:"Shahrixon", price:950000000, area:200, rooms:6, floor:'2 qavat', tier:'vip', imgs:[14,5,2], description:"Katta hovli uy, 8 sotix. 2 qavat, 6 xona, garaj va tomorqa. Katta oila uchun." },
+  { dealType:'rent', propertyType:'apartment', region:'Andijon', district:"Bog'ishamol", price:4200000, area:70, rooms:3, floor:'6/9', imgs:[9,15], description:"3 xonali keng kvartira ijaraga. To'liq jihozlangan, konditsioner, kir mashinasi." },
+  { dealType:'sale', propertyType:'apartment', region:'Andijon', district:"Cho'lpon", price:460000000, area:48, rooms:2, floor:'1/5', imgs:[16,11], description:"Arzon narxdagi 2 xonali kvartira. Ta'mir talab, lekin joyi juda qulay. Shoshilinch." },
+  { dealType:'sale', propertyType:'land', region:'Andijon', district:"Baliqchi", price:210000000, area:800, rooms:null, floor:null, imgs:[2,13], description:"8 sotix yer, dehqonchilik yoki qurilish uchun. Asfalt yo'lga chiqish bor." },
+  { dealType:'rent', propertyType:'house', region:'Andijon', district:"Xonobod", price:3800000, area:120, rooms:3, floor:'1 qavat', imgs:[1,6], description:"Hovli uy ijaraga beriladi. Alohida hovli, mashina uchun joy. Tinch ko'cha." },
+  { dealType:'sale', propertyType:'apartment', region:'Andijon', district:"Navoiy", price:830000000, area:82, rooms:3, floor:'8/12', tier:'top', imgs:[4,17], description:"Yangi turar-joy majmuasida 3 xonali. Evroremont, o'rnatilgan oshxona. Yuqori qavat, manzara." },
+  { dealType:'sale', propertyType:'house', region:'Andijon', district:"Marhamat", price:690000000, area:160, rooms:5, floor:'1 qavat', imgs:[3,13], description:"Marhamatda hovli uy. 6 sotix, bog', quduq. Toza havo, qishloq joyi." },
+  { dealType:'rent', propertyType:'apartment', region:'Andijon', district:"Eski shahar", price:2500000, area:42, rooms:1, floor:'2/4', imgs:[10,16], description:"Kichik 1 xonali kvartira ijaraga. Yolg'iz odam yoki juftlik uchun qulay. Arzon." },
+  { dealType:'sale', propertyType:'commercial', region:'Andijon', district:"Bog'ishamol", price:1700000000, area:180, rooms:null, floor:'1/2', imgs:[19,5], description:"Tijorat binosi — do'kon, ombor yoki ishlab chiqarish uchun. Katta maydon, yo'l bo'yida." },
+  { dealType:'sale', propertyType:'apartment', region:'Andijon', district:"Yangi bozor", price:560000000, area:58, rooms:2, floor:'4/5', imgs:[8,11], description:"2 xonali kvartira, ta'mirli. Bozor va bekatga piyoda 5 daqiqa. Hujjat toza." },
+  { dealType:'rent', propertyType:'apartment', region:'Andijon', district:"Cho'lpon", price:3200000, area:65, rooms:2, floor:'5/7', tier:'top', imgs:[15,17], description:"2 xonali kvartira uzoq muddatga ijaraga. Jihozlangan, sokin joyda. Oila uchun." },
+  { dealType:'sale', propertyType:'house', region:'Andijon', district:"Paxtaobod", price:610000000, area:170, rooms:5, floor:'1 qavat', imgs:[6,13,3], description:"Paxtaobodda keng hovli uy. Tomorqa, mevali daraxtlar, alohida oshxona." },
+  { dealType:'sale', propertyType:'apartment', region:'Andijon', district:"Bog'ishamol", price:990000000, area:95, rooms:4, floor:'9/12', tier:'vip', imgs:[4,9], description:"Premium sinf 4 xonali kvartira. Dizayner ta'miri, panoramali oynalar. Eng yaxshi ko'rinish." },
+  { dealType:'rent', propertyType:'commercial', region:'Andijon', district:"Sanoat", price:6500000, area:110, rooms:null, floor:'1/1', imgs:[19], description:"Ombor/ishlab chiqarish maydoni ijaraga. Yuk mashinasi kirishi qulay, keng hudud." },
+  { dealType:'sale', propertyType:'land', region:'Andijon', district:"Jalaquduq", price:175000000, area:1000, rooms:null, floor:null, imgs:[13,2], description:"10 sotix yer uchastkasi. Bog' yoki uy qurish uchun. Suv va elektr yaqinda." }
+];
+
+async function loadAdminDemoCount(){
+  const el = $('adminDemoCount'); if(!el) return;
+  try{ const s = await db.collection('listings').where('isDemo','==',true).get(); el.textContent = s.size; }
+  catch(e){ el.textContent = '—'; }
+}
+
+async function seedDemoListings(btn){
+  if(!isAdminUser()){ toast('Bu amal faqat admin uchun','error'); return; }
+  try{
+    const ex = await db.collection('listings').where('isDemo','==',true).get();
+    if(ex.size>0 && !confirm(`Allaqachon ${ex.size} ta namuna e'lon mavjud. Yana ${DEMO_LISTINGS.length} ta qo'shilsinmi?`)) return;
+  }catch(e){}
+  setLoading(btn, true);
+  let n = 0;
+  try{
+    for(let i=0;i<DEMO_LISTINGS.length;i++){
+      const d = DEMO_LISTINGS[i];
+      const now = Date.now();
+      const offset = Math.floor((2 + Math.random()*470) * 3600000); // 2 soat – ~20 kun oldin
+      const tierActive = d.tier && d.tier !== 'standard';
+      await db.collection('listings').add({
+        ownerType: 'owner',
+        dealType: d.dealType,
+        propertyType: d.propertyType,
+        region: d.region,
+        district: d.district,
+        price: Number(d.price),
+        area: d.area || null,
+        rooms: d.rooms || null,
+        floor: d.floor || null,
+        description: d.description || '',
+        phone: DEMO_PHONE,
+        photos: d.imgs.map(demoImg),
+        status: 'active',
+        lat: 40.78 + ((i%7)-3)*0.009,
+        lng: 72.34 + ((i%5)-2)*0.011,
+        tier: tierActive ? d.tier : 'standard',
+        tierUntil: tierActive ? (now + PROMO_MS) : null,
+        urgent: false,
+        urgentUntil: null,
+        bumpedAt: now - offset,
+        ownerUid: currentUser.uid,
+        isDemo: true,
+        views: 15 + Math.floor(Math.random()*380),
+        createdAt: firebase.firestore.Timestamp.fromMillis(now - offset)
+      });
+      n++;
+    }
+    toast(n + " ta namuna e'lon qo'shildi", 'success');
+    loadAdminDemoCount();
+    loadListings();
+  }catch(err){ console.error(err); toast(t('error')+err.message + (n?` (${n} ta qo'shildi)`:''), 'error'); }
+  finally{ setLoading(btn, false); }
+}
+
+async function deleteDemoListings(btn){
+  if(!isAdminUser()){ toast('Bu amal faqat admin uchun','error'); return; }
+  if(!confirm("Barcha namuna e'lonlar o'chirilsinmi? Bu amalni qaytarib bo'lmaydi.")) return;
+  setLoading(btn, true);
+  let n = 0;
+  try{
+    const snap = await db.collection('listings').where('isDemo','==',true).get();
+    for(const doc of snap.docs){ await doc.ref.delete(); n++; }
+    toast(n + " ta namuna e'lon o'chirildi", 'success');
+    loadAdminDemoCount();
+    loadListings();
+  }catch(err){ console.error(err); toast(t('error')+err.message, 'error'); }
+  finally{ setLoading(btn, false); }
 }
 
 /* ============ INIT ============ */
