@@ -2647,10 +2647,21 @@ function showSkeletons(){
 async function loadListings(){
   showSkeletons();
   try{
-    const snap = await db.collection('listings').where('status','==','active').orderBy('createdAt','desc').limit(100).get();
+    // Avval createdAt bo'yicha tartiblangan so'rovni sinaymiz. Agar composite index
+    // yo'q bo'lsa yoki ba'zi e'lonlarda createdAt bo'lmasa (natija bo'sh chiqsa),
+    // index talab qilmaydigan oddiy so'rovga o'tamiz va client tomonda saralaymiz.
+    let snap = null;
+    try{
+      snap = await db.collection('listings').where('status','==','active').orderBy('createdAt','desc').limit(200).get();
+    }catch(idxErr){
+      console.warn('loadListings: ordered query failed, falling back:', idxErr && idxErr.message);
+    }
+    if(!snap || snap.empty){
+      snap = await db.collection('listings').where('status','==','active').limit(200).get();
+    }
     allListings = [];
     snap.forEach(doc=>allListings.push({ id:doc.id, ...doc.data() }));
-    renderListings();
+    renderListings();  // tartiblash getFilteredListings() ichida (tarif + vaqt) amalga oshadi
   }catch(err){
     console.error(err);
     $('listingsContainer').innerHTML = `<div class="empty-state"><div class="ic">⚠️</div><div class="title">${t('loadError')}</div><div class="sub">${esc(err.message)}</div></div>`;
