@@ -4243,14 +4243,21 @@ async function loadAgentRequests(){
       const full = r._count >= ACCEPT_LIMIT;
       const card = document.createElement('div'); card.className='req-card';
 
-      // Amal tugmasi: kelishilgan bo'lsa telefon ochiladi; taklif yuborilgan bo'lsa
-      // kutiladi; aks holda "Taklif yuborish".
+      // Amal tugmasi: mijoz meni tanlagan bo'lsa telefon ochiladi (+ bekor qilish
+      // mumkin, bir qatorda); taklif yuborilgan bo'lsa mijoz javobi kutiladi;
+      // aks holda "Taklif yuborish".
       const matchedToMe = uid && r.matchedBroker === uid;
       const matchedToOther = r.matchedBroker && r.matchedBroker !== uid;
       let actionHtml;
       if(matchedToMe){
+        const cancelHtml = pendingCancels.has(r.id)
+          ? `<div class="rc-cancel-pending" style="flex:1;text-align:center;color:#e6a23c;font-size:12.5px;font-weight:600;">⏳ ${t('cancelPending')}</div>`
+          : `<button class="btn btn-outline btn-sm rq-cancel" style="flex:1;"><span class="btn-label">🚫 ${t('cancelReqBtn')}</span></button>`;
         actionHtml = `<div class="rc-accepted">✅ ${t('offerMatchedBroker')}${r.agreedFeePct?(' · '+r.agreedFeePct+'%'):''}</div>
-          <button class="btn btn-secondary btn-sm rq-call"><span class="btn-label">📞 ${t('contactBtn')}</span></button>`;
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="btn btn-secondary btn-sm rq-call" style="flex:1;"><span class="btn-label">📞 ${t('contactBtn')}</span></button>
+            ${cancelHtml}
+          </div>`;
       }else if(r._iAccepted){
         const cancelHtml = pendingCancels.has(r.id)
           ? `<div class="rc-cancel-pending" style="color:#e6a23c;font-size:12.5px;font-weight:600;">⏳ ${t('cancelPending')}</div>`
