@@ -66,25 +66,36 @@
     transition:color .3s ease;
   }
 
-  /* ===== Hayratlanarli fon: "Nur" auroralari + suzuvchi yorug'lik zarralari ===== */
-  .bg-fx{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;}
-  .bg-fx .orb{position:absolute;border-radius:50%;filter:blur(70px);will-change:transform;}
-  .bg-fx .o1{width:44vmax;height:44vmax;left:-14vmax;top:-16vmax;
-    background:radial-gradient(circle,rgba(245,182,86,0.55),rgba(240,168,60,0) 68%);
+  /* ===== Hayratlanarli fon: "Nur" auroralari + suzuvchi yorug'lik zarralari =====
+     Perf eslatma: blur(), backdrop-filter va katta animatsiyalangan qatlamlar GPU/CPU
+     uchun qimmat. Bu bo'lim ataylab yengillashtirilgan (kichikroq blur radius, kamroq
+     maydon, kamroq zarracha) — past quvvatli qurilmalarda "qotish"ni kamaytiradi.
+     body.bg-paused klassi (tab fonga o'tganda) animatsiyalarni to'xtatadi. */
+  .bg-fx{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;contain:strict;}
+  .bg-fx .orb{position:absolute;border-radius:50%;filter:blur(46px);will-change:transform;}
+  .bg-fx .o1{width:32vmax;height:32vmax;left:-10vmax;top:-12vmax;
+    background:radial-gradient(circle,rgba(245,182,86,0.5),rgba(240,168,60,0) 68%);
     animation:orbDrift1 22s ease-in-out infinite;}
-  .bg-fx .o2{width:40vmax;height:40vmax;right:-16vmax;top:12%;
-    background:radial-gradient(circle,rgba(214,138,31,0.42),rgba(214,138,31,0) 68%);
+  .bg-fx .o2{width:30vmax;height:30vmax;right:-12vmax;top:12%;
+    background:radial-gradient(circle,rgba(214,138,31,0.38),rgba(214,138,31,0) 68%);
     animation:orbDrift2 28s ease-in-out infinite;}
-  .bg-fx .o3{width:38vmax;height:38vmax;left:24%;bottom:-20vmax;
-    background:radial-gradient(circle,rgba(51,161,132,0.28),rgba(51,161,132,0) 70%);
+  .bg-fx .o3{width:28vmax;height:28vmax;left:24%;bottom:-15vmax;
+    background:radial-gradient(circle,rgba(51,161,132,0.25),rgba(51,161,132,0) 70%);
     animation:orbDrift3 32s ease-in-out infinite;}
+  body.bg-paused .bg-fx .orb,body.bg-paused .bg-fx .motes i{animation-play-state:paused;}
   @keyframes orbDrift1{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(6vmax,5vmax) scale(1.12);}}
   @keyframes orbDrift2{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-5vmax,4vmax) scale(1.08);}}
   @keyframes orbDrift3{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(4vmax,-4vmax) scale(1.14);}}
   .bg-fx .motes{position:absolute;inset:0;}
   .bg-fx .motes i{position:absolute;bottom:-14px;width:4px;height:4px;border-radius:50%;
-    background:rgba(255,220,150,0.95);box-shadow:0 0 8px 2px rgba(240,168,60,0.55);
+    background:rgba(255,220,150,0.95);box-shadow:0 0 4px 1px rgba(240,168,60,0.5);
     opacity:0;animation:moteRise linear infinite;}
+  /* Kichik ekranlarda (telefonlar) yarim zarrachalar va yengilroq blur — bu qurilmalar
+     ko'pincha eng ko'p "qotish" muammosini boshdan kechiradi */
+  @media (max-width:600px){
+    .bg-fx .orb{filter:blur(32px);}
+    .bg-fx .motes i:nth-child(n+7){display:none;}
+  }
   @keyframes moteRise{
     0%{transform:translateY(0) translateX(0) scale(1);opacity:0;}
     12%{opacity:.9;}
@@ -493,7 +504,7 @@
   .photo-count{
     position:absolute;bottom:10px;right:10px;z-index:2;
     display:flex;align-items:center;gap:4px;
-    background:rgba(13,17,23,0.62);backdrop-filter:blur(6px);
+    background:rgba(13,17,23,0.78);
     color:#fff;font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:20px;
   }
   .listing-body{padding:15px 16px 16px;}
@@ -507,11 +518,14 @@
   .listing-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:13px;padding-top:12px;border-top:1px solid var(--line-soft);}
   .listing-time{font-size:11.5px;color:var(--text-faint);}
   .listing-foot .btn{width:auto;padding:9px 15px;}
-  .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:20px;letter-spacing:0.01em;backdrop-filter:blur(6px);}
-  .badge-owner{background:var(--teal-soft);color:#7fe3c6;}
-  .badge-agent{background:var(--gold-soft);color:#f8c877;}
-  .badge-rent{background:var(--violet-soft);color:#c3b3ff;}
-  .badge-sale{background:var(--danger-soft);color:#ff9b8f;}
+  /* Perf: backdrop-filter olib tashlandi — bir kartada 3-5 marta takrorlanib GPU'ni
+     ortiqcha band qilardi. Fon ranglari (rgba/soft) allaqachon yetarli kontrast beradi. */
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:20px;letter-spacing:0.01em;}
+  /* backdrop-filter olib tashlangani uchun rasm ustida o'qilishi uchun fonlar quyuqlashtirildi */
+  .badge-owner{background:rgba(31,58,50,0.88);color:#7fe3c6;}
+  .badge-agent{background:rgba(58,45,20,0.88);color:#f8c877;}
+  .badge-rent{background:rgba(45,40,66,0.88);color:#c3b3ff;}
+  .badge-sale{background:rgba(58,32,29,0.88);color:#ff9b8f;}
   .badge-verified{background:rgba(51,161,132,0.9);color:#fff;}
   .badge-new{background:rgba(240,168,60,0.92);color:#241505;}
   /* E'lon tarif belgilari */
@@ -545,9 +559,11 @@
   .badge-solid-rent{background:rgba(160,140,255,0.9);color:#fff;}
 
   .fav-btn{
+    /* Perf: backdrop-filter olib tashlandi — feed'da har bir kartada takrorlanib
+       (20-50+ marta) sezilarli sekinlashtiruvchi asosiy sabablardan biri edi. */
     position:absolute;top:10px;right:10px;z-index:3;
     width:36px;height:36px;border-radius:50%;
-    background:rgba(13,17,23,0.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    background:rgba(13,17,23,0.72);
     border:1px solid rgba(255,255,255,0.16);
     display:flex;align-items:center;justify-content:center;
     font-size:17px;cursor:pointer;color:rgba(244,241,234,0.9);
@@ -1740,12 +1756,15 @@ let currentUser = null;
 let userDoc = null;
 let selectedPhotos = [];
 let existingPhotos = [];   // when editing
+let existingThumbs = [];   // when editing — kichik nusxalar (feed uchun), photos bilan bir xil indeks
 let editingListingId = null;
 let allListings = [];      // raw fetched
 let favoriteIds = new Set();
 let pendingAuthTarget = 'feed';
 let onboardingChoice = null;
 let currentDealFilter = 'all';
+const FEED_PAGE_SIZE = 20;     // perf: bir vaqtda DOM'ga qo'shiladigan e'lon soni (pagination)
+let feedVisibleCount = FEED_PAGE_SIZE;
 let currentMode = localStorage.getItem('nm_mode') || 'independent'; // 'independent' | 'assisted'
 let currentSort = 'new';
 let advFilters = { propType:'', rooms:'', priceMin:'', priceMax:'' };
@@ -1770,6 +1789,13 @@ let convCache = {};                       // chatId -> conversation data
 const $ = (id)=>document.getElementById(id);
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function setLoading(btn, on){ if(!btn) return; btn.classList.toggle('loading', on); btn.disabled = on; }
+
+/* ============ PERF: tab fonga o'tganda og'ir fon animatsiyasini to'xtatish ============
+   Bu batareya/CPU sarfini kamaytiradi va foreground'ga qaytganda "qotish" hissini
+   kamaytiradi (animatsiya orqada to'planib qolmaydi). */
+document.addEventListener('visibilitychange', ()=>{
+  document.body.classList.toggle('bg-paused', document.hidden);
+});
 
 /* ============ UNIFIED LINE ICONS (barcha emojilar o'rniga) ============
    Pastki menyudagi qidiruv/sevimli/profil ikonkalari uslubida: stroke=currentColor,
@@ -1860,7 +1886,11 @@ function toast(msg, type){
 }
 
 function openSheet(id){ $(id).classList.add('active'); document.body.classList.add('no-scroll'); }
-function closeSheet(id){ $(id).classList.remove('active'); document.body.classList.remove('no-scroll'); }
+function closeSheet(id){
+  $(id).classList.remove('active'); document.body.classList.remove('no-scroll');
+  // Perf: detal xaritasi yopilganda Leaflet tile'larini xotiradan bo'shatamiz
+  if(id==='detailModal' && detailMapObj){ try{ detailMapObj.remove(); }catch(e){} detailMapObj=null; }
+}
 document.querySelectorAll('.modal-overlay').forEach(ov=>{
   ov.addEventListener('click', e=>{ if(e.target === ov) closeSheet(ov.id); });
 });
@@ -1903,7 +1933,7 @@ const I18N = {
     filterReset:"Tozalash", filterApply:"Qo'llash",
     sortTitle:"Saralash", sortNew:"Avval yangilari", sortPriceAsc:"Narx: arzondan qimmatga",
     sortPriceDesc:"Narx: qimmatdan arzonga", sortAreaDesc:"Maydon: kattadan kichikka",
-    resultsFound:"ta e'lon topildi",
+    resultsFound:"ta e'lon topildi", loadMoreBtn:"Ko'proq yuklash",
     postTitle:"Yangi e'lon", editTitle:"E'lonni tahrirlash",
     postSub:"Mulkingiz haqidagi ma'lumotlarni to'ldiring — e'lon bir necha soniyada joylanadi.",
     postWho:"Kim joylayapti?", postWhoOwner:"Mulk egasiman (mustaqil)", postWhoAgent:"Makler sifatida joylayapman",
@@ -2013,7 +2043,7 @@ const I18N = {
     filterReset:"Сбросить", filterApply:"Применить",
     sortTitle:"Сортировка", sortNew:"Сначала новые", sortPriceAsc:"Цена: по возрастанию",
     sortPriceDesc:"Цена: по убыванию", sortAreaDesc:"Площадь: по убыванию",
-    resultsFound:"объявлений найдено",
+    resultsFound:"объявлений найдено", loadMoreBtn:"Показать ещё",
     postTitle:"Новое объявление", editTitle:"Редактирование объявления",
     postSub:"Заполните данные о недвижимости — объявление появится за пару секунд.",
     postWho:"Кто размещает?", postWhoOwner:"Я собственник (самостоятельно)", postWhoAgent:"Размещаю как риелтор",
@@ -2123,7 +2153,7 @@ const I18N = {
     filterReset:"Reset", filterApply:"Apply",
     sortTitle:"Sort", sortNew:"Newest first", sortPriceAsc:"Price: low to high",
     sortPriceDesc:"Price: high to low", sortAreaDesc:"Area: large to small",
-    resultsFound:"listings found",
+    resultsFound:"listings found", loadMoreBtn:"Load more",
     postTitle:"New listing", editTitle:"Edit listing",
     postSub:"Fill in your property details — the listing goes live in seconds.",
     postWho:"Who is posting?", postWhoOwner:"I'm the owner (independent)", postWhoAgent:"Posting as a broker",
@@ -2503,16 +2533,21 @@ $('postPhotos').addEventListener('change', e=>{
   renderPhotoPreview();
   e.target.value = '';
 });
+let _previewBlobUrls = [];  // perf: yaratilgan blob URL'larni kuzatib, keyin revoke qilamiz (xotira sizishini oldini oladi)
 function renderPhotoPreview(){
+  // Avvalgi renderdagi blob URL'larni bo'shatamiz — aks holda har bosishda xotirada qolib ketadi
+  _previewBlobUrls.forEach(u=>{ try{ URL.revokeObjectURL(u); }catch(e){} });
+  _previewBlobUrls = [];
   const wrap = $('photoPreview'); wrap.innerHTML = '';
   existingPhotos.forEach((url, i)=>{
     const d = document.createElement('div'); d.className='photo-thumb';
-    d.innerHTML = `<img src="${esc(url)}" alt=""><button class="rm" type="button" data-ic="close" data-ic-size="15"></button>`;
-    d.querySelector('.rm').addEventListener('click', ()=>{ existingPhotos.splice(i,1); renderPhotoPreview(); });
+    d.innerHTML = `<img src="${esc(existingThumbs[i]||url)}" alt="" loading="lazy"><button class="rm" type="button" data-ic="close" data-ic-size="15"></button>`;
+    d.querySelector('.rm').addEventListener('click', ()=>{ existingPhotos.splice(i,1); existingThumbs.splice(i,1); renderPhotoPreview(); });
     wrap.appendChild(d);
   });
   selectedPhotos.forEach((file, i)=>{
     const url = URL.createObjectURL(file);
+    _previewBlobUrls.push(url);
     const d = document.createElement('div'); d.className='photo-thumb';
     d.innerHTML = `<img src="${url}" alt=""><button class="rm" type="button" data-ic="close" data-ic-size="15"></button>`;
     d.querySelector('.rm').addEventListener('click', ()=>{ selectedPhotos.splice(i,1); renderPhotoPreview(); });
@@ -2520,19 +2555,27 @@ function renderPhotoPreview(){
   });
 }
 async function uploadPhotosToImgbb(files){
-  const urls = [];
+  // Perf: to'liq o'lchamdagi rasm bilan birga imgbb qaytargan kichik "thumb" havolasini
+  // ham saqlaymiz. Feed kartalarida asl (ko'pincha bir necha MB) rasm o'rniga shu kichik
+  // nusxa ko'rsatiladi — bu ilovaning sekinlashishi/qotishining asosiy sabablaridan biri edi.
+  const urls = [];       // to'liq o'lcham — detal/lightbox uchun
+  const thumbs = [];     // kichik nusxa — feed/mini-listing kartalari uchun
   for(const file of files){
     const fd = new FormData(); fd.append('image', file);
     const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method:'POST', body:fd });
     const data = await res.json();
-    if(data.success) urls.push(data.data.url);
+    if(data.success){
+      urls.push(data.data.url);
+      const thumbUrl = (data.data.medium && data.data.medium.url) || (data.data.thumb && data.data.thumb.url) || data.data.url;
+      thumbs.push(thumbUrl);
+    }
   }
-  return urls;
+  return { urls, thumbs };
 }
 
 /* ============ POST / EDIT LISTING ============ */
 function resetPostForm(){
-  editingListingId = null; existingPhotos = []; selectedPhotos = [];
+  editingListingId = null; existingPhotos = []; existingThumbs = []; selectedPhotos = [];
   document.querySelectorAll('#screen-post input, #screen-post textarea').forEach(el=>el.value='');
   $('postOwnerType').value = (userDoc && userDoc.isAgent) ? 'agent' : 'owner';
   $('postDealType').value='sale'; $('postPropertyType').value='apartment';
@@ -2595,6 +2638,7 @@ function startEditListing(l){
   $('postDescription').value = l.description||'';
   $('postPhone').value = l.phone||'';
   existingPhotos = Array.isArray(l.photos) ? l.photos.slice() : [];
+  existingThumbs = Array.isArray(l.photoThumbs) ? l.photoThumbs.slice() : existingPhotos.slice();
   selectedPhotos = [];
   renderPhotoPreview();
   pickedLat = (typeof l.lat==='number') ? l.lat : null;
@@ -2619,9 +2663,13 @@ $('submitListingBtn').addEventListener('click', async ()=>{
   setLoading(btn, true);
   statusEl.textContent = t('uploadingPhotos');
   try{
-    let newUrls = [];
-    if(selectedPhotos.length > 0) newUrls = await uploadPhotosToImgbb(selectedPhotos);
+    let newUrls = [], newThumbs = [];
+    if(selectedPhotos.length > 0){
+      const up = await uploadPhotosToImgbb(selectedPhotos);
+      newUrls = up.urls; newThumbs = up.thumbs;
+    }
     const photos = existingPhotos.concat(newUrls);
+    const photoThumbs = existingThumbs.concat(newThumbs);
     statusEl.textContent = t('savingListing');
     const payload = {
       ownerType: (userDoc && userDoc.isAgent) ? $('postOwnerType').value : 'owner',
@@ -2633,7 +2681,7 @@ $('submitListingBtn').addEventListener('click', async ()=>{
       rooms: Number($('postRooms').value)||null,
       floor: $('postFloor').value.trim()||null,
       description: $('postDescription').value.trim(),
-      phone, photos, status:'active',
+      phone, photos, photoThumbs, status:'active',
       lat: (pickedLat!=null ? pickedLat : null),
       lng: (pickedLng!=null ? pickedLng : null)
     };
@@ -2737,12 +2785,12 @@ async function loadListings(){
     // index talab qilmaydigan oddiy so'rovga o'tamiz va client tomonda saralaymiz.
     let snap = null;
     try{
-      snap = await db.collection('listings').where('status','==','active').orderBy('createdAt','desc').limit(200).get();
+      snap = await db.collection('listings').where('status','==','active').orderBy('createdAt','desc').limit(150).get();
     }catch(idxErr){
       console.warn('loadListings: ordered query failed, falling back:', idxErr && idxErr.message);
     }
     if(!snap || snap.empty){
-      snap = await db.collection('listings').where('status','==','active').limit(200).get();
+      snap = await db.collection('listings').where('status','==','active').limit(150).get();
     }
     allListings = [];
     snap.forEach(doc=>allListings.push({ id:doc.id, ...doc.data() }));
@@ -2781,7 +2829,12 @@ function getFilteredListings(){
   return list;
 }
 
-function renderListings(){
+function renderListings(keepPage){
+  // Perf: bir vaqtda cheksiz e'lonni DOM'ga qo'shish (masalan 150+ karta, har birida
+  // rasm + bir necha SVG ikonka) katta sahifalarda scroll'ni sekinlashtiradi va past
+  // quvvatli qurilmalarda "qotish" hissini beradi. Shu sabab natijalar bosqichma-bosqich
+  // (FEED_PAGE_SIZE) ko'rsatiladi, qolganini "Ko'proq yuklash" tugmasi bilan.
+  if(!keepPage) feedVisibleCount = FEED_PAGE_SIZE;
   const container = $('listingsContainer');
   const list = getFilteredListings();
   $('resultsCount').innerHTML = list.length ? `<b>${list.length}</b> ${t('resultsFound')}` : '';
@@ -2793,8 +2846,19 @@ function renderListings(){
     if(b) b.addEventListener('click', ()=>{ if(!currentUser){requireLogin('post');return;} resetPostForm(); showScreen('post'); });
     return;
   }
+  const visible = list.slice(0, feedVisibleCount);
   container.innerHTML = '';
-  list.forEach(l=>container.appendChild(renderListingCard(l)));
+  const frag = document.createDocumentFragment();
+  visible.forEach(l=>frag.appendChild(renderListingCard(l)));
+  container.appendChild(frag);
+  if(list.length > visible.length){
+    const more = document.createElement('button');
+    more.className = 'btn btn-outline';
+    more.style.marginTop = '4px';
+    more.innerHTML = `<span class="btn-label">${t('loadMoreBtn')} (${list.length - visible.length})</span>`;
+    more.addEventListener('click', ()=>{ feedVisibleCount += FEED_PAGE_SIZE; renderListings(true); });
+    container.appendChild(more);
+  }
 }
 
 function isNew(l){
@@ -2802,10 +2866,17 @@ function isNew(l){
   return (Date.now()/1000 - l.createdAt.seconds) < 172800; // 48h
 }
 
+function thumbFor(l, idx){
+  // Perf: feed/mini kartalarda kichik "thumb" havolasini ishlatamiz (agar mavjud bo'lsa),
+  // to'liq o'lchamdagi asl rasm faqat detal/lightbox'da yuklanadi.
+  idx = idx||0;
+  if(Array.isArray(l.photoThumbs) && l.photoThumbs[idx]) return l.photoThumbs[idx];
+  return (l.photos && l.photos[idx]) || '';
+}
 function renderListingCard(l){
   const div = document.createElement('div');
   div.className = 'listing';
-  const photo = (l.photos && l.photos[0]) ? l.photos[0] : '';
+  const photo = thumbFor(l, 0);
   const dealBadge = l.dealType==='sale'
     ? `<span class="badge badge-solid-sale">${t('dealSale')}</span>`
     : `<span class="badge badge-solid-rent">${t('dealRent')}</span>`;
@@ -3269,7 +3340,7 @@ async function loadMyListings(){
     if(mine.length===0){ listEl.innerHTML = `<div class="center-note">${t('noMyListings')}</div>`; return; }
     listEl.innerHTML = '';
     mine.forEach(l=>{
-      const photo = (l.photos && l.photos[0]) ? `<img src="${esc(l.photos[0])}" alt="">` : `<div class="noimg">${propIcon(l.propertyType)}</div>`;
+      const photo = thumbFor(l) ? `<img src="${esc(thumbFor(l))}" alt="" loading="lazy">` : `<div class="noimg">${propIcon(l.propertyType)}</div>`;
       const et = effTier(l);
       const tierTag = et==='vip' ? `<span class="badge badge-vip" style="margin-left:6px;">${ic('diamond',12)} VIP</span>`
         : et==='top' ? `<span class="badge badge-top" style="margin-left:6px;">${ic('top',12)} TOP</span>` : '';
@@ -3976,7 +4047,7 @@ async function startChatFromListing(l){
   info[l.ownerUid] = { label: (l.ownerType==='agent'?t('ownerAgent'):t('ownerOwner')), kind: l.ownerType||'owner' };
   const snapshot = {
     id: l.id, price: l.price||0, region: l.region||'', district: l.district||'',
-    dealType: l.dealType||'sale', photo: (l.photos&&l.photos[0])||'', propertyType: l.propertyType||'apartment'
+    dealType: l.dealType||'sale', photo: thumbFor(l), propertyType: l.propertyType||'apartment'
   };
   try{
     await db.collection('chats').doc(cid).set({
