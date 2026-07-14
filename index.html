@@ -1047,6 +1047,20 @@
   </div>
 </div>
 
+<!-- ===================== UMUMIY TASDIQLASH OYNASI (confirm dialog) ===================== -->
+<!-- Chiqish/dasturdan chiqish va boshqa "ha/yo'q" tasdiqlarini so'rash uchun qayta ishlatiladigan oyna -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal" style="padding-bottom:calc(20px + var(--safe-b));">
+    <div class="sheet-handle"></div>
+    <h2 id="confirmModalTitle" style="margin:0 0 8px;font-size:18px;"></h2>
+    <p id="confirmModalText" class="center-note" style="text-align:left;margin:0 0 4px;"></p>
+    <div class="btn-row" style="margin-top:18px;">
+      <button class="btn btn-outline" id="confirmModalNoBtn"><span class="btn-label" id="confirmModalNoLabel"></span></button>
+      <button class="btn btn-danger" id="confirmModalYesBtn"><span class="btn-label" id="confirmModalYesLabel"></span></button>
+    </div>
+  </div>
+</div>
+
 <!-- ===================== TOP BAR ===================== -->
 <div class="topbar" id="topbar">
   <div class="topbar-left" id="topbarLeft">
@@ -1885,14 +1899,105 @@ function toast(msg, type){
   toastTimer = setTimeout(()=>{ el.className = 'toast'; }, 2600);
 }
 
-function openSheet(id){ $(id).classList.add('active'); document.body.classList.add('no-scroll'); }
+function openSheet(id){ $(id).classList.add('active'); document.body.classList.add('no-scroll'); armNavGuard(); }
 function closeSheet(id){
   $(id).classList.remove('active'); document.body.classList.remove('no-scroll');
   // Perf: detal xaritasi yopilganda Leaflet tile'larini xotiradan bo'shatamiz
   if(id==='detailModal' && detailMapObj){ try{ detailMapObj.remove(); }catch(e){} detailMapObj=null; }
+  armNavGuard();
 }
 document.querySelectorAll('.modal-overlay').forEach(ov=>{
   ov.addEventListener('click', e=>{ if(e.target === ov) closeSheet(ov.id); });
+});
+
+/* ============================================================
+   ORQAGA QAYTISH (back) TUGMASI + DASTURDAN CHIQISH
+   ------------------------------------------------------------
+   Brauzer/qurilma "orqaga" tugmasi bosilganda:
+     1) Agar biror oyna (modal/sheet/lightbox) ochiq bo'lsa — shu oyna yopiladi.
+     2) Aks holda, agar bosh ekrandan (feed) boshqa bo'limda bo'lsak — bosh ekranga qaytadi.
+     3) Bosh ekranda, hech narsa ochiq bo'lmasa — birinchi bosishda ogohlantirish
+        ko'rsatiladi, ketma-ket ikkinchi bosishda dasturdan chiqishga harakat qilinadi.
+   Amalga oshirish: History API orqali bitta "trap" yozuvi doim ushlab turiladi;
+   u iste'mol qilinganda (popstate) joriy DOM holatiga qarab tegishli amal bajariladi.
+   ============================================================ */
+let navGuardActive = false;
+let exitArmed = false;
+let exitArmTimer = null;
+
+function armNavGuard(){
+  if(navGuardActive) return;
+  navGuardActive = true;
+  try{ history.pushState({ nmGuard:true }, '', location.href); }catch(e){}
+}
+
+function closeLightboxUI(){
+  $('lightbox').classList.remove('active');
+  document.body.classList.remove('no-scroll');
+  armNavGuard();
+}
+
+// Joriy eng ustki ochiq qatlamni yopadi (lightbox > modal/sheet > ekran->feed).
+// Nimadir yopilgan bo'lsa true, aks holda (allaqachon bosh ekranda) false qaytaradi.
+function closeTopLayer(){
+  const lb = $('lightbox');
+  if(lb && lb.classList.contains('active')){
+    closeLightboxUI();
+    return true;
+  }
+  const openModals = document.querySelectorAll('.modal-overlay.active');
+  if(openModals.length){
+    const top = openModals[openModals.length - 1];
+    closeSheet(top.id);
+    return true;
+  }
+  const activeScreen = document.querySelector('.screen.active');
+  if(activeScreen && activeScreen.id !== 'screen-feed'){
+    showScreen('feed');
+    return true;
+  }
+  return false;
+}
+
+window.addEventListener('popstate', ()=>{
+  navGuardActive = false;
+  if(closeTopLayer()){
+    exitArmed = false;
+    armNavGuard();
+  }else{
+    if(exitArmed){
+      clearTimeout(exitArmTimer);
+      exitArmed = false;
+      try{ window.close(); }catch(e){}
+      // Agar oynani skript bilan yopib bo'lmasa (ko'pchilik brauzerlar script ochmagan
+      // tabni yopishga ruxsat bermaydi), tarix bo'sh qolgani uchun keyingi "orqaga"
+      // bosilganda tizim/brauzer ilovani/tabni o'zi yopadi.
+    }else{
+      exitArmed = true;
+      toast(t('exitConfirmToast'));
+      armNavGuard();
+      clearTimeout(exitArmTimer);
+      exitArmTimer = setTimeout(()=>{ exitArmed = false; }, 2500);
+    }
+  }
+});
+
+/* ============ UMUMIY TASDIQLASH OYNASI (Ha/Yo'q) ============ */
+let _confirmYesHandler = null;
+function showConfirm(opts){
+  opts = opts || {};
+  $('confirmModalTitle').textContent = opts.title || '';
+  $('confirmModalText').textContent = opts.text || '';
+  $('confirmModalYesLabel').textContent = opts.yesLabel || t('confirmYes');
+  $('confirmModalNoLabel').textContent = opts.noLabel || t('confirmNo');
+  _confirmYesHandler = typeof opts.onYes === 'function' ? opts.onYes : null;
+  openSheet('confirmModal');
+}
+$('confirmModalNoBtn').addEventListener('click', ()=>{ _confirmYesHandler=null; closeSheet('confirmModal'); });
+$('confirmModalYesBtn').addEventListener('click', ()=>{
+  const fn = _confirmYesHandler; _confirmYesHandler = null;
+  closeSheet('confirmModal');
+  if(fn) fn();
 });
 
 /* ============ I18N ============ */
@@ -1958,6 +2063,8 @@ const I18N = {
     favSub:"Yoqqan e'lonlaringiz shu yerda saqlanadi.",
     favEmpty:"Hozircha sevimli e'lonlar yo'q", favEmptySub:"Yoqqan e'lonlardagi yurak belgisini bosib saqlab qo'ying.",
     needLoginToast:"Bu amal uchun avval tizimga kiring", logoutBtnLabel:"Tizimdan chiqish",
+    confirmYes:"Ha", confirmNo:"Yo'q", logoutConfirmTitle:"Tizimdan chiqish", logoutConfirmText:"Rostdan ham profildan chiqishni istaysizmi?", logoutYes:"Ha, chiqish",
+    exitConfirmToast:"Dasturdan chiqish uchun yana bir marta orqaga qaytish tugmasini bosing",
     dealSale:"Sotiladi", dealRent:"Ijaraga", ownerAgent:"Makler", ownerOwner:"Mulk egasi",
     roomsSuffix:" xona", floorLabel:"Qavat", areaLabel:"Maydon",
     contactBtn:"Bog'lanish", contactTitle:"Bog'lanish", contactCall:"Qo'ng'iroq qilish", contactCopy:"Raqamni nusxalash",
@@ -2068,6 +2175,8 @@ const I18N = {
     favSub:"Понравившиеся объявления хранятся здесь.",
     favEmpty:"Пока нет избранных объявлений", favEmptySub:"Нажмите на значок сердца в понравившемся объявлении, чтобы сохранить.",
     needLoginToast:"Для этого действия сначала войдите", logoutBtnLabel:"Выйти из аккаунта",
+    confirmYes:"Да", confirmNo:"Нет", logoutConfirmTitle:"Выйти из аккаунта", logoutConfirmText:"Вы действительно хотите выйти из аккаунта?", logoutYes:"Да, выйти",
+    exitConfirmToast:"Нажмите «Назад» ещё раз, чтобы выйти из приложения",
     dealSale:"Продажа", dealRent:"Аренда", ownerAgent:"Риелтор", ownerOwner:"Собственник",
     roomsSuffix:" комн.", floorLabel:"Этаж", areaLabel:"Площадь",
     contactBtn:"Связаться", contactTitle:"Связаться", contactCall:"Позвонить", contactCopy:"Скопировать номер",
@@ -2178,6 +2287,8 @@ const I18N = {
     favSub:"Your saved listings are kept here.",
     favEmpty:"No favorite listings yet", favEmptySub:"Tap the heart icon on a listing you like to save it.",
     needLoginToast:"Please log in first to do this", logoutBtnLabel:"Log out",
+    confirmYes:"Yes", confirmNo:"No", logoutConfirmTitle:"Log out", logoutConfirmText:"Are you sure you want to log out?", logoutYes:"Yes, log out",
+    exitConfirmToast:"Press back again to exit the app",
     dealSale:"For sale", dealRent:"For rent", ownerAgent:"Broker", ownerOwner:"Owner",
     roomsSuffix:" rooms", floorLabel:"Floor", areaLabel:"Area",
     contactBtn:"Contact", contactTitle:"Contact", contactCall:"Call", contactCopy:"Copy number",
@@ -2325,6 +2436,7 @@ function showScreen(id){
   // "Mening so'rovlarim" ekrani ochilganda takliflarni yuklaymiz (login redirect ham qamrab olinadi)
   if(id==='myreq' && currentUser && typeof loadMyRequests==='function') loadMyRequests();
   window.scrollTo(0,0);
+  if(typeof armNavGuard==='function') armNavGuard();
 }
 
 /* ============ TERMS MODAL ============ */
@@ -2441,8 +2553,17 @@ $('forgotPasswordBtn').addEventListener('click', async ()=>{
   catch(err){ toast(t('error')+err.message,'error'); }
 });
 
-$('logoutBtn').addEventListener('click', ()=>auth.signOut());
-$('profileLogoutBtn').addEventListener('click', ()=>auth.signOut());
+function confirmLogout(){
+  showConfirm({
+    title: t('logoutConfirmTitle'),
+    text: t('logoutConfirmText'),
+    yesLabel: t('logoutYes'),
+    noLabel: t('confirmNo'),
+    onYes: ()=>auth.signOut()
+  });
+}
+$('logoutBtn').addEventListener('click', confirmLogout);
+$('profileLogoutBtn').addEventListener('click', confirmLogout);
 
 /* ============ AUTH STATE ============ */
 auth.onAuthStateChanged(async (user)=>{
@@ -3046,6 +3167,7 @@ function openLightbox(idx){
   updateLightbox();
   $('lightbox').classList.add('active');
   document.body.classList.add('no-scroll');
+  armNavGuard();
 }
 function updateLightbox(){
   $('lightboxImg').src = galleryPhotos[lightboxIdx];
@@ -3053,10 +3175,10 @@ function updateLightbox(){
   $('lightboxPrev').style.display = galleryPhotos.length>1 ? 'flex' : 'none';
   $('lightboxNext').style.display = galleryPhotos.length>1 ? 'flex' : 'none';
 }
-$('lightboxClose').addEventListener('click', ()=>{ $('lightbox').classList.remove('active'); document.body.classList.remove('no-scroll'); });
+$('lightboxClose').addEventListener('click', closeLightboxUI);
 $('lightboxPrev').addEventListener('click', ()=>{ lightboxIdx=(lightboxIdx-1+galleryPhotos.length)%galleryPhotos.length; updateLightbox(); });
 $('lightboxNext').addEventListener('click', ()=>{ lightboxIdx=(lightboxIdx+1)%galleryPhotos.length; updateLightbox(); });
-$('lightbox').addEventListener('click', e=>{ if(e.target.id==='lightbox'){ $('lightbox').classList.remove('active'); document.body.classList.remove('no-scroll'); } });
+$('lightbox').addEventListener('click', e=>{ if(e.target.id==='lightbox'){ closeLightboxUI(); } });
 
 /* ============ CONTACT SHEET ============ */
 let contactPhone = '';
@@ -4935,6 +5057,7 @@ syncModeUI();
 showScreen('feed');
 loadListings();
 loadHotline();
+armNavGuard(); // orqaga qaytish tugmasi uchun navigatsiya "trap" yozuvini o'rnatish
 </script>
 </body>
 </html>
