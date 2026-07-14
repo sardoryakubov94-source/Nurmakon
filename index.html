@@ -824,6 +824,12 @@
   .install-banner .ib-txt b{font-size:14px;}
   .install-banner .ib-txt p{margin:2px 0 0;font-size:12px;color:var(--text-dim);}
   .install-banner .ib-close{background:none;border:none;color:var(--text-faint);font-size:16px;cursor:pointer;flex-shrink:0;}
+
+  /* ===== Unified line-icon system (barcha emojilar o'rniga) ===== */
+  .i-ic{display:inline-flex;align-items:center;justify-content:center;vertical-align:-0.18em;flex-shrink:0;}
+  .i-ic svg{display:block;width:100%;height:100%;}
+  [data-ic]{display:inline-flex;align-items:center;justify-content:center;line-height:0;}
+  .btn .i-ic,.btn [data-ic]{vertical-align:middle;}
 </style>
 </head>
 <body>
@@ -840,7 +846,7 @@
   <div class="modal">
     <div class="sheet-handle"></div>
     <div class="modal-head"><h2 data-i18n="termsTitle">Foydalanish shartnomasi</h2>
-      <button class="modal-close" id="closeTermsX" type="button">✕</button></div>
+      <button class="modal-close" id="closeTermsX" type="button" data-ic="close" data-ic-size="15"></button></div>
     <div class="terms-text" id="termsTextContent">
       <h4>1. Umumiy qoidalar</h4>
       <p>Ushbu Foydalanish shartnomasi (keyingi o'rinlarda — "Shartnoma") NurMakon platformasidan (keyingi o'rinlarda — "Platforma") foydalanish tartibini belgilaydi. Platformadan foydalanish orqali foydalanuvchi ushbu Shartnoma shartlariga to'liq rozilik bildiradi.</p>
@@ -870,7 +876,7 @@
       <label for="termsModalCheck" data-i18n="termsAgree">Men ushbu Foydalanish shartnomasini o'qidim va roziman</label>
     </div>
     <div class="btn-row">
-      <button class="btn btn-outline" id="downloadTermsPdfBtn"><span class="btn-label" data-i18n="termsPdf">📄 PDF saqlash</span></button>
+      <button class="btn btn-outline" id="downloadTermsPdfBtn"><span data-ic="file" data-ic-size="17"></span><span class="btn-label" data-i18n="termsPdf">PDF saqlash</span></button>
       <button class="btn btn-primary" id="closeTermsModalBtn"><span class="btn-label" data-i18n="close">Yopish</span></button>
     </div>
   </div>
@@ -886,10 +892,10 @@
 
 <!-- ===================== IMAGE LIGHTBOX ===================== -->
 <div class="lightbox" id="lightbox">
-  <button class="lightbox-close" id="lightboxClose">✕</button>
-  <button class="lightbox-nav prev" id="lightboxPrev">‹</button>
+  <button class="lightbox-close" id="lightboxClose" data-ic="close" data-ic-size="20"></button>
+  <button class="lightbox-nav prev" id="lightboxPrev" data-ic="back" data-ic-size="24"></button>
   <img id="lightboxImg" src="" alt="">
-  <button class="lightbox-nav next" id="lightboxNext">›</button>
+  <button class="lightbox-nav next" id="lightboxNext" data-ic="chevron-right" data-ic-size="24"></button>
   <div class="lightbox-counter" id="lightboxCounter"></div>
 </div>
 
@@ -898,7 +904,7 @@
   <div class="modal">
     <div class="sheet-handle"></div>
     <div class="modal-head"><h2 data-i18n="filterTitle">Filtrlar</h2>
-      <button class="modal-close" id="filterCloseX" type="button">✕</button></div>
+      <button class="modal-close" id="filterCloseX" type="button" data-ic="close" data-ic-size="15"></button></div>
 
     <label data-i18n="filterPropType">Mulk turi</label>
     <div class="chip-select" id="filterPropType">
@@ -937,7 +943,7 @@
   <div class="modal">
     <div class="sheet-handle"></div>
     <div class="modal-head"><h2 data-i18n="sortTitle">Saralash</h2>
-      <button class="modal-close" id="sortCloseX" type="button">✕</button></div>
+      <button class="modal-close" id="sortCloseX" type="button" data-ic="close" data-ic-size="15"></button></div>
     <div class="sort-opt active" data-sort="new"><span data-i18n="sortNew">Avval yangilari</span><span class="check">✓</span></div>
     <div class="sort-opt" data-sort="priceAsc"><span data-i18n="sortPriceAsc">Narx: arzondan qimmatga</span><span class="check">✓</span></div>
     <div class="sort-opt" data-sort="priceDesc"><span data-i18n="sortPriceDesc">Narx: qimmatdan arzonga</span><span class="check">✓</span></div>
@@ -950,13 +956,13 @@
   <div class="modal">
     <div class="sheet-handle"></div>
     <div class="modal-head"><h2 data-i18n="contactTitle">Bog'lanish</h2>
-      <button class="modal-close" id="contactCloseX" type="button">✕</button></div>
+      <button class="modal-close" id="contactCloseX" type="button" data-ic="close" data-ic-size="15"></button></div>
     <div id="contactPhoneDisplay" style="font-size:22px;font-weight:700;text-align:center;margin:6px 0 18px;font-family:'Space Grotesk',sans-serif;"></div>
     <p id="contactDemoNote" class="center-note" style="display:none;margin:-8px 0 16px;">Egasi bilan bog'lanish uchun "Yozish" tugmasi orqali xabar qoldiring.</p>
-    <button class="btn btn-secondary" id="contactMsgBtn" style="margin-bottom:10px;display:none;"><span class="btn-label">💬 Yozish</span></button>
-    <button class="btn btn-primary" id="contactCallBtn" style="margin-bottom:10px;"><span class="btn-label" data-i18n="contactCall">📞 Qo'ng'iroq qilish</span></button>
-    <button class="btn btn-secondary" id="contactTelegramBtn" style="margin-bottom:10px;"><span class="btn-label">✈️ Telegram</span></button>
-    <button class="btn btn-outline" id="contactCopyBtn"><span class="btn-label" data-i18n="contactCopy">📋 Raqamni nusxalash</span></button>
+    <button class="btn btn-secondary" id="contactMsgBtn" style="margin-bottom:10px;display:none;"><span data-ic="message" data-ic-size="18"></span><span class="btn-label" data-i18n="messageBtn">Yozish</span></button>
+    <button class="btn btn-primary" id="contactCallBtn" style="margin-bottom:10px;"><span data-ic="phone" data-ic-size="18"></span><span class="btn-label" data-i18n="contactCall">Qo'ng'iroq qilish</span></button>
+    <button class="btn btn-secondary" id="contactTelegramBtn" style="margin-bottom:10px;"><span data-ic="send" data-ic-size="18"></span><span class="btn-label">Telegram</span></button>
+    <button class="btn btn-outline" id="contactCopyBtn"><span data-ic="copy" data-ic-size="18"></span><span class="btn-label" data-i18n="contactCopy">Raqamni nusxalash</span></button>
   </div>
 </div>
 
@@ -965,7 +971,7 @@
   <div class="modal">
     <div class="sheet-handle"></div>
     <div class="modal-head"><h2 data-i18n="promoteTitle">E'lonni reklama qilish</h2>
-      <button class="modal-close" id="promoteCloseX" type="button">✕</button></div>
+      <button class="modal-close" id="promoteCloseX" type="button" data-ic="close" data-ic-size="15"></button></div>
     <p class="center-note" id="promoteBalance" style="text-align:left;margin:0 0 12px;"></p>
     <div id="promoteOptions"></div>
     <p class="center-note" data-i18n="promoteNote" style="text-align:left;margin-top:12px;">Reklama darhol yoqiladi; balansdan kredit yechiladi. Kredit yetmasa avval balansni to'ldiring.</p>
@@ -977,7 +983,7 @@
   <div class="modal">
     <div class="sheet-handle"></div>
     <div class="modal-head"><h2 data-i18n="cancelSheetTitle">So'rovni bekor qilish</h2>
-      <button class="modal-close" id="cancelReqCloseX" type="button">✕</button></div>
+      <button class="modal-close" id="cancelReqCloseX" type="button" data-ic="close" data-ic-size="15"></button></div>
     <p class="center-note" style="text-align:left;margin:0 0 10px;color:#e6a23c;" data-i18n="cancelWarn">Diqqat: bekor qilish so'rovi adminga yuboriladi. Tasdiqlansa, reytingingiz pasayadi.</p>
     <label data-i18n="cancelReasonLabel">Bekor qilish sababi</label>
     <textarea id="cancelReqReason" rows="3" data-i18n-placeholder="cancelReasonPh" placeholder="Masalan: mijoz javob bermayapti, boshqa shahardan..."></textarea>
@@ -990,7 +996,7 @@
   <div class="modal">
     <div class="sheet-handle"></div>
     <div class="modal-head"><h2 data-i18n="offerSheetTitle">Mijozga taklif yuborish</h2>
-      <button class="modal-close" id="offerCloseX" type="button">✕</button></div>
+      <button class="modal-close" id="offerCloseX" type="button" data-ic="close" data-ic-size="15"></button></div>
     <p class="center-note" style="text-align:left;margin:0 0 12px;" data-i18n="offerSheetSub">Ish haqi foizingizni belgilang. Mijoz rozi bo'lsagina bog'lanish ochiladi.</p>
     <div id="offerReqSummary" class="req-card" style="margin-bottom:12px;"></div>
     <div class="offer-cap-note" id="offerCapNote"></div>
@@ -1012,7 +1018,7 @@
   <div class="modal">
     <div class="sheet-handle"></div>
     <div class="modal-head"><h2 data-i18n="rateTitle">Maklerni baholang</h2>
-      <button class="modal-close" id="rateCloseX" type="button">✕</button></div>
+      <button class="modal-close" id="rateCloseX" type="button" data-ic="close" data-ic-size="15"></button></div>
     <div class="star-picker" id="starPicker">
       <button type="button" class="star" data-v="1">★</button>
       <button type="button" class="star" data-v="2">★</button>
@@ -1031,7 +1037,7 @@
     <div class="switch-group" id="switchGroup">
       <div class="lang-dd" id="langToggle">
         <button class="lang-current" id="langCurrentBtn" type="button">
-          <span id="langCurrentLabel">O'z 🇺🇿</span><span class="caret">▾</span>
+          <span id="langCurrentLabel">O'z 🇺🇿</span><span class="caret" data-ic="chevron-down" data-ic-size="10"></span>
         </button>
         <div class="lang-menu">
           <button class="lang-pill" data-lang="uz" type="button"><span>🇺🇿</span>O'zbek</button>
@@ -1041,7 +1047,7 @@
       </div>
       <div class="cur-dd" id="currencyToggle">
         <button class="cur-current" id="curCurrentBtn" type="button">
-          <span id="curCurrentLabel">so'm</span><span class="caret">▾</span>
+          <span id="curCurrentLabel">so'm</span><span class="caret" data-ic="chevron-down" data-ic-size="10"></span>
         </button>
         <div class="cur-menu">
           <button class="currency-pill active" data-cur="uzs" type="button">so'm</button>
@@ -1053,13 +1059,13 @@
   <div class="topbar-right">
     <button class="icon-btn" id="supportBtn" title="Yordam" aria-label="Support"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v-1a8 8 0 0 1 16 0v1"/><path d="M4 14a2 2 0 0 1 2-2h1v6H6a2 2 0 0 1-2-2v-2Z"/><path d="M20 14a2 2 0 0 0-2-2h-1v6h1a2 2 0 0 0 2-2v-2Z"/><path d="M18 18v.5a3 3 0 0 1-3 3h-3"/></svg></button>
     <button class="topbar-login-btn" id="topbarLoginBtn" data-i18n="navLogin">Kirish</button>
-    <button class="icon-btn" id="logoutBtn" title="Chiqish" style="display:none;">⎋</button>
+    <button class="icon-btn" id="logoutBtn" title="Chiqish" style="display:none;" data-ic="logout" data-ic-size="18"></button>
   </div>
 </div>
 
 <!-- ===================== AUTH SCREEN ===================== -->
 <div class="screen" id="screen-auth" style="padding-top:0;">
-  <button class="auth-close-btn" id="authCloseBtn" type="button">✕</button>
+  <button class="auth-close-btn" id="authCloseBtn" type="button" data-ic="close" data-ic-size="15"></button>
   <div class="hero-banner" style="min-height:180px;padding-bottom:34px;">
     <div class="brand" style="font-size:32px;">Nur<span>Makon</span></div>
     <p class="hero-sub" data-i18n="heroSub">Uy-joy izlashning oson va ishonchli yo'li</p>
@@ -1082,7 +1088,7 @@
       <label data-i18n="password">Parol</label>
       <div class="input-wrap">
         <input type="password" id="passwordInput" autocomplete="current-password">
-        <button type="button" class="pw-toggle" data-target="passwordInput">👁</button>
+        <button type="button" class="pw-toggle" data-target="passwordInput" data-ic="eye" data-ic-size="20"></button>
       </div>
       <button class="btn btn-ghost btn-sm" id="forgotPasswordBtn" style="margin-top:14px;width:auto;margin-left:auto;"><span class="btn-label" data-i18n="forgotPassword">Parolni unutdingizmi?</span></button>
       <button class="btn btn-primary" id="loginBtn" style="margin-top:8px;"><span class="btn-label" data-i18n="tabLogin">Kirish</span></button>
@@ -1095,7 +1101,7 @@
       <label data-i18n="password">Parol</label>
       <div class="input-wrap">
         <input type="password" id="passwordInputReg" autocomplete="new-password">
-        <button type="button" class="pw-toggle" data-target="passwordInputReg">👁</button>
+        <button type="button" class="pw-toggle" data-target="passwordInputReg" data-ic="eye" data-ic-size="20"></button>
       </div>
       <p class="center-note" style="text-align:left;margin-top:8px;" data-i18n="passwordHint">Parol kamida 6 ta belgidan iborat bo'lishi kerak.</p>
       <div class="checkbox-row" style="margin-top:14px;">
@@ -1112,13 +1118,13 @@
   <h2 class="section-title" style="margin-top:16px;" data-i18n="onboardingTitle">Makler xizmatidan foydalanasizmi?</h2>
   <p class="section-sub" data-i18n="onboardingSub">Bu tanlovga qarab, sizga mos takliflar ko'rsatiladi. Keyinroq o'zgartirish mumkin.</p>
   <div class="choice-card" data-choice="assisted">
-    <div class="ic">🤝</div>
+    <div class="ic" data-ic="users" data-ic-size="24"></div>
     <div><h3 data-i18n="choiceAssistedTitle">Ha, makler yordam bersin</h3>
       <p data-i18n="choiceAssistedSub">So'rovingizni qoldirasiz, mos makler siz bilan bog'lanadi</p></div>
     <div class="radio"></div>
   </div>
   <div class="choice-card" data-choice="independent">
-    <div class="ic">🔍</div>
+    <div class="ic" data-ic="search" data-ic-size="24"></div>
     <div><h3 data-i18n="choiceIndependentTitle">Yo'q, o'zim qidiraman</h3>
       <p data-i18n="choiceIndependentSub">Barcha e'lonlarni mustaqil ko'rasiz, egasi bilan to'g'ridan-to'g'ri bog'lanasiz</p></div>
     <div class="radio"></div>
@@ -1170,18 +1176,18 @@
     </div>
     <div class="search-row">
       <div class="search-input-wrap">
-        <span class="search-ic">🔍</span>
+        <span class="search-ic" data-ic="search" data-ic-size="17"></span>
         <input type="text" id="districtFilter" placeholder="Hudud yoki tuman..." data-i18n-placeholder="districtPlaceholder">
       </div>
       <button class="btn btn-primary" id="searchGoBtn"><span class="btn-label" data-i18n="searchBtn">Qidirish</span></button>
     </div>
     <div class="search-tools">
-      <button class="tool-btn" id="openFilterBtn">⚙️ <span data-i18n="filterTitle">Filtrlar</span> <span class="badge-count hidden" id="filterCountBadge">0</span></button>
-      <button class="tool-btn" id="openSortBtn">↕️ <span data-i18n="sortTitle">Saralash</span></button>
+      <button class="tool-btn" id="openFilterBtn"><span data-ic="filter" data-ic-size="16"></span> <span data-i18n="filterTitle">Filtrlar</span> <span class="badge-count hidden" id="filterCountBadge">0</span></button>
+      <button class="tool-btn" id="openSortBtn"><span data-ic="sort" data-ic-size="16"></span> <span data-i18n="sortTitle">Saralash</span></button>
     </div>
   </div>
   <div class="broker-cta hidden" id="brokerCta">
-    <div class="bc-ic">📝</div>
+    <div class="bc-ic" data-ic="clipboard" data-ic-size="22"></div>
     <div class="bc-tx"><b data-i18n="ctaTitle">Aniq nima kerakligini yozib qoldiring</b>
       <p data-i18n="ctaSub">Mos maklerlar so'rovingizni ko'rib, siz bilan bog'lanadi</p></div>
     <button class="btn btn-primary btn-sm" id="openRequestBtn"><span class="btn-label" data-i18n="ctaBtn">So'rov qoldirish</span></button>
@@ -1267,7 +1273,7 @@
 
   <label data-i18n="postPhotosLabel">Rasmlar (6 tagacha)</label>
   <label class="upload-drop" for="postPhotos">
-    <span class="ic">🖼️</span>
+    <span class="ic" data-ic="image" data-ic-size="26"></span>
     <span data-i18n="uploadHint">Rasm tanlash uchun bosing</span>
     <input type="file" id="postPhotos" accept="image/*" multiple>
   </label>
@@ -1275,7 +1281,7 @@
 
   <label data-i18n="postMapLabel">Xaritada joylashuv (ixtiyoriy)</label>
   <div class="loc-field">
-    <button type="button" class="btn btn-outline btn-sm" id="postPickLocationBtn"><span class="btn-label" data-i18n="mapPick">🗺️ Xaritadan tanlash</span></button>
+    <button type="button" class="btn btn-outline btn-sm" id="postPickLocationBtn"><span data-ic="map" data-ic-size="16"></span><span class="btn-label" data-i18n="mapPick">Xaritadan tanlash</span></button>
   </div>
   <div id="postLocReadout" style="margin-top:8px;"></div>
 
@@ -1283,15 +1289,15 @@
     <label style="margin-top:16px;" data-i18n="postPromoLabel">E'lon turi</label>
     <div class="tier-select" id="postTierSelect">
       <button type="button" class="tier-opt active" data-tier="standard">
-        <span class="tier-ic">📄</span><span class="tier-name" data-i18n="tierStandard">Oddiy</span><span class="tier-cost" id="tierCostStandard"></span></button>
+        <span class="tier-ic" data-ic="file" data-ic-size="20"></span><span class="tier-name" data-i18n="tierStandard">Oddiy</span><span class="tier-cost" id="tierCostStandard"></span></button>
       <button type="button" class="tier-opt" data-tier="top">
-        <span class="tier-ic">🔝</span><span class="tier-name" data-i18n="tierTop">TOP</span><span class="tier-cost">3 💳</span></button>
+        <span class="tier-ic" data-ic="top" data-ic-size="20"></span><span class="tier-name" data-i18n="tierTop">TOP</span><span class="tier-cost">3 <span data-ic="card" data-ic-size="12"></span></span></button>
       <button type="button" class="tier-opt" data-tier="vip">
-        <span class="tier-ic">💎</span><span class="tier-name" data-i18n="tierVip">VIP</span><span class="tier-cost">5 💳</span></button>
+        <span class="tier-ic" data-ic="diamond" data-ic-size="20"></span><span class="tier-name" data-i18n="tierVip">VIP</span><span class="tier-cost">5 <span data-ic="card" data-ic-size="12"></span></span></button>
     </div>
     <label class="checkbox-row" style="margin-top:12px;">
       <input type="checkbox" id="postUrgent">
-      <span data-i18n="postUrgentLabel">⚡ Shoshilinch belgisi (+2 kredit)</span>
+      <span data-ic="bolt" data-ic-size="15"></span><span data-i18n="postUrgentLabel">Shoshilinch belgisi (+2 kredit)</span>
     </label>
     <p class="center-note" id="postPromoNote" style="text-align:left;margin-top:8px;"></p>
   </div>
@@ -1306,10 +1312,10 @@
   <h2 class="section-title" style="margin-top:8px;" data-i18n="navFavorites">Sevimli</h2>
   <p class="section-sub" data-i18n="favSub">Yoqqan e'lonlaringiz shu yerda saqlanadi.</p>
   <div class="lock-card" id="favoritesLoggedOut">
-    <div class="lock-ic">♡</div>
+    <div class="lock-ic" data-ic="heart" data-ic-size="20"></div>
     <div class="lock-txt"><h3 data-i18n="lockFavTitle">Sevimlilarni ko'rish uchun kiring</h3>
       <p data-i18n="lockFavSub">Yoqqan e'lonlarni saqlab qo'yish uchun tizimga kiring</p></div>
-    <div class="lock-chevron">›</div>
+    <div class="lock-chevron" data-ic="chevron-right" data-ic-size="20"></div>
   </div>
   <div id="favoritesContainer" class="hidden"></div>
 </div>
@@ -1318,17 +1324,17 @@
 <div class="screen" id="screen-profile">
   <h2 class="section-title" style="margin-top:8px;" data-i18n="profileTitle">Profil</h2>
   <div class="lock-card" id="profileLoggedOut">
-    <div class="lock-ic">👤</div>
+    <div class="lock-ic" data-ic="user" data-ic-size="20"></div>
     <div class="lock-txt"><h3 data-i18n="lockLoginTitle">Tizimga kirish</h3>
       <p data-i18n="lockLoginSub">To'liq versiya uchun tizimga kiring</p></div>
-    <div class="lock-chevron">›</div>
+    <div class="lock-chevron" data-ic="chevron-right" data-ic-size="20"></div>
   </div>
 
   <div id="profileLoggedIn" class="hidden">
     <div class="card">
       <div style="display:flex;align-items:center;gap:14px;">
         <div class="detail-owner" style="margin:0;border:none;background:none;padding:0;">
-          <div class="avatar" id="profileAvatar">👤</div>
+          <div class="avatar" id="profileAvatar" data-ic="user" data-ic-size="22"></div>
         </div>
         <div style="min-width:0;">
           <div id="profileEmail" style="font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
@@ -1359,26 +1365,26 @@
     </div>
 
     <div class="lock-card" id="openMyReqBtn" style="margin-top:0;position:relative;">
-      <div class="lock-ic">🤝</div>
+      <div class="lock-ic" data-ic="users" data-ic-size="20"></div>
       <div class="lock-txt"><h3 data-i18n="myReqTitle">Mening so'rovlarim</h3>
         <p data-i18n="myReqEntrySub">Maklerlar takliflarini ko'ring va rozilik bering</p></div>
       <span id="myReqBadge" style="display:none;position:absolute;top:10px;right:34px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#e53935;color:#fff;font-size:12px;font-weight:700;line-height:20px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.25);"></span>
-      <div class="lock-chevron">›</div>
+      <div class="lock-chevron" data-ic="chevron-right" data-ic-size="20"></div>
     </div>
 
     <div class="lock-card" id="openAgentBtn" style="margin-top:0;">
-      <div class="lock-ic">👔</div>
+      <div class="lock-ic" data-ic="briefcase" data-ic-size="20"></div>
       <div class="lock-txt"><h3 data-i18n="agentSectionTitle">Makler kabineti</h3>
         <p id="agentStatusLine" data-i18n="agentSectionSub">Makler bo'lib ishlash va mijoz so'rovlarini ko'rish</p></div>
-      <div class="lock-chevron">›</div>
+      <div class="lock-chevron" data-ic="chevron-right" data-ic-size="20"></div>
     </div>
 
     <div class="lock-card hidden" id="openAdminBtn" style="margin-top:0;position:relative;">
-      <div class="lock-ic">🛠️</div>
+      <div class="lock-ic" data-ic="tools" data-ic-size="20"></div>
       <div class="lock-txt"><h3 data-i18n="adminTitle">Admin panel</h3>
         <p data-i18n="adminEntrySub">Statistika, verifikatsiya va sozlamalarni boshqarish</p></div>
       <span id="adminTopupBadge" style="display:none;position:absolute;top:10px;right:34px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#e53935;color:#fff;font-size:12px;font-weight:700;line-height:20px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.25);"></span>
-      <div class="lock-chevron">›</div>
+      <div class="lock-chevron" data-ic="chevron-right" data-ic-size="20"></div>
     </div>
 
     <button class="btn btn-danger-soft" id="profileLogoutBtn" style="margin-top:14px;"><span class="btn-label" data-i18n="logoutBtnLabel">Tizimdan chiqish</span></button>
@@ -1388,11 +1394,11 @@
 <!-- ===================== MAKLER (BROKER) SCREEN ===================== -->
 <div class="screen" id="screen-agent">
   <div class="screen-head">
-    <button class="back-btn" id="agentBackBtn" type="button">‹</button>
+    <button class="back-btn" id="agentBackBtn" type="button" data-ic="back" data-ic-size="22"></button>
     <h2 class="section-title" style="margin:0;" data-i18n="agentSectionTitle">Makler kabineti</h2>
   </div>
 
-  <div class="perk-note" style="margin-bottom:14px;"><span class="pn-ic">🎁</span><span data-i18n-html="brokerPerks">Erta qo'shilgan maklerlarga: mijoz so'rovlari <b>BEPUL</b> + tasdiqlangan belgi va ustuvor ko'rsatish.</span></div>
+  <div class="perk-note" style="margin-bottom:14px;"><span class="pn-ic" data-ic="gift" data-ic-size="18"></span><span data-i18n-html="brokerPerks">Erta qo'shilgan maklerlarga: mijoz so'rovlari <b>BEPUL</b> + tasdiqlangan belgi va ustuvor ko'rsatish.</span></div>
 
   <!-- NOT a broker yet: registration + mandatory verification -->
   <div id="agentRegisterView">
@@ -1406,7 +1412,7 @@
       <input type="text" id="agentDistrict" placeholder="Andijon shahri">
 
       <div class="verify-box">
-        <h4>🛡️ <span data-i18n="verifyTitle">Verifikatsiya (majburiy)</span></h4>
+        <h4><span data-ic="shield-check" data-ic-size="16"></span> <span data-i18n="verifyTitle">Verifikatsiya (majburiy)</span></h4>
         <p class="vb-note" data-i18n="verifyNote">Xavfsizlik uchun shaxsingizni tasdiqlang. Bu ma'lumotlar maxfiy saqlanadi va faqat tekshiruv uchun ishlatiladi.</p>
         <label data-i18n="agentPassportLabel">Passport seriya va raqami</label>
         <input type="text" id="agentPassport" placeholder="AA 1234567">
@@ -1435,7 +1441,7 @@
 
     <!-- 1) Balans -->
     <div class="card" id="brokerWalletCard">
-      <h4 style="margin:0 0 10px;font-size:15px;">💳 <span data-i18n="walletSectionTitle">Balans</span></h4>
+      <h4 style="margin:0 0 10px;font-size:15px;"><span data-ic="card" data-ic-size="16"></span> <span data-i18n="walletSectionTitle">Balans</span></h4>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
         <div>
           <div style="font-size:13px;color:var(--text-dim);" data-i18n="walletBalance">Lead balansi</div>
@@ -1449,21 +1455,21 @@
 
     <!-- 2) Reyting -->
     <div class="card">
-      <h4 style="margin:0 0 12px;font-size:15px;">⭐ <span data-i18n="ratingSectionTitle">Reyting</span></h4>
+      <h4 style="margin:0 0 12px;font-size:15px;"><span data-ic="star" data-ic-size="16"></span> <span data-i18n="ratingSectionTitle">Reyting</span></h4>
       <div id="brokerRatingSummary"></div>
       <button class="btn btn-outline btn-sm" id="viewMyProfileBtn" style="margin-top:12px;width:auto;"><span class="btn-label" data-i18n="viewMyProfileBtn">Ochiq profilni ko'rish</span></button>
     </div>
 
     <!-- 3) Mijoz so'rovlari -->
     <div class="card">
-      <h4 style="margin:0 0 4px;font-size:15px;">📨 <span data-i18n="agentRequestsTitle">Mijoz so'rovlari</span></h4>
+      <h4 style="margin:0 0 4px;font-size:15px;"><span data-ic="inbox" data-ic-size="16"></span> <span data-i18n="agentRequestsTitle">Mijoz so'rovlari</span></h4>
       <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="agentRequestsSub">Mijozlar qoldirgan so'rovlar. Bog'lanib, mos variant taklif qiling.</p>
       <div id="agentRequests"></div>
     </div>
 
     <!-- 4) Bekor qilingan so'rovlar -->
     <div class="card">
-      <h4 style="margin:0 0 4px;font-size:15px;">🚫 <span data-i18n="cancelTitle">Bekor qilingan so'rovlar</span></h4>
+      <h4 style="margin:0 0 4px;font-size:15px;"><span data-ic="ban" data-ic-size="16"></span> <span data-i18n="cancelTitle">Bekor qilingan so'rovlar</span></h4>
       <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="cancelSectionSub">Bu yerda bekor qilish so'rovlaringiz va holati ko'rinadi (ma'lumot uchun).</p>
       <div id="agentCancellations"></div>
     </div>
@@ -1473,7 +1479,7 @@
 <!-- ===================== MENING SO'ROVLARIM (CLIENT) SCREEN ===================== -->
 <div class="screen" id="screen-myreq">
   <div class="screen-head">
-    <button class="back-btn" id="myReqBackBtn" type="button">‹</button>
+    <button class="back-btn" id="myReqBackBtn" type="button" data-ic="back" data-ic-size="22"></button>
     <h2 class="section-title" style="margin:0;" data-i18n="myReqTitle">Mening so'rovlarim</h2>
   </div>
   <p class="center-note" style="text-align:left;margin:0 0 14px;" data-i18n="myReqSub">Qoldirgan so'rovlaringizga maklerlar taklif yuboradi. Ish haqi foizini ko'rib, bittasiga rozilik bering — shundan keyingina bog'lanish ochiladi.</p>
@@ -1483,19 +1489,19 @@
 <!-- ===================== SUPPORT (YORDAM) SCREEN ===================== -->
 <div class="screen" id="screen-support">
   <div class="screen-head">
-    <button class="back-btn" id="supportBackBtn" type="button">‹</button>
+    <button class="back-btn" id="supportBackBtn" type="button" data-ic="back" data-ic-size="22"></button>
     <h2 class="section-title" style="margin:0;" data-i18n="supportTitle">Yordam xizmati</h2>
   </div>
 
   <div class="card" id="supportHotlineRow">
-    <h3 style="margin:0 0 4px;font-size:16px;">📞 <span data-i18n="supportHotlineTitle">Ishonch telefoni</span></h3>
+    <h3 style="margin:0 0 4px;font-size:16px;"><span data-ic="phone" data-ic-size="17"></span> <span data-i18n="supportHotlineTitle">Ishonch telefoni</span></h3>
     <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="supportHotlineSub">Savol yoki muammo bo'lsa qo'ng'iroq qiling.</p>
     <div id="supportHotline" style="font-size:22px;font-weight:700;font-family:'Space Grotesk',sans-serif;margin-bottom:12px;"></div>
-    <button class="btn btn-primary" id="supportCallBtn"><span class="btn-label" data-i18n="contactCall">📞 Qo'ng'iroq qilish</span></button>
+    <button class="btn btn-primary" id="supportCallBtn"><span data-ic="phone" data-ic-size="18"></span><span class="btn-label" data-i18n="contactCall">Qo'ng'iroq qilish</span></button>
   </div>
 
   <div class="card">
-    <h3 style="margin:0 0 4px;font-size:16px;">✍️ <span data-i18n="supportWriteTitle">Bizga yozing</span></h3>
+    <h3 style="margin:0 0 4px;font-size:16px;"><span data-ic="edit" data-ic-size="17"></span> <span data-i18n="supportWriteTitle">Bizga yozing</span></h3>
     <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="supportWriteSub">Muammo yoki taklifingizni yozib qoldiring — javob beramiz.</p>
     <textarea id="supportMessage" rows="4" data-i18n-placeholder="supportMsgPh" placeholder="Xabaringiz..."></textarea>
     <label data-i18n="supportContactLabel" style="margin-top:8px;">Bog'lanish uchun (ixtiyoriy)</label>
@@ -1507,46 +1513,46 @@
 <!-- ===================== ADMIN PANEL SCREEN ===================== -->
 <div class="screen" id="screen-admin">
   <div class="screen-head">
-    <button class="back-btn" id="adminBackBtn" type="button">‹</button>
+    <button class="back-btn" id="adminBackBtn" type="button" data-ic="back" data-ic-size="22"></button>
     <h2 class="section-title" style="margin:0;" data-i18n="adminTitle">Admin panel</h2>
   </div>
 
   <div class="card">
-    <h3 style="margin:0 0 12px;font-size:16px;">📊 <span data-i18n="admStatsTitle">Statistika</span></h3>
+    <h3 style="margin:0 0 12px;font-size:16px;"><span data-ic="chart" data-ic-size="17"></span> <span data-i18n="admStatsTitle">Statistika</span></h3>
     <div class="stat-grid" id="adminStats"></div>
   </div>
 
   <div class="card">
-    <h3 style="margin:0 0 4px;font-size:16px;">🧪 <span>Namuna e'lonlar</span></h3>
+    <h3 style="margin:0 0 4px;font-size:16px;"><span data-ic="flask" data-ic-size="17"></span> <span>Namuna e'lonlar</span></h3>
     <p class="center-note" style="text-align:left;margin:0 0 8px;">Faqat siz (admin) ko'rasiz. Tashqi foydalanuvchilarga bular oddiy e'lon bo'lib ko'rinadi. Bog'lanish faqat "Yozish" orqali — xabar to'g'ridan-to'g'ri sizga tushadi. Telefon raqami yashirin (<b>+998 90 *** ** **</b>).</p>
     <p class="center-note" style="text-align:left;margin:0 0 12px;">Hozirgi namuna e'lonlar: <b id="adminDemoCount">—</b></p>
     <div class="btn-row">
-      <button class="btn btn-primary" id="adminSeedDemoBtn"><span class="btn-label">＋ Namuna qo'shish</span></button>
-      <button class="btn btn-danger-soft" id="adminDelDemoBtn"><span class="btn-label">🗑 Barchasini o'chirish</span></button>
+      <button class="btn btn-primary" id="adminSeedDemoBtn"><span class="btn-label"><span data-ic="plus" data-ic-size="16"></span> Namuna qo'shish</span></button>
+      <button class="btn btn-danger-soft" id="adminDelDemoBtn"><span class="btn-label"><span data-ic="trash" data-ic-size="16"></span> Barchasini o'chirish</span></button>
     </div>
   </div>
 
   <div class="card">
-    <h3 style="margin:0 0 4px;font-size:16px;">🛡️ <span data-i18n="admVerifyTitle">Verifikatsiya so'rovlari</span></h3>
+    <h3 style="margin:0 0 4px;font-size:16px;"><span data-ic="shield-check" data-ic-size="17"></span> <span data-i18n="admVerifyTitle">Verifikatsiya so'rovlari</span></h3>
     <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="admVerifySub">Makler bo'lish uchun tasdiq kutayotganlar.</p>
     <div id="adminPending"></div>
   </div>
 
   <div class="card">
-    <h3 style="margin:0 0 4px;font-size:16px;">📞 <span data-i18n="admHotlineTitle">Ishonch telefoni</span></h3>
+    <h3 style="margin:0 0 4px;font-size:16px;"><span data-ic="phone" data-ic-size="17"></span> <span data-i18n="admHotlineTitle">Ishonch telefoni</span></h3>
     <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="admHotlineSub">Bu raqam Yordam bo'limida hammaga ko'rinadi.</p>
     <input type="tel" id="adminHotlineInput" placeholder="+998 71 200 00 00">
     <button class="btn btn-secondary btn-sm" id="adminSaveHotlineBtn" style="margin-top:12px;"><span class="btn-label" data-i18n="saveBtn">Saqlash</span></button>
   </div>
 
   <div class="card">
-    <h3 style="margin:0 0 4px;font-size:16px;">💳 <span data-i18n="admTopupsTitle">To'lov so'rovlari</span></h3>
+    <h3 style="margin:0 0 4px;font-size:16px;"><span data-ic="card" data-ic-size="17"></span> <span data-i18n="admTopupsTitle">To'lov so'rovlari</span></h3>
     <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="admTopupsSub">Maklerlarning balans to'ldirish so'rovlari.</p>
     <div id="adminTopups"></div>
   </div>
 
   <div class="card">
-    <h3 style="margin:0 0 4px;font-size:16px;">🚫 <span data-i18n="admCancelsTitle">Bekor qilish so'rovlari</span></h3>
+    <h3 style="margin:0 0 4px;font-size:16px;"><span data-ic="ban" data-ic-size="17"></span> <span data-i18n="admCancelsTitle">Bekor qilish so'rovlari</span></h3>
     <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="admCancelsSub">Maklerlarning mijoz so'rovini bekor qilish so'rovlari. Tasdiqlansa, so'rov qayta ochiladi va makler reytingi pasayadi.</p>
     <div id="adminCancellations"></div>
   </div>
@@ -1555,7 +1561,7 @@
 <!-- ===================== TOP-UP (BALANS) SCREEN ===================== -->
 <div class="screen" id="screen-topup">
   <div class="screen-head">
-    <button class="back-btn" id="topupBackBtn" type="button">‹</button>
+    <button class="back-btn" id="topupBackBtn" type="button" data-ic="back" data-ic-size="22"></button>
     <h2 class="section-title" style="margin:0;" data-i18n="topupTitle">Balansni to'ldirish</h2>
   </div>
   <div class="card">
@@ -1563,7 +1569,7 @@
   </div>
   <div id="topupPackages"></div>
   <div class="card">
-    <h3 style="margin:0 0 6px;font-size:15px;">⭐ <span data-i18n="topupPremiumTitle">Premium obuna</span></h3>
+    <h3 style="margin:0 0 6px;font-size:15px;"><span data-ic="star" data-ic-size="16"></span> <span data-i18n="topupPremiumTitle">Premium obuna</span></h3>
     <p class="center-note" style="text-align:left;margin:0 0 10px;" data-i18n="topupPremiumDesc">Cheksiz lead qabul qilish + so'rovlarda ustuvor ko'rsatish.</p>
     <button class="btn btn-primary" id="topupPremiumBtn"><span class="btn-label"></span></button>
   </div>
@@ -1575,14 +1581,14 @@
 <!-- ===================== BROKER (MAKLER) PUBLIC PROFILE SCREEN ===================== -->
 <div class="screen" id="screen-broker">
   <div class="screen-head">
-    <button class="back-btn" id="brokerBackBtn" type="button">‹</button>
+    <button class="back-btn" id="brokerBackBtn" type="button" data-ic="back" data-ic-size="22"></button>
     <h2 class="section-title" style="margin:0;" data-i18n="brokerProfileTitle">Makler profili</h2>
   </div>
   <div class="card" id="brokerProfileCard"></div>
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
-      <h3 style="margin:0;font-size:16px;">💬 <span data-i18n="reviewsTitle">Sharhlar</span></h3>
-      <button class="btn btn-primary btn-sm" id="rateBrokerBtn" style="width:auto;"><span class="btn-label" data-i18n="rateBtn">⭐ Baholash</span></button>
+      <h3 style="margin:0;font-size:16px;"><span data-ic="message" data-ic-size="16"></span> <span data-i18n="reviewsTitle">Sharhlar</span></h3>
+      <button class="btn btn-primary btn-sm" id="rateBrokerBtn" style="width:auto;"><span data-ic="star" data-ic-size="16"></span><span class="btn-label" data-i18n="rateBtn">Baholash</span></button>
     </div>
     <div id="brokerReviews" style="margin-top:12px;"></div>
   </div>
@@ -1593,10 +1599,10 @@
   <h2 class="section-title" style="margin-top:8px;" data-i18n="navMessages">Xabarlar</h2>
   <p class="section-sub" data-i18n="chatSub">E'lon egalari va maklerlar bilan yozishmalaringiz.</p>
   <div class="lock-card" id="chatLoggedOut">
-    <div class="lock-ic">💬</div>
+    <div class="lock-ic" data-ic="message" data-ic-size="20"></div>
     <div class="lock-txt"><h3 data-i18n="lockChatTitle">Xabarlar uchun kiring</h3>
       <p data-i18n="lockChatSub">Sotuvchilar bilan yozishish uchun tizimga kiring</p></div>
-    <div class="lock-chevron">›</div>
+    <div class="lock-chevron" data-ic="chevron-right" data-ic-size="20"></div>
   </div>
   <div id="chatListContainer" class="hidden"></div>
 </div>
@@ -1606,10 +1612,10 @@
   <div class="modal">
     <div class="sheet-handle"></div>
     <div class="modal-head"><h2 data-i18n="mapTitle">Joylashuvni tanlang</h2>
-      <button class="modal-close" id="mapCloseX" type="button">✕</button></div>
+      <button class="modal-close" id="mapCloseX" type="button" data-ic="close" data-ic-size="15"></button></div>
     <p class="map-hint" data-i18n="mapPickHint">Xaritani bosib yoki markerni surib mulk joylashuvini belgilang.</p>
     <div id="mapPickerMap"></div>
-    <button class="btn btn-outline btn-sm" id="mapMyLocationBtn" style="margin-bottom:10px;"><span class="btn-label" data-i18n="mapMyLocation">📍 Mening joylashuvim</span></button>
+    <button class="btn btn-outline btn-sm" id="mapMyLocationBtn" style="margin-bottom:10px;"><span data-ic="pin" data-ic-size="16"></span><span class="btn-label" data-i18n="mapMyLocation">Mening joylashuvim</span></button>
     <div class="btn-row">
       <button class="btn btn-ghost" id="mapClearBtn"><span class="btn-label" data-i18n="filterReset">Tozalash</span></button>
       <button class="btn btn-primary" id="mapConfirmBtn"><span class="btn-label" data-i18n="mapConfirm">Tasdiqlash</span></button>
@@ -1621,8 +1627,8 @@
 <div class="modal-overlay" id="chatThreadModal">
   <div class="modal">
     <div class="chat-head">
-      <button class="back" id="chatBackBtn">‹</button>
-      <div class="chat-avatar" id="chatHeadAvatar">👤</div>
+      <button class="back" id="chatBackBtn" data-ic="back" data-ic-size="20"></button>
+      <div class="chat-avatar" id="chatHeadAvatar" data-ic="user" data-ic-size="22"></div>
       <div style="min-width:0;">
         <div class="ch-name" id="chatHeadName">—</div>
         <div class="ch-sub" id="chatHeadSub"></div>
@@ -1632,17 +1638,17 @@
     <div class="chat-msgs" id="chatMsgs"></div>
     <div class="chat-input-bar">
       <textarea id="chatInput" rows="1" placeholder="Xabar yozing..." data-i18n-placeholder="typeMessage"></textarea>
-      <button class="chat-send" id="chatSendBtn">➤</button>
+      <button class="chat-send" id="chatSendBtn" data-ic="send" data-ic-size="18"></button>
     </div>
   </div>
 </div>
 
 <!-- ===================== INSTALL BANNER (PWA) ===================== -->
 <div class="install-banner" id="installBanner">
-  <div class="ib-ic">📲</div>
+  <div class="ib-ic" data-ic="install" data-ic-size="22"></div>
   <div class="ib-txt"><b data-i18n="installTitle">Ilovani o'rnating</b><p data-i18n="installHint">NurMakon'ni telefon ekraningizga qo'shing</p></div>
   <button class="btn btn-primary btn-sm" id="installBtn" style="width:auto;flex-shrink:0;"><span class="btn-label" data-i18n="installBtn">O'rnatish</span></button>
-  <button class="ib-close" id="installCloseBtn">✕</button>
+  <button class="ib-close" id="installCloseBtn" data-ic="close" data-ic-size="16"></button>
 </div>
 
 <!-- ===================== CLIENT REQUEST MODAL (broker lead) ===================== -->
@@ -1650,7 +1656,7 @@
   <div class="modal">
     <div class="sheet-handle"></div>
     <div class="modal-head"><h2 data-i18n="reqTitle">Makler uchun so'rov</h2>
-      <button class="modal-close" id="reqCloseX" type="button">✕</button></div>
+      <button class="modal-close" id="reqCloseX" type="button" data-ic="close" data-ic-size="15"></button></div>
     <p class="center-note" style="text-align:left;margin-top:0;" data-i18n="reqSub">Nima izlayotganingizni yozing — mos maklerlar bog'lanadi.</p>
     <div class="field-row">
       <div>
@@ -1765,10 +1771,89 @@ const $ = (id)=>document.getElementById(id);
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function setLoading(btn, on){ if(!btn) return; btn.classList.toggle('loading', on); btn.disabled = on; }
 
+/* ============ UNIFIED LINE ICONS (barcha emojilar o'rniga) ============
+   Pastki menyudagi qidiruv/sevimli/profil ikonkalari uslubida: stroke=currentColor,
+   chiziqli (line) SVG. Har bir emoji shu yagona formatga o'tkazildi. */
+const ICON_PATHS = {
+  search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+  heart:'<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  'eye-off':'<path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 10 8 10 8a13.2 13.2 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.5 13.5 0 0 0 2 12s3 8 10 8a9.12 9.12 0 0 0 5.39-1.61"/><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M2 2l20 20"/>',
+  phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/>',
+  message:'<path d="M20.5 11.4a8 8 0 0 1-11.6 7.1L4 20l1.5-4.7A8 8 0 1 1 20.5 11.4Z"/>',
+  send:'<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7Z"/>',
+  copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/>',
+  close:'<path d="M18 6 6 18M6 6l12 12"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  back:'<path d="m15 18-6-6 6-6"/>',
+  'chevron-right':'<path d="m9 18 6-6-6-6"/>',
+  'chevron-down':'<path d="m6 9 6 6 6-6"/>',
+  filter:'<path d="M3 4h18l-7 8v6l-4 2v-8Z"/>',
+  sort:'<path d="M8 4v16M8 20l-3-3M8 20l3-3M16 20V4M16 4l-3 3M16 4l3 3"/>',
+  pin:'<path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/>',
+  map:'<path d="m9 4-6 2.5V21l6-2.5 6 2.5 6-2.5V4l-6 2.5Z"/><path d="M9 4v14.5M15 6.5V21"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  bed:'<path d="M2 8v11M2 14h20v5M22 14v-3a3 3 0 0 0-3-3h-9v6"/><path d="M6 11h.01"/>',
+  area:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h3M3 15h3M9 3v3M15 3v3"/>',
+  building:'<rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h.01M15 7h.01M9 11h.01M15 11h.01M10 21v-4h4v4"/>',
+  home:'<path d="m3 10.5 9-7 9 7"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/>',
+  store:'<path d="M3.5 4h17l1 5a3 3 0 0 1-5.9.6 3 3 0 0 1-5.9 0 3 3 0 0 1-5.9-.6Z"/><path d="M5 12v8h14v-8"/><path d="M10 20v-5h4v5"/>',
+  land:'<path d="M12 2 6.5 11H10l-4.5 8h13L14 11h3.5L12 2Z"/><path d="M12 19v3"/>',
+  key:'<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 8-8M15.5 5.5l2.5 2.5M18.5 2.5l3 3"/>',
+  briefcase:'<rect x="2.5" y="7" width="19" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M2.5 12.5h19"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/>',
+  users:'<circle cx="9" cy="8" r="3.4"/><path d="M2.5 20c0-3.4 2.9-5.5 6.5-5.5s6.5 2.1 6.5 5.5"/><path d="M16 5.2a3.4 3.4 0 0 1 0 6.4M21.5 20c0-2.7-1.6-4.6-4-5.2"/>',
+  image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m21 15-4.5-4.5L5 21"/>',
+  camera:'<path d="M3 8.5A2 2 0 0 1 5 6.5h1.6l1.2-2h6.4l1.2 2H19a2 2 0 0 1 2 2v9A2 2 0 0 1 19 19.5H5a2 2 0 0 1-2-2Z"/><circle cx="12" cy="13" r="3.5"/>',
+  edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  trash:'<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M6 6l1 14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-14"/>',
+  share:'<path d="M12 15V3M8 7l4-4 4 4M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  gift:'<path d="M20 12v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8"/><rect x="2.5" y="7.5" width="19" height="4.5" rx="1"/><path d="M12 7.5V21M12 7.5S11 3.5 8 4s4 3.5 4 3.5Zm0 0s1-4 4-3.5-4 3.5-4 3.5Z"/>',
+  shield:'<path d="M12 3 5 6v5c0 4.5 3 7.7 7 9 4-1.3 7-4.5 7-9V6l-7-3Z"/>',
+  'shield-check':'<path d="M12 3 5 6v5c0 4.5 3 7.7 7 9 4-1.3 7-4.5 7-9V6l-7-3Z"/><path d="m9 12 2 2 4-4"/>',
+  diamond:'<path d="M6 3h12l3.5 6L12 21 2.5 9 6 3Z"/><path d="M2.5 9h19M8.5 3 6 9l6 12M15.5 3l2.5 6-6 12"/>',
+  top:'<path d="M5 4h14"/><path d="M12 21V8M7.5 12.5 12 8l4.5 4.5"/>',
+  bolt:'<path d="M13 2 4 14h6.5L9 22l9-12h-6.5L13 2Z"/>',
+  card:'<rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 9.5h19"/>',
+  star:'<path d="m12 3 2.6 5.7 6.2.6-4.7 4.2 1.4 6.1L12 17l-5.5 2.6 1.4-6.1-4.7-4.2 6.2-.6L12 3Z"/>',
+  rocket:'<path d="M12 15c-2.5 2.5-6 2.5-6 2.5s0-3.5 2.5-6M14.5 12.5C19 8 19 3 19 3s-5 0-9.5 4.5c-1.7 1.7-2.6 3.6-3 5.1L8.9 15.5c1.5-.4 3.4-1.3 5.1-3Z"/><path d="M6 18c-1 .5-2 3-2 3s2.5-1 3-2M15 9h.01"/>',
+  refresh:'<path d="M21 12a9 9 0 1 1-2.6-6.3M21 4v5h-5"/>',
+  clipboard:'<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3.5A1.5 1.5 0 0 1 10.5 2h3A1.5 1.5 0 0 1 15 3.5V4M9.5 11h5M9.5 15h3"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 4.8L8.5 15.5l2.2-4.8 4.8-2.2Z"/>',
+  warning:'<path d="M12 3 2.5 20h19L12 3Z"/><path d="M12 10v4.5M12 17.5h.01"/>',
+  install:'<rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 7v6M9.5 10.5 12 13l2.5-2.5M10.5 18.5h3"/>',
+  inbox:'<path d="M4 13h4l1.5 2.5h5L16 13h4"/><path d="M4.5 13 6 5.5A1.5 1.5 0 0 1 7.5 4.5h9A1.5 1.5 0 0 1 18 5.5L19.5 13v5a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 18Z"/>',
+  ban:'<circle cx="12" cy="12" r="9"/><path d="m5.6 5.6 12.8 12.8"/>',
+  flask:'<path d="M9.5 3h5M10.5 3v6.5l-5 8.5A1.4 1.4 0 0 0 6.7 20h10.6a1.4 1.4 0 0 0 1.2-2L13.5 9.5V3"/><path d="M8 15h8"/>',
+  chart:'<path d="M4 4v16h16"/><rect x="7" y="12" width="3" height="5"/><rect x="12" y="8" width="3" height="9"/><rect x="17" y="10" width="3" height="7"/>',
+  tools:'<path d="M14.7 6.3a4 4 0 0 0-5.2 5.2l-6.6 6.6a1.5 1.5 0 0 0 2.1 2.1l6.6-6.6a4 4 0 0 0 5.2-5.2l-2.4 2.4-2.1-2.1 2.4-2.4Z"/>',
+  wave:'<path d="M20.5 11.4a8 8 0 0 1-11.6 7.1L4 20l1.5-4.7A8 8 0 1 1 20.5 11.4Z"/><path d="M9 10h.01M12.5 10h.01M16 10h.01"/>',
+  logout:'<path d="M9 21H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h4"/><path d="M16 17l5-5-5-5M21 12H9"/>'
+};
+function ic(name, size, extraCls){
+  size = size || 20;
+  const base = String(name).replace('-filled','');
+  const filled = String(name).endsWith('-filled');
+  const p = ICON_PATHS[base] || '';
+  const fill = filled ? 'currentColor' : 'none';
+  const cls = 'i-ic' + (extraCls ? ' '+extraCls : '');
+  return `<svg class="${cls}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="${fill}" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+}
+function hydrateIcons(root){
+  (root||document).querySelectorAll('[data-ic]').forEach(el=>{
+    const nm = el.getAttribute('data-ic');
+    const sz = Number(el.getAttribute('data-ic-size')) || 20;
+    el.innerHTML = ic(nm, sz);
+  });
+}
+
 let toastTimer;
 function toast(msg, type){
   const el = $('toast');
-  el.textContent = msg;
+  const iconName = type==='success' ? 'check' : type==='error' ? 'warning' : null;
+  el.innerHTML = (iconName ? ic(iconName,16) : '') + `<span>${esc(String(msg==null?'':msg))}</span>`;
   el.className = 'toast show' + (type ? (' '+type) : '');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(()=>{ el.className = 'toast'; }, 2600);
@@ -1793,8 +1878,8 @@ const I18N = {
     admTopupsTitle:"To'lov so'rovlari", admTopupsSub:"Maklerlarning balans to'ldirish so'rovlari.", admNoTopups:"To'lov so'rovlari yo'q", admTopupApprove:"✓ Tasdiqlash", admTopupApproved:"To'lov tasdiqlandi — balans yangilandi",
     cancelReqBtn:"Bekor qilish", cancelPending:"Bekor qilish so'ralgan (kutilmoqda)", cancelSheetTitle:"So'rovni bekor qilish", cancelWarn:"Diqqat: bekor qilish so'rovi adminga yuboriladi. Tasdiqlansa, reytingingiz pasayadi.", cancelReasonLabel:"Bekor qilish sababi", cancelReasonPh:"Masalan: mijoz javob bermayapti, boshqa shahardan...", cancelSubmit:"Bekor qilishni so'rash", cancelReasonRequired:"Iltimos, bekor qilish sababini yozing", cancelSent:"Bekor qilish so'rovi yuborildi. Admin ko'rib chiqadi.", cancelTitle:"Bekor qilingan so'rovlar", cancelSectionSub:"Bu yerda bekor qilish so'rovlaringiz va holati ko'rinadi (ma'lumot uchun).", cancelNone:"Bekor qilish so'rovlari yo'q", cancelStPending:"Kutilmoqda", cancelStApproved:"Tasdiqlangan", cancelStRejected:"Rad etilgan",
     admCancelsTitle:"Bekor qilish so'rovlari", admCancelsSub:"Maklerlarning mijoz so'rovini bekor qilish so'rovlari. Tasdiqlansa, so'rov qayta ochiladi va makler reytingi pasayadi.", admNoCancels:"Bekor qilish so'rovlari yo'q", admCancelApprove:"✓ Bekor qilishni tasdiqlash", admCancelApproved:"Bekor qilindi — so'rov qayta ochildi, reyting yangilandi", admRejected:"Rad etildi",
-    postPromoLabel:"E'lon turi", tierStandard:"Oddiy", tierTop:"TOP", tierVip:"VIP", tierStandardCost:"1-si bepul", postUrgentLabel:"⚡ Shoshilinch belgisi (+2 kredit)", postPromoInfo:"Birinchi {free} ta e'lon bepul, keyingisi {extra} kredit.", urgentBadge:"Shoshilinch", promoteBtn:"Reklama", promoteTitle:"E'lonni reklama qilish", promoteBalance:"Balans: {n} kredit", promoteNote:"Reklama darhol yoqiladi; balansdan kredit yechiladi. Kredit yetmasa avval balansni to'ldiring.", promoBump:"Ko'tarish (tepaga)", promoteDone:"Reklama yoqildi!", promoSkippedLowCredit:"Kredit yetmadi — oddiy e'lon sifatida joylandi.", needCreditToPost:"Kredit yetarli emas. Balansni to'ldiring.", listingPostedPaid:"E'lon joylandi! {n} kredit yechildi.",
-    brokerProfileTitle:"Makler profili", reviewsTitle:"Sharhlar", reviewsCount:"baho", dealsLabel:"bitimlar", noReviews:"Hozircha sharhlar yo'q", brokerNotFound:"Makler topilmadi", viewBrokerBtn:"Makler profili →", viewMyProfileBtn:"Ochiq profilni ko'rish", walletSectionTitle:"Balans", ratingSectionTitle:"Reyting", rateBtn:"⭐ Baholash", rateTitle:"Maklerni baholang", rateCommentPh:"Izoh (ixtiyoriy)...", rateSubmit:"Yuborish", rateSelf:"O'zingizni baholay olmaysiz", rateChoose:"Iltimos, yulduz tanlang", rateThanks:"Bahoyingiz uchun rahmat!",
+    postPromoLabel:"E'lon turi", tierStandard:"Oddiy", tierTop:"TOP", tierVip:"VIP", tierStandardCost:"1-si bepul", postUrgentLabel:"Shoshilinch belgisi (+2 kredit)", postPromoInfo:"Birinchi {free} ta e'lon bepul, keyingisi {extra} kredit.", urgentBadge:"Shoshilinch", promoteBtn:"Reklama", promoteTitle:"E'lonni reklama qilish", promoteBalance:"Balans: {n} kredit", promoteNote:"Reklama darhol yoqiladi; balansdan kredit yechiladi. Kredit yetmasa avval balansni to'ldiring.", promoBump:"Ko'tarish (tepaga)", promoteDone:"Reklama yoqildi!", promoSkippedLowCredit:"Kredit yetmadi — oddiy e'lon sifatida joylandi.", needCreditToPost:"Kredit yetarli emas. Balansni to'ldiring.", listingPostedPaid:"E'lon joylandi! {n} kredit yechildi.",
+    brokerProfileTitle:"Makler profili", reviewsTitle:"Sharhlar", reviewsCount:"baho", dealsLabel:"bitimlar", noReviews:"Hozircha sharhlar yo'q", brokerNotFound:"Makler topilmadi", viewBrokerBtn:"Makler profili →", viewMyProfileBtn:"Ochiq profilni ko'rish", walletSectionTitle:"Balans", ratingSectionTitle:"Reyting", rateBtn:"Baholash", rateTitle:"Maklerni baholang", rateCommentPh:"Izoh (ixtiyoriy)...", rateSubmit:"Yuborish", rateSelf:"O'zingizni baholay olmaysiz", rateChoose:"Iltimos, yulduz tanlang", rateThanks:"Bahoyingiz uchun rahmat!",
     googleSignIn:"Google orqali davom etish", or:"yoki",
     tabLogin:"Kirish", tabRegister:"Ro'yxatdan o'tish",
     email:"Email", password:"Parol", forgotPassword:"Parolni unutdingizmi?",
@@ -1802,7 +1887,7 @@ const I18N = {
     errEmail:"Email to'g'ri formatda kiriting",
     termsLabel:"Men <button type=\"button\" class=\"terms-link\" id=\"viewTermsLink\">Foydalanish shartnomasi</button> bilan tanishdim va roziman.",
     termsTitle:"Foydalanish shartnomasi", termsAgree:"Men ushbu shartnomani o'qidim va roziman",
-    termsPdf:"📄 PDF saqlash", close:"Yopish",
+    termsPdf:"PDF saqlash", close:"Yopish",
     onboardingTitle:"Makler xizmatidan foydalanasizmi?",
     onboardingSub:"Bu tanlovga qarab, sizga mos takliflar ko'rsatiladi. Keyinroq o'zgartirish mumkin.",
     choiceAssistedTitle:"Ha, makler yordam bersin", choiceAssistedSub:"So'rovingizni qoldirasiz, mos makler siz bilan bog'lanadi",
@@ -1841,11 +1926,11 @@ const I18N = {
     lockLoginTitle:"Tizimga kirish", lockLoginSub:"To'liq versiya uchun tizimga kiring",
     lockFavTitle:"Sevimlilarni ko'rish uchun kiring", lockFavSub:"Yoqqan e'lonlarni saqlab qo'yish uchun tizimga kiring",
     favSub:"Yoqqan e'lonlaringiz shu yerda saqlanadi.",
-    favEmpty:"Hozircha sevimli e'lonlar yo'q", favEmptySub:"Yoqqan e'lonlardagi ♡ belgisini bosib saqlab qo'ying.",
+    favEmpty:"Hozircha sevimli e'lonlar yo'q", favEmptySub:"Yoqqan e'lonlardagi yurak belgisini bosib saqlab qo'ying.",
     needLoginToast:"Bu amal uchun avval tizimga kiring", logoutBtnLabel:"Tizimdan chiqish",
     dealSale:"Sotiladi", dealRent:"Ijaraga", ownerAgent:"Makler", ownerOwner:"Mulk egasi",
     roomsSuffix:" xona", floorLabel:"Qavat", areaLabel:"Maydon",
-    contactBtn:"Bog'lanish", contactTitle:"Bog'lanish", contactCall:"📞 Qo'ng'iroq qilish", contactCopy:"📋 Raqamni nusxalash",
+    contactBtn:"Bog'lanish", contactTitle:"Bog'lanish", contactCall:"Qo'ng'iroq qilish", contactCopy:"Raqamni nusxalash",
     copied:"Raqam nusxalandi", shareBtn:"Ulashish", shareUnsupported:"Ulashish qo'llab-quvvatlanmaydi",
     modeAssisted:"Rejim: Makler yordamida", modeIndependent:"Rejim: Mustaqil qidiruv",
     modeIndepTitle:"Mustaqil", modeIndepDesc:"Komissiyasiz, to'g'ridan-to'g'ri",
@@ -1858,8 +1943,8 @@ const I18N = {
     reqRegionLabel:"Qaysi hudud", reqBudgetLabel:"Byudjet (gacha)", reqNoteLabel:"Qo'shimcha izoh", reqNotePh:"Masalan: metroga yaqin, ta'mirli...",
     reqSubmit:"So'rovni yuborish", reqSent:"So'rovingiz yuborildi! Maklerlar taklif yuboradi — 'Mening so'rovlarim'da ko'ring.", reqAnyBudget:"Byudjet ko'rsatilmagan",
     agentRequestsTitle:"Mijoz so'rovlari", agentRequestsSub:"Mijoz so'rovlari. Ish haqi foizingizni taklif qiling — mijoz rozi bo'lsagina telefon ochiladi.", noRequests:"Hozircha yangi so'rovlar yo'q",
-    reqAcceptBtn:"✅ Qabul qilaman", reqAcceptedYou:"✓ Siz qabul qildingiz", reqTaken:"So'rov to'ldi", reqYourArea:"Sizning hududingiz", reqAcceptedToast:"Qabul qilindi! Endi mijoz bilan bog'laning.", reqAcceptFullToast:"Bu so'rovga yetarlicha makler qabul qilgan.", reqBrokersJoined:"makler qabul qildi",
-    reqSendOfferBtn:"💼 Taklif yuborish", offerSheetTitle:"Mijozga taklif yuborish", offerSheetSub:"Ish haqi foizingizni belgilang. Mijoz rozi bo'lsagina bog'lanish ochiladi.", offerMaxNote:"Bu so'rov uchun ruxsat etilgan <b>maksimal ish haqi — {pct}%</b>. Undan past taklif qilsangiz, tanlanish ehtimoli oshadi.", offerPctLabel:"Ish haqi (%)", offerNoteLabel:"Izoh (ixtiyoriy)", offerNotePh:"Masalan: shartnoma tuzamiz, ko'rsatish xizmati...", offerSubmit:"Taklif yuborish", offerCreditNote:"Taklif yuborish — 1 lead krediti (premiumda bepul).", offerFeePreview:"Taxminiy ish haqi", offerPctRequired:"Iltimos, ish haqi foizini kiriting.", offerPctInvalid:"Ruxsat etilgan maksimal — {pct}%. Undan oshirib bo'lmaydi.", offerSentToast:"Taklif yuborildi! Mijoz javobini kuting.", offerPending:"Taklif yuborildi — mijoz javobini kuting", offerMatchedBroker:"Mijoz sizni tanladi! Bog'laning", offerClosed:"So'rov yopildi",
+    reqAcceptBtn:"Qabul qilaman", reqAcceptedYou:"Siz qabul qildingiz", reqTaken:"So'rov to'ldi", reqYourArea:"Sizning hududingiz", reqAcceptedToast:"Qabul qilindi! Endi mijoz bilan bog'laning.", reqAcceptFullToast:"Bu so'rovga yetarlicha makler qabul qilgan.", reqBrokersJoined:"makler qabul qildi",
+    reqSendOfferBtn:"Taklif yuborish", offerSheetTitle:"Mijozga taklif yuborish", offerSheetSub:"Ish haqi foizingizni belgilang. Mijoz rozi bo'lsagina bog'lanish ochiladi.", offerMaxNote:"Bu so'rov uchun ruxsat etilgan <b>maksimal ish haqi — {pct}%</b>. Undan past taklif qilsangiz, tanlanish ehtimoli oshadi.", offerPctLabel:"Ish haqi (%)", offerNoteLabel:"Izoh (ixtiyoriy)", offerNotePh:"Masalan: shartnoma tuzamiz, ko'rsatish xizmati...", offerSubmit:"Taklif yuborish", offerCreditNote:"Taklif yuborish — 1 lead krediti (premiumda bepul).", offerFeePreview:"Taxminiy ish haqi", offerPctRequired:"Iltimos, ish haqi foizini kiriting.", offerPctInvalid:"Ruxsat etilgan maksimal — {pct}%. Undan oshirib bo'lmaydi.", offerSentToast:"Taklif yuborildi! Mijoz javobini kuting.", offerPending:"Taklif yuborildi — mijoz javobini kuting", offerMatchedBroker:"Mijoz sizni tanladi! Bog'laning", offerClosed:"So'rov yopildi",
     myReqTitle:"Mening so'rovlarim", myReqEntrySub:"Maklerlar takliflarini ko'ring va rozilik bering", myReqSub:"Qoldirgan so'rovlaringizga maklerlar taklif yuboradi. Ish haqi foizini ko'rib, bittasiga rozilik bering — shundan keyingina bog'lanish ochiladi.", myReqEmpty:"Hali so'rov qoldirmagansiz.", myReqWaiting:"Takliflar kutilmoqda...", myReqStatusOpen:"Ochiq", myReqStatusMatched:"Kelishildi", myReqApproveBtn:"Rozi bo'lish", myReqMatched:"Siz bu maklerni tanladingiz", myReqAgreedFee:"Kelishilgan ish haqi", agreeConfirm:"Ushbu maklerni {pct}% ish haqi bilan tanlaysizmi? Rozilik bergach, bog'lanish ochiladi.", dealDoneToast:"Kelishuv tuzildi! Endi makler bilan bog'lanishingiz mumkin.", dealAlready:"Bu so'rov bo'yicha allaqachon kelishuvga erishilgan.",
     brokerPerks:"Erta qo'shilgan maklerlarga: mijoz so'rovlari <b>BEPUL</b> + tasdiqlangan belgi va ustuvor ko'rsatish.",
     agentSectionTitle:"Makler kabineti", agentSectionSub:"Makler bo'lib ishlash va mijoz so'rovlarini ko'rish",
@@ -1886,12 +1971,12 @@ const I18N = {
     lockChatTitle:"Xabarlar uchun kiring", lockChatSub:"Sotuvchilar bilan yozishish uchun tizimga kiring",
     chatEmpty:"Hozircha xabarlar yo'q", chatEmptySub:"E'lon sahifasida \"Yozish\" tugmasini bosib suhbat boshlang.",
     messageBtn:"Yozish", typeMessage:"Xabar yozing...", you:"Siz", chatSelf:"Bu sizning e'loningiz",
-    mapTitle:"Joylashuvni tanlang", mapPick:"🗺️ Xaritadan tanlash", mapChange:"🗺️ Joyni o'zgartirish",
+    mapTitle:"Joylashuvni tanlang", mapPick:"Xaritadan tanlash", mapChange:"Joyni o'zgartirish",
     mapPickHint:"Xaritani bosib yoki markerni surib mulk joylashuvini belgilang.",
-    mapConfirm:"Tasdiqlash", mapMyLocation:"📍 Mening joylashuvim", mapDirections:"Yo'l ko'rsatish",
+    mapConfirm:"Tasdiqlash", mapMyLocation:"Mening joylashuvim", mapDirections:"Yo'l ko'rsatish",
     postMapLabel:"Xaritada joylashuv (ixtiyoriy)", mapLocationSet:"Joylashuv belgilandi", mapNoGeo:"Joylashuvni aniqlab bo'lmadi",
     detailLocation:"Joylashuvi", installTitle:"Ilovani o'rnating", installHint:"NurMakon'ni telefon ekraningizga qo'shing",
-    installBtn:"O'rnatish", installed:"Ilova o'rnatildi ✓", notifNewMsg:"Yangi xabar", msgEmpty:"Suhbatni boshlang 👋"
+    installBtn:"O'rnatish", installed:"Ilova o'rnatildi", notifNewMsg:"Yangi xabar", msgEmpty:"Suhbatni boshlang"
   },
   ru:{
     heroSub:"Простой и надёжный способ найти жильё",
@@ -1903,8 +1988,8 @@ const I18N = {
     admTopupsTitle:"Запросы на оплату", admTopupsSub:"Запросы риелторов на пополнение баланса.", admNoTopups:"Нет запросов на оплату", admTopupApprove:"✓ Подтвердить", admTopupApproved:"Оплата подтверждена — баланс обновлён",
     cancelReqBtn:"Отменить", cancelPending:"Отмена запрошена (ожидает)", cancelSheetTitle:"Отмена запроса", cancelWarn:"Внимание: запрос на отмену отправляется администратору. При одобрении ваш рейтинг снизится.", cancelReasonLabel:"Причина отмены", cancelReasonPh:"Например: клиент не отвечает, из другого города...", cancelSubmit:"Запросить отмену", cancelReasonRequired:"Пожалуйста, укажите причину отмены", cancelSent:"Запрос на отмену отправлен. Администратор рассмотрит.", cancelTitle:"Отменённые запросы", cancelSectionSub:"Здесь отображаются ваши запросы на отмену и их статус (для информации).", cancelNone:"Нет запросов на отмену", cancelStPending:"Ожидает", cancelStApproved:"Одобрено", cancelStRejected:"Отклонено",
     admCancelsTitle:"Запросы на отмену", admCancelsSub:"Запросы риелторов на отмену запроса клиента. При одобрении запрос снова открывается, а рейтинг риелтора снижается.", admNoCancels:"Нет запросов на отмену", admCancelApprove:"✓ Подтвердить отмену", admCancelApproved:"Отменено — запрос снова открыт, рейтинг обновлён", admRejected:"Отклонено",
-    postPromoLabel:"Тип объявления", tierStandard:"Обычное", tierTop:"ТОП", tierVip:"VIP", tierStandardCost:"1-е бесплатно", postUrgentLabel:"⚡ Метка «Срочно» (+2 кредита)", postPromoInfo:"Первые {free} объявл. бесплатно, следующее — {extra} кредит.", urgentBadge:"Срочно", promoteBtn:"Продвижение", promoteTitle:"Продвижение объявления", promoteBalance:"Баланс: {n} кредитов", promoteNote:"Продвижение включается сразу; кредиты списываются с баланса. Если не хватает — сначала пополните.", promoBump:"Поднять (вверх)", promoteDone:"Продвижение включено!", promoSkippedLowCredit:"Не хватило кредитов — размещено как обычное.", needCreditToPost:"Недостаточно кредитов. Пополните баланс.", listingPostedPaid:"Объявление размещено! Списано {n} кредитов.",
-    brokerProfileTitle:"Профиль риелтора", reviewsTitle:"Отзывы", reviewsCount:"оценок", dealsLabel:"сделки", noReviews:"Пока нет отзывов", brokerNotFound:"Риелтор не найден", viewBrokerBtn:"Профиль риелтора →", viewMyProfileBtn:"Открыть публичный профиль", walletSectionTitle:"Баланс", ratingSectionTitle:"Рейтинг", rateBtn:"⭐ Оценить", rateTitle:"Оцените риелтора", rateCommentPh:"Комментарий (необязательно)...", rateSubmit:"Отправить", rateSelf:"Нельзя оценить самого себя", rateChoose:"Пожалуйста, выберите звёзды", rateThanks:"Спасибо за оценку!",
+    postPromoLabel:"Тип объявления", tierStandard:"Обычное", tierTop:"ТОП", tierVip:"VIP", tierStandardCost:"1-е бесплатно", postUrgentLabel:"Метка «Срочно» (+2 кредита)", postPromoInfo:"Первые {free} объявл. бесплатно, следующее — {extra} кредит.", urgentBadge:"Срочно", promoteBtn:"Продвижение", promoteTitle:"Продвижение объявления", promoteBalance:"Баланс: {n} кредитов", promoteNote:"Продвижение включается сразу; кредиты списываются с баланса. Если не хватает — сначала пополните.", promoBump:"Поднять (вверх)", promoteDone:"Продвижение включено!", promoSkippedLowCredit:"Не хватило кредитов — размещено как обычное.", needCreditToPost:"Недостаточно кредитов. Пополните баланс.", listingPostedPaid:"Объявление размещено! Списано {n} кредитов.",
+    brokerProfileTitle:"Профиль риелтора", reviewsTitle:"Отзывы", reviewsCount:"оценок", dealsLabel:"сделки", noReviews:"Пока нет отзывов", brokerNotFound:"Риелтор не найден", viewBrokerBtn:"Профиль риелтора →", viewMyProfileBtn:"Открыть публичный профиль", walletSectionTitle:"Баланс", ratingSectionTitle:"Рейтинг", rateBtn:"Оценить", rateTitle:"Оцените риелтора", rateCommentPh:"Комментарий (необязательно)...", rateSubmit:"Отправить", rateSelf:"Нельзя оценить самого себя", rateChoose:"Пожалуйста, выберите звёзды", rateThanks:"Спасибо за оценку!",
     googleSignIn:"Продолжить через Google", or:"или",
     tabLogin:"Вход", tabRegister:"Регистрация",
     email:"Email", password:"Пароль", forgotPassword:"Забыли пароль?",
@@ -1912,7 +1997,7 @@ const I18N = {
     errEmail:"Введите корректный email",
     termsLabel:"Я ознакомлен(а) с <button type=\"button\" class=\"terms-link\" id=\"viewTermsLink\">Пользовательским соглашением</button> и согласен(на).",
     termsTitle:"Пользовательское соглашение", termsAgree:"Я прочитал(а) соглашение и согласен(на)",
-    termsPdf:"📄 Сохранить PDF", close:"Закрыть",
+    termsPdf:"Сохранить PDF", close:"Закрыть",
     onboardingTitle:"Пользуетесь услугами риелтора?",
     onboardingSub:"В зависимости от выбора вам будут показаны подходящие предложения. Позже можно изменить.",
     choiceAssistedTitle:"Да, пусть риелтор поможет", choiceAssistedSub:"Оставьте заявку, и подходящий риелтор свяжется с вами",
@@ -1951,11 +2036,11 @@ const I18N = {
     lockLoginTitle:"Войти в аккаунт", lockLoginSub:"Войдите, чтобы получить полный доступ",
     lockFavTitle:"Войдите, чтобы видеть избранное", lockFavSub:"Войдите, чтобы сохранять понравившиеся объявления",
     favSub:"Понравившиеся объявления хранятся здесь.",
-    favEmpty:"Пока нет избранных объявлений", favEmptySub:"Нажмите ♡ на понравившемся объявлении, чтобы сохранить.",
+    favEmpty:"Пока нет избранных объявлений", favEmptySub:"Нажмите на значок сердца в понравившемся объявлении, чтобы сохранить.",
     needLoginToast:"Для этого действия сначала войдите", logoutBtnLabel:"Выйти из аккаунта",
     dealSale:"Продажа", dealRent:"Аренда", ownerAgent:"Риелтор", ownerOwner:"Собственник",
     roomsSuffix:" комн.", floorLabel:"Этаж", areaLabel:"Площадь",
-    contactBtn:"Связаться", contactTitle:"Связаться", contactCall:"📞 Позвонить", contactCopy:"📋 Скопировать номер",
+    contactBtn:"Связаться", contactTitle:"Связаться", contactCall:"Позвонить", contactCopy:"Скопировать номер",
     copied:"Номер скопирован", shareBtn:"Поделиться", shareUnsupported:"Поделиться не поддерживается",
     modeAssisted:"Режим: с помощью риелтора", modeIndependent:"Режим: самостоятельный поиск",
     modeIndepTitle:"Самостоятельно", modeIndepDesc:"Без комиссии, напрямую",
@@ -1968,8 +2053,8 @@ const I18N = {
     reqRegionLabel:"Район", reqBudgetLabel:"Бюджет (до)", reqNoteLabel:"Дополнительно", reqNotePh:"Например: рядом метро, с ремонтом...",
     reqSubmit:"Отправить запрос", reqSent:"Запрос отправлен! Риелторы пришлют предложения — смотрите в «Мои запросы».", reqAnyBudget:"Бюджет не указан",
     agentRequestsTitle:"Запросы клиентов", agentRequestsSub:"Запросы клиентов. Предложите свой процент вознаграждения — телефон откроется только после согласия клиента.", noRequests:"Пока нет новых запросов",
-    reqAcceptBtn:"✅ Принять", reqAcceptedYou:"✓ Вы приняли", reqTaken:"Запрос заполнен", reqYourArea:"Ваш район", reqAcceptedToast:"Принято! Свяжитесь с клиентом.", reqAcceptFullToast:"Этот запрос уже приняли достаточно риелторов.", reqBrokersJoined:"риелтор(ов) приняли",
-    reqSendOfferBtn:"💼 Отправить предложение", offerSheetTitle:"Отправить предложение клиенту", offerSheetSub:"Укажите свой процент вознаграждения. Контакт откроется только после согласия клиента.", offerMaxNote:"Для этого запроса максимально допустимое <b>вознаграждение — {pct}%</b>. Предложив меньше, вы повысите шанс быть выбранным.", offerPctLabel:"Вознаграждение (%)", offerNoteLabel:"Комментарий (необязательно)", offerNotePh:"Например: заключим договор, услуга показа...", offerSubmit:"Отправить предложение", offerCreditNote:"Отправка предложения — 1 лид-кредит (в премиуме бесплатно).", offerFeePreview:"Примерное вознаграждение", offerPctRequired:"Пожалуйста, укажите процент вознаграждения.", offerPctInvalid:"Максимум — {pct}%. Больше нельзя.", offerSentToast:"Предложение отправлено! Ждите ответа клиента.", offerPending:"Предложение отправлено — ждите ответа клиента", offerMatchedBroker:"Клиент выбрал вас! Свяжитесь", offerClosed:"Запрос закрыт",
+    reqAcceptBtn:"Принять", reqAcceptedYou:"Вы приняли", reqTaken:"Запрос заполнен", reqYourArea:"Ваш район", reqAcceptedToast:"Принято! Свяжитесь с клиентом.", reqAcceptFullToast:"Этот запрос уже приняли достаточно риелторов.", reqBrokersJoined:"риелтор(ов) приняли",
+    reqSendOfferBtn:"Отправить предложение", offerSheetTitle:"Отправить предложение клиенту", offerSheetSub:"Укажите свой процент вознаграждения. Контакт откроется только после согласия клиента.", offerMaxNote:"Для этого запроса максимально допустимое <b>вознаграждение — {pct}%</b>. Предложив меньше, вы повысите шанс быть выбранным.", offerPctLabel:"Вознаграждение (%)", offerNoteLabel:"Комментарий (необязательно)", offerNotePh:"Например: заключим договор, услуга показа...", offerSubmit:"Отправить предложение", offerCreditNote:"Отправка предложения — 1 лид-кредит (в премиуме бесплатно).", offerFeePreview:"Примерное вознаграждение", offerPctRequired:"Пожалуйста, укажите процент вознаграждения.", offerPctInvalid:"Максимум — {pct}%. Больше нельзя.", offerSentToast:"Предложение отправлено! Ждите ответа клиента.", offerPending:"Предложение отправлено — ждите ответа клиента", offerMatchedBroker:"Клиент выбрал вас! Свяжитесь", offerClosed:"Запрос закрыт",
     myReqTitle:"Мои запросы", myReqEntrySub:"Смотрите предложения риелторов и подтверждайте", myReqSub:"Риелторы отправляют предложения на ваши запросы. Посмотрите процент вознаграждения и подтвердите одно — только после этого откроется контакт.", myReqEmpty:"Вы ещё не оставляли запросов.", myReqWaiting:"Ожидаются предложения...", myReqStatusOpen:"Открыт", myReqStatusMatched:"Согласовано", myReqApproveBtn:"Согласиться", myReqMatched:"Вы выбрали этого риелтора", myReqAgreedFee:"Согласованное вознаграждение", agreeConfirm:"Выбрать этого риелтора с вознаграждением {pct}%? После согласия откроется контакт.", dealDoneToast:"Сделка заключена! Теперь вы можете связаться с риелтором.", dealAlready:"По этому запросу уже достигнута договорённость.",
     brokerPerks:"Ранним риелторам: запросы клиентов <b>БЕСПЛАТНО</b> + значок проверенного и приоритет.",
     agentSectionTitle:"Кабинет риелтора", agentSectionSub:"Работать риелтором и видеть запросы клиентов",
@@ -1996,12 +2081,12 @@ const I18N = {
     lockChatTitle:"Войдите для сообщений", lockChatSub:"Войдите, чтобы писать продавцам",
     chatEmpty:"Пока нет сообщений", chatEmptySub:"Начните чат кнопкой «Написать» на странице объявления.",
     messageBtn:"Написать", typeMessage:"Напишите сообщение...", you:"Вы", chatSelf:"Это ваше объявление",
-    mapTitle:"Выберите местоположение", mapPick:"🗺️ Выбрать на карте", mapChange:"🗺️ Изменить место",
+    mapTitle:"Выберите местоположение", mapPick:"Выбрать на карте", mapChange:"Изменить место",
     mapPickHint:"Нажмите на карту или перетащите маркер, чтобы указать местоположение.",
-    mapConfirm:"Подтвердить", mapMyLocation:"📍 Моё местоположение", mapDirections:"Проложить маршрут",
+    mapConfirm:"Подтвердить", mapMyLocation:"Моё местоположение", mapDirections:"Проложить маршрут",
     postMapLabel:"Местоположение на карте (необязательно)", mapLocationSet:"Местоположение указано", mapNoGeo:"Не удалось определить местоположение",
     detailLocation:"Местоположение", installTitle:"Установите приложение", installHint:"Добавьте NurMakon на экран телефона",
-    installBtn:"Установить", installed:"Приложение установлено ✓", notifNewMsg:"Новое сообщение", msgEmpty:"Начните беседу 👋"
+    installBtn:"Установить", installed:"Приложение установлено", notifNewMsg:"Новое сообщение", msgEmpty:"Начните беседу"
   },
   en:{
     heroSub:"The easy and trusted way to find a home",
@@ -2013,8 +2098,8 @@ const I18N = {
     admTopupsTitle:"Payment requests", admTopupsSub:"Brokers' balance top-up requests.", admNoTopups:"No payment requests", admTopupApprove:"✓ Approve", admTopupApproved:"Payment approved — balance updated",
     cancelReqBtn:"Cancel", cancelPending:"Cancellation requested (pending)", cancelSheetTitle:"Cancel request", cancelWarn:"Note: the cancellation request is sent to the admin. If approved, your rating will drop.", cancelReasonLabel:"Reason for cancellation", cancelReasonPh:"e.g. client not responding, from another city...", cancelSubmit:"Request cancellation", cancelReasonRequired:"Please provide a reason for cancellation", cancelSent:"Cancellation request sent. The admin will review it.", cancelTitle:"Cancelled requests", cancelSectionSub:"Your cancellation requests and their status appear here (for information).", cancelNone:"No cancellation requests", cancelStPending:"Pending", cancelStApproved:"Approved", cancelStRejected:"Rejected",
     admCancelsTitle:"Cancellation requests", admCancelsSub:"Brokers' requests to cancel a client request. If approved, the request reopens and the broker's rating drops.", admNoCancels:"No cancellation requests", admCancelApprove:"✓ Approve cancellation", admCancelApproved:"Cancelled — request reopened, rating updated", admRejected:"Rejected",
-    postPromoLabel:"Listing type", tierStandard:"Standard", tierTop:"TOP", tierVip:"VIP", tierStandardCost:"1st free", postUrgentLabel:"⚡ Urgent badge (+2 credits)", postPromoInfo:"First {free} listing(s) free, next one {extra} credit.", urgentBadge:"Urgent", promoteBtn:"Promote", promoteTitle:"Promote listing", promoteBalance:"Balance: {n} credits", promoteNote:"Promotion activates instantly; credits are deducted. If not enough, top up first.", promoBump:"Bump (to top)", promoteDone:"Promotion activated!", promoSkippedLowCredit:"Not enough credits — posted as standard.", needCreditToPost:"Not enough credits. Please top up.", listingPostedPaid:"Listing posted! {n} credits deducted.",
-    brokerProfileTitle:"Broker profile", reviewsTitle:"Reviews", reviewsCount:"ratings", dealsLabel:"deals", noReviews:"No reviews yet", brokerNotFound:"Broker not found", viewBrokerBtn:"Broker profile →", viewMyProfileBtn:"Open public profile", walletSectionTitle:"Balance", ratingSectionTitle:"Rating", rateBtn:"⭐ Rate", rateTitle:"Rate the broker", rateCommentPh:"Comment (optional)...", rateSubmit:"Submit", rateSelf:"You can't rate yourself", rateChoose:"Please pick stars", rateThanks:"Thanks for your rating!",
+    postPromoLabel:"Listing type", tierStandard:"Standard", tierTop:"TOP", tierVip:"VIP", tierStandardCost:"1st free", postUrgentLabel:"Urgent badge (+2 credits)", postPromoInfo:"First {free} listing(s) free, next one {extra} credit.", urgentBadge:"Urgent", promoteBtn:"Promote", promoteTitle:"Promote listing", promoteBalance:"Balance: {n} credits", promoteNote:"Promotion activates instantly; credits are deducted. If not enough, top up first.", promoBump:"Bump (to top)", promoteDone:"Promotion activated!", promoSkippedLowCredit:"Not enough credits — posted as standard.", needCreditToPost:"Not enough credits. Please top up.", listingPostedPaid:"Listing posted! {n} credits deducted.",
+    brokerProfileTitle:"Broker profile", reviewsTitle:"Reviews", reviewsCount:"ratings", dealsLabel:"deals", noReviews:"No reviews yet", brokerNotFound:"Broker not found", viewBrokerBtn:"Broker profile →", viewMyProfileBtn:"Open public profile", walletSectionTitle:"Balance", ratingSectionTitle:"Rating", rateBtn:"Rate", rateTitle:"Rate the broker", rateCommentPh:"Comment (optional)...", rateSubmit:"Submit", rateSelf:"You can't rate yourself", rateChoose:"Please pick stars", rateThanks:"Thanks for your rating!",
     googleSignIn:"Continue with Google", or:"or",
     tabLogin:"Log in", tabRegister:"Sign up",
     email:"Email", password:"Password", forgotPassword:"Forgot password?",
@@ -2022,7 +2107,7 @@ const I18N = {
     errEmail:"Enter a valid email address",
     termsLabel:"I have read and agree to the <button type=\"button\" class=\"terms-link\" id=\"viewTermsLink\">Terms of Use</button>.",
     termsTitle:"Terms of Use", termsAgree:"I have read and agree to these terms",
-    termsPdf:"📄 Save PDF", close:"Close",
+    termsPdf:"Save PDF", close:"Close",
     onboardingTitle:"Would you like to use a broker's service?",
     onboardingSub:"Based on your choice, we'll show you matching offers. You can change this later.",
     choiceAssistedTitle:"Yes, let a broker help", choiceAssistedSub:"Leave your request and a matching broker will contact you",
@@ -2061,11 +2146,11 @@ const I18N = {
     lockLoginTitle:"Log in to your account", lockLoginSub:"Log in to unlock the full experience",
     lockFavTitle:"Log in to see favorites", lockFavSub:"Log in to save listings you like",
     favSub:"Your saved listings are kept here.",
-    favEmpty:"No favorite listings yet", favEmptySub:"Tap the ♡ on a listing you like to save it.",
+    favEmpty:"No favorite listings yet", favEmptySub:"Tap the heart icon on a listing you like to save it.",
     needLoginToast:"Please log in first to do this", logoutBtnLabel:"Log out",
     dealSale:"For sale", dealRent:"For rent", ownerAgent:"Broker", ownerOwner:"Owner",
     roomsSuffix:" rooms", floorLabel:"Floor", areaLabel:"Area",
-    contactBtn:"Contact", contactTitle:"Contact", contactCall:"📞 Call", contactCopy:"📋 Copy number",
+    contactBtn:"Contact", contactTitle:"Contact", contactCall:"Call", contactCopy:"Copy number",
     copied:"Number copied", shareBtn:"Share", shareUnsupported:"Sharing not supported",
     modeAssisted:"Mode: With broker's help", modeIndependent:"Mode: Independent search",
     modeIndepTitle:"On my own", modeIndepDesc:"No commission, direct",
@@ -2078,8 +2163,8 @@ const I18N = {
     reqRegionLabel:"Which area", reqBudgetLabel:"Budget (up to)", reqNoteLabel:"Extra note", reqNotePh:"e.g. near metro, renovated...",
     reqSubmit:"Send request", reqSent:"Request sent! Brokers will send offers — see them in 'My requests'.", reqAnyBudget:"Budget not specified",
     agentRequestsTitle:"Client requests", agentRequestsSub:"Client requests. Offer your commission — the phone opens only after the client agrees.", noRequests:"No new requests yet",
-    reqAcceptBtn:"✅ Accept", reqAcceptedYou:"✓ You accepted", reqTaken:"Request full", reqYourArea:"Your area", reqAcceptedToast:"Accepted! Contact the client.", reqAcceptFullToast:"Enough brokers already accepted this request.", reqBrokersJoined:"broker(s) joined",
-    reqSendOfferBtn:"💼 Send offer", offerSheetTitle:"Send offer to client", offerSheetSub:"Set your commission percentage. Contact opens only after the client agrees.", offerMaxNote:"For this request the maximum allowed <b>commission is {pct}%</b>. Offering less increases your chance of being chosen.", offerPctLabel:"Commission (%)", offerNoteLabel:"Note (optional)", offerNotePh:"e.g. we'll sign a contract, viewing service...", offerSubmit:"Send offer", offerCreditNote:"Sending an offer costs 1 lead credit (free on Premium).", offerFeePreview:"Estimated commission", offerPctRequired:"Please enter your commission percentage.", offerPctInvalid:"Maximum is {pct}%. You can't exceed it.", offerSentToast:"Offer sent! Wait for the client's response.", offerPending:"Offer sent — waiting for client's response", offerMatchedBroker:"The client chose you! Get in touch", offerClosed:"Request closed",
+    reqAcceptBtn:"Accept", reqAcceptedYou:"You accepted", reqTaken:"Request full", reqYourArea:"Your area", reqAcceptedToast:"Accepted! Contact the client.", reqAcceptFullToast:"Enough brokers already accepted this request.", reqBrokersJoined:"broker(s) joined",
+    reqSendOfferBtn:"Send offer", offerSheetTitle:"Send offer to client", offerSheetSub:"Set your commission percentage. Contact opens only after the client agrees.", offerMaxNote:"For this request the maximum allowed <b>commission is {pct}%</b>. Offering less increases your chance of being chosen.", offerPctLabel:"Commission (%)", offerNoteLabel:"Note (optional)", offerNotePh:"e.g. we'll sign a contract, viewing service...", offerSubmit:"Send offer", offerCreditNote:"Sending an offer costs 1 lead credit (free on Premium).", offerFeePreview:"Estimated commission", offerPctRequired:"Please enter your commission percentage.", offerPctInvalid:"Maximum is {pct}%. You can't exceed it.", offerSentToast:"Offer sent! Wait for the client's response.", offerPending:"Offer sent — waiting for client's response", offerMatchedBroker:"The client chose you! Get in touch", offerClosed:"Request closed",
     myReqTitle:"My requests", myReqEntrySub:"See broker offers and approve", myReqSub:"Brokers send offers to your requests. Review the commission and approve one — contact opens only after that.", myReqEmpty:"You haven't left any requests yet.", myReqWaiting:"Waiting for offers...", myReqStatusOpen:"Open", myReqStatusMatched:"Agreed", myReqApproveBtn:"Agree", myReqMatched:"You chose this broker", myReqAgreedFee:"Agreed commission", agreeConfirm:"Choose this broker with a {pct}% commission? Contact opens after you agree.", dealDoneToast:"Deal made! You can now contact the broker.", dealAlready:"A deal has already been made for this request.",
     brokerPerks:"Early brokers: client requests <b>FREE</b> + verified badge and priority.",
     agentSectionTitle:"Broker cabinet", agentSectionSub:"Work as a broker and see client requests",
@@ -2106,12 +2191,12 @@ const I18N = {
     lockChatTitle:"Log in for messages", lockChatSub:"Log in to message sellers",
     chatEmpty:"No messages yet", chatEmptySub:"Start a chat with the \"Message\" button on a listing.",
     messageBtn:"Message", typeMessage:"Type a message...", you:"You", chatSelf:"This is your listing",
-    mapTitle:"Choose location", mapPick:"🗺️ Pick on map", mapChange:"🗺️ Change location",
+    mapTitle:"Choose location", mapPick:"Pick on map", mapChange:"Change location",
     mapPickHint:"Tap the map or drag the marker to set the property location.",
-    mapConfirm:"Confirm", mapMyLocation:"📍 My location", mapDirections:"Get directions",
+    mapConfirm:"Confirm", mapMyLocation:"My location", mapDirections:"Get directions",
     postMapLabel:"Location on map (optional)", mapLocationSet:"Location set", mapNoGeo:"Could not detect location",
     detailLocation:"Location", installTitle:"Install the app", installHint:"Add NurMakon to your home screen",
-    installBtn:"Install", installed:"App installed ✓", notifNewMsg:"New message", msgEmpty:"Start the conversation 👋"
+    installBtn:"Install", installed:"App installed", notifNewMsg:"New message", msgEmpty:"Start the conversation"
   }
 };
 
@@ -2197,7 +2282,7 @@ function timeAgo(ts){
   return Math.floor(diff/2592000) + t('monthsAgo');
 }
 
-function propIcon(type){ return ({apartment:'🏢',house:'🏡',commercial:'🏬',land:'🌳'})[type] || '🏠'; }
+function propIcon(type, size){ const m={apartment:'building',house:'home',commercial:'store',land:'land'}; return ic(m[type]||'home', size||20); }
 
 /* ============ SCREEN NAV ============ */
 function showScreen(id){
@@ -2251,7 +2336,7 @@ document.querySelectorAll('.pw-toggle').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     const inp = $(btn.dataset.target);
     inp.type = inp.type==='password' ? 'text' : 'password';
-    btn.textContent = inp.type==='password' ? '👁' : '🙈';
+    btn.innerHTML = ic(inp.type==='password' ? 'eye' : 'eye-off', 20);
   });
 });
 
@@ -2422,14 +2507,14 @@ function renderPhotoPreview(){
   const wrap = $('photoPreview'); wrap.innerHTML = '';
   existingPhotos.forEach((url, i)=>{
     const d = document.createElement('div'); d.className='photo-thumb';
-    d.innerHTML = `<img src="${esc(url)}" alt=""><button class="rm" type="button">✕</button>`;
+    d.innerHTML = `<img src="${esc(url)}" alt=""><button class="rm" type="button" data-ic="close" data-ic-size="15"></button>`;
     d.querySelector('.rm').addEventListener('click', ()=>{ existingPhotos.splice(i,1); renderPhotoPreview(); });
     wrap.appendChild(d);
   });
   selectedPhotos.forEach((file, i)=>{
     const url = URL.createObjectURL(file);
     const d = document.createElement('div'); d.className='photo-thumb';
-    d.innerHTML = `<img src="${url}" alt=""><button class="rm" type="button">✕</button>`;
+    d.innerHTML = `<img src="${url}" alt=""><button class="rm" type="button" data-ic="close" data-ic-size="15"></button>`;
     d.querySelector('.rm').addEventListener('click', ()=>{ selectedPhotos.splice(i,1); renderPhotoPreview(); });
     wrap.appendChild(d);
   });
@@ -2664,7 +2749,7 @@ async function loadListings(){
     renderListings();  // tartiblash getFilteredListings() ichida (tarif + vaqt) amalga oshadi
   }catch(err){
     console.error(err);
-    $('listingsContainer').innerHTML = `<div class="empty-state"><div class="ic">⚠️</div><div class="title">${t('loadError')}</div><div class="sub">${esc(err.message)}</div></div>`;
+    $('listingsContainer').innerHTML = `<div class="empty-state"><div class="ic">${ic('warning',44)}</div><div class="title">${t('loadError')}</div><div class="sub">${esc(err.message)}</div></div>`;
   }
 }
 
@@ -2701,9 +2786,9 @@ function renderListings(){
   const list = getFilteredListings();
   $('resultsCount').innerHTML = list.length ? `<b>${list.length}</b> ${t('resultsFound')}` : '';
   if(list.length === 0){
-    container.innerHTML = `<div class="empty-state"><div class="ic">🏠</div>
+    container.innerHTML = `<div class="empty-state"><div class="ic">${ic('home',44)}</div>
       <div class="title">${t('noListings')}</div><div class="sub">${t('noListingsMode')}</div>
-      <button class="btn btn-primary" id="emptyPostBtn"><span class="btn-label">＋ ${t('navPost')}</span></button></div>`;
+      <button class="btn btn-primary" id="emptyPostBtn"><span class="btn-label">${ic('plus',18)} ${t('navPost')}</span></button></div>`;
     const b = $('emptyPostBtn');
     if(b) b.addEventListener('click', ()=>{ if(!currentUser){requireLogin('post');return;} resetPostForm(); showScreen('post'); });
     return;
@@ -2725,35 +2810,35 @@ function renderListingCard(l){
     ? `<span class="badge badge-solid-sale">${t('dealSale')}</span>`
     : `<span class="badge badge-solid-rent">${t('dealRent')}</span>`;
   const ownerBadge = l.ownerType==='agent'
-    ? `<span class="badge badge-agent">👔 ${t('ownerAgent')}</span>`
-    : `<span class="badge badge-owner">🔑 ${t('ownerOwner')}</span>`;
+    ? `<span class="badge badge-agent">${ic('briefcase',13)} ${t('ownerAgent')}</span>`
+    : `<span class="badge badge-owner">${ic('key',13)} ${t('ownerOwner')}</span>`;
   const newBadge = isNew(l) ? `<span class="badge badge-new">NEW</span>` : '';
   const et = effTier(l);
-  const tierBadge = et==='vip' ? `<span class="badge badge-vip">💎 VIP</span>` : et==='top' ? `<span class="badge badge-top">🔝 TOP</span>` : '';
-  const urgentBadge = effUrgent(l) ? `<span class="badge badge-urgent">⚡ ${t('urgentBadge')}</span>` : '';
+  const tierBadge = et==='vip' ? `<span class="badge badge-vip">${ic('diamond',13)} VIP</span>` : et==='top' ? `<span class="badge badge-top">${ic('top',13)} TOP</span>` : '';
+  const urgentBadge = effUrgent(l) ? `<span class="badge badge-urgent">${ic('bolt',13)} ${t('urgentBadge')}</span>` : '';
   // "Namuna" belgisi FAQAT adminga ko'rinadi; oddiy foydalanuvchida chiqmaydi
-  const demoBadge = (l.isDemo && isAdminUser()) ? `<span class="badge" style="background:#7c3aed;color:#fff;">🧪 Namuna</span>` : '';
+  const demoBadge = (l.isDemo && isAdminUser()) ? `<span class="badge" style="background:#7c3aed;color:#fff;">${ic('flask',13)} Namuna</span>` : '';
   const isFav = favoriteIds.has(l.id);
-  const photoCount = (l.photos && l.photos.length>1) ? `<div class="photo-count">📷 ${l.photos.length}</div>` : '';
+  const photoCount = (l.photos && l.photos.length>1) ? `<div class="photo-count">${ic('camera',13)} ${l.photos.length}</div>` : '';
   const specs = [];
-  if(l.rooms) specs.push(`<span class="spec"><span class="spec-ic">🛏</span>${l.rooms}${t('roomsSuffix')}</span>`);
-  if(l.area) specs.push(`<span class="spec"><span class="spec-ic">📐</span>${l.area} m²</span>`);
-  if(l.floor) specs.push(`<span class="spec"><span class="spec-ic">🏢</span>${esc(l.floor)}</span>`);
+  if(l.rooms) specs.push(`<span class="spec"><span class="spec-ic">${ic('bed',15)}</span>${l.rooms}${t('roomsSuffix')}</span>`);
+  if(l.area) specs.push(`<span class="spec"><span class="spec-ic">${ic('area',15)}</span>${l.area} m²</span>`);
+  if(l.floor) specs.push(`<span class="spec"><span class="spec-ic">${ic('building',15)}</span>${esc(l.floor)}</span>`);
 
   div.innerHTML = `
     <div class="listing-media">
       <div class="media-badges">${demoBadge}${tierBadge}${urgentBadge}${dealBadge}${ownerBadge}${newBadge}</div>
-      <button class="fav-btn ${isFav?'active':''}" data-id="${l.id}" aria-label="fav">${isFav?'♥':'♡'}</button>
-      ${photo ? `<img src="${esc(photo)}" alt="" loading="lazy">` : `<div class="no-photo">${propIcon(l.propertyType)}</div>`}
+      <button class="fav-btn ${isFav?'active':''}" data-id="${l.id}" aria-label="fav">${ic(isFav?'heart-filled':'heart',19)}</button>
+      ${photo ? `<img src="${esc(photo)}" alt="" loading="lazy">` : `<div class="no-photo">${propIcon(l.propertyType,44)}</div>`}
       ${photoCount}
     </div>
     <div class="listing-body">
       <div class="listing-price">${fmtPrice(l.price)}<span class="price-secondary">≈ ${fmtPriceSecondary(l.price)}</span></div>
       <div class="listing-specs">${specs.join('')}</div>
-      <div class="listing-loc">📍 ${esc(l.region)}, ${esc(l.district)}</div>
+      <div class="listing-loc">${ic('pin',14)} ${esc(l.region)}, ${esc(l.district)}</div>
       <div class="listing-foot">
-        <span class="listing-time">🕐 ${timeAgo(l.createdAt)}</span>
-        <button class="btn btn-secondary contact-btn"><span class="btn-label">📞 ${t('contactBtn')}</span></button>
+        <span class="listing-time">${ic('clock',12)} ${timeAgo(l.createdAt)}</span>
+        <button class="btn btn-secondary contact-btn"><span class="btn-label">${ic('phone',16)} ${t('contactBtn')}</span></button>
       </div>
     </div>`;
 
@@ -2771,52 +2856,52 @@ async function openDetail(l){
   const isFav = favoriteIds.has(l.id);
   if(galleryPhotos.length){
     gallery.innerHTML = `
-      <button class="detail-close" id="detailCloseBtn">✕</button>
-      <button class="detail-fav ${isFav?'active':''}" id="detailFavBtn">${isFav?'♥':'♡'}</button>
+      <button class="detail-close" id="detailCloseBtn">${ic('close',16)}</button>
+      <button class="detail-fav ${isFav?'active':''}" id="detailFavBtn">${ic(isFav?'heart-filled':'heart',18)}</button>
       <div class="track" id="detailTrack">${galleryPhotos.map((p,i)=>`<div class="slide"><img src="${esc(p)}" data-idx="${i}" alt=""></div>`).join('')}</div>
       ${galleryPhotos.length>1?`<div class="gallery-dots" id="galleryDots">${galleryPhotos.map((_,i)=>`<span class="dot ${i===0?'active':''}"></span>`).join('')}</div>`:''}`;
   }else{
     gallery.innerHTML = `
-      <button class="detail-close" id="detailCloseBtn">✕</button>
-      <button class="detail-fav ${isFav?'active':''}" id="detailFavBtn">${isFav?'♥':'♡'}</button>
-      <div class="no-photo">${propIcon(l.propertyType)}</div>`;
+      <button class="detail-close" id="detailCloseBtn">${ic('close',16)}</button>
+      <button class="detail-fav ${isFav?'active':''}" id="detailFavBtn">${ic(isFav?'heart-filled':'heart',18)}</button>
+      <div class="no-photo">${propIcon(l.propertyType,60)}</div>`;
   }
 
   const dealBadge = l.dealType==='sale' ? `<span class="badge badge-sale">${t('dealSale')}</span>` : `<span class="badge badge-rent">${t('dealRent')}</span>`;
-  const ownerBadge = l.ownerType==='agent' ? `<span class="badge badge-agent">👔 ${t('ownerAgent')}</span>` : `<span class="badge badge-owner">🔑 ${t('ownerOwner')}</span>`;
+  const ownerBadge = l.ownerType==='agent' ? `<span class="badge badge-agent">${ic('briefcase',13)} ${t('ownerAgent')}</span>` : `<span class="badge badge-owner">${ic('key',13)} ${t('ownerOwner')}</span>`;
   const specs = [];
-  specs.push({k:t('postPropertyTypeLabel'), v:`${propIcon(l.propertyType)} ${t('prop'+(l.propertyType||'apartment').charAt(0).toUpperCase()+(l.propertyType||'apartment').slice(1))}`});
+  specs.push({k:t('postPropertyTypeLabel'), v:`${propIcon(l.propertyType,16)} ${t('prop'+(l.propertyType||'apartment').charAt(0).toUpperCase()+(l.propertyType||'apartment').slice(1))}`});
   if(l.rooms) specs.push({k:t('postRoomsLabel'), v:l.rooms});
   if(l.area) specs.push({k:t('areaLabel'), v:l.area+' m²'});
   if(l.floor) specs.push({k:t('floorLabel'), v:esc(l.floor)});
 
   const isOwn = currentUser && l.ownerUid === currentUser.uid;
   $('detailContent').innerHTML = `
-    <div class="detail-meta-row">${(l.isDemo && isAdminUser())?'<span class="badge" style="background:#7c3aed;color:#fff;">🧪 Namuna</span>':''}${effTier(l)==='vip'?'<span class="badge badge-vip">💎 VIP</span>':effTier(l)==='top'?'<span class="badge badge-top">🔝 TOP</span>':''}${effUrgent(l)?`<span class="badge badge-urgent">⚡ ${t('urgentBadge')}</span>`:''}${dealBadge}${ownerBadge}<span class="listing-time" style="margin-left:auto;">🕐 ${timeAgo(l.createdAt)}</span></div>
+    <div class="detail-meta-row">${(l.isDemo && isAdminUser())?`<span class="badge" style="background:#7c3aed;color:#fff;">${ic('flask',13)} Namuna</span>`:''}${effTier(l)==='vip'?`<span class="badge badge-vip">${ic('diamond',13)} VIP</span>`:effTier(l)==='top'?`<span class="badge badge-top">${ic('top',13)} TOP</span>`:''}${effUrgent(l)?`<span class="badge badge-urgent">${ic('bolt',13)} ${t('urgentBadge')}</span>`:''}${dealBadge}${ownerBadge}<span class="listing-time" style="margin-left:auto;">${ic('clock',12)} ${timeAgo(l.createdAt)}</span></div>
     <div class="detail-price">${fmtPrice(l.price)} <span class="price-secondary">≈ ${fmtPriceSecondary(l.price)}</span></div>
-    <div class="listing-loc" style="margin-top:6px;">📍 ${esc(l.region)}, ${esc(l.district)}</div>
+    <div class="listing-loc" style="margin-top:6px;">${ic('pin',14)} ${esc(l.region)}, ${esc(l.district)}</div>
     <div class="detail-spec-grid">${specs.map(s=>`<div class="detail-spec"><div class="k">${s.k}</div><div class="v">${s.v}</div></div>`).join('')}</div>
     <div class="detail-section-title">${t('detailDesc')}</div>
     <div class="detail-desc">${l.description ? esc(l.description) : `<span style="color:var(--text-faint)">${t('detailNoDesc')}</span>`}</div>
     <div class="detail-owner">
-      <div class="avatar">${l.ownerType==='agent'?'👔':'🔑'}</div>
+      <div class="avatar">${l.ownerType==='agent'?ic('briefcase',22):ic('key',22)}</div>
       <div class="oinfo"><h4>${l.ownerType==='agent'?t('ownerAgent'):t('ownerOwner')}</h4>
-        <p>${l.ownerType==='agent'?t('agentContact'):t('ownerContact')}${l.ownerType!=='agent' ? ' · ✅ '+t('noCommission') : ''} · 👁 ${l.views||0} ${t('views')}</p></div>
+        <p>${l.ownerType==='agent'?t('agentContact'):t('ownerContact')}${l.ownerType!=='agent' ? ' · '+t('noCommission') : ''} · ${ic('eye',13)} ${l.views||0} ${t('views')}</p></div>
       ${l.ownerType==='agent' ? `<button class="btn btn-outline btn-sm" id="viewBrokerBtn" style="width:auto;margin-left:auto;flex-shrink:0;"><span class="btn-label">${t('viewBrokerBtn')}</span></button>` : ''}
     </div>
     ${(typeof l.lat==='number' && typeof l.lng==='number') ? `
       <div class="detail-section-title">${t('detailLocation')}</div>
       <div id="detailMap"></div>
-      <a class="directions-link" id="detailDirections" target="_blank" rel="noopener">🧭 ${t('mapDirections')}</a>
+      <a class="directions-link" id="detailDirections" target="_blank" rel="noopener">${ic('compass',15)} ${t('mapDirections')}</a>
     ` : ''}
     <div class="detail-actions">
       ${isOwn ? `
-        <button class="btn btn-outline" id="detailEditBtn"><span class="btn-label">✏️ ${t('edit')}</span></button>
-        <button class="btn btn-danger-soft" id="detailDeleteBtn"><span class="btn-label">🗑 ${t('delete')}</span></button>
+        <button class="btn btn-outline" id="detailEditBtn"><span class="btn-label">${ic('edit',16)} ${t('edit')}</span></button>
+        <button class="btn btn-danger-soft" id="detailDeleteBtn"><span class="btn-label">${ic('trash',16)} ${t('delete')}</span></button>
       ` : `
-        <button class="btn btn-outline" id="detailShareBtn" style="flex:0 0 auto;width:auto;padding:15px 16px;">↗</button>
-        <button class="btn btn-outline" id="detailMsgBtn"><span class="btn-label">💬 ${t('messageBtn')}</span></button>
-        <button class="btn btn-primary" id="detailContactBtn"><span class="btn-label">📞 ${t('contactBtn')}</span></button>
+        <button class="btn btn-outline" id="detailShareBtn" style="flex:0 0 auto;width:auto;padding:15px 16px;">${ic('share',18)}</button>
+        <button class="btn btn-outline" id="detailMsgBtn"><span class="btn-label">${ic('message',16)} ${t('messageBtn')}</span></button>
+        <button class="btn btn-primary" id="detailContactBtn"><span class="btn-label">${ic('phone',16)} ${t('contactBtn')}</span></button>
       `}
     </div>`;
 
@@ -3007,8 +3092,8 @@ async function toggleFavorite(listing, btnEl){
   try{
     if(nowFav){ favoriteIds.add(listing.id); await ref.set({ listingId:listing.id, savedAt:firebase.firestore.FieldValue.serverTimestamp() }); }
     else{ favoriteIds.delete(listing.id); await ref.delete(); }
-    document.querySelectorAll(`.fav-btn[data-id="${listing.id}"]`).forEach(b=>{ b.classList.toggle('active', nowFav); b.textContent = nowFav?'♥':'♡'; });
-    if(btnEl && btnEl.classList.contains('detail-fav')){ btnEl.classList.toggle('active', nowFav); btnEl.textContent = nowFav?'♥':'♡'; }
+    document.querySelectorAll(`.fav-btn[data-id="${listing.id}"]`).forEach(b=>{ b.classList.toggle('active', nowFav); b.innerHTML = ic(nowFav?'heart-filled':'heart',19); });
+    if(btnEl && btnEl.classList.contains('detail-fav')){ btnEl.classList.toggle('active', nowFav); btnEl.innerHTML = ic(nowFav?'heart-filled':'heart',18); }
     if($('screen-favorites').classList.contains('active')) refreshFavoritesScreen();
   }catch(err){ console.error(err); toast(t('error')+err.message,'error'); }
 }
@@ -3016,16 +3101,16 @@ async function refreshFavoritesScreen(){
   const lock = $('favoritesLoggedOut'); const container = $('favoritesContainer');
   if(!currentUser){ lock.classList.remove('hidden'); container.classList.add('hidden'); return; }
   lock.classList.add('hidden'); container.classList.remove('hidden');
-  container.innerHTML = `<div class="empty-state"><div class="ic">♡</div>${t('loading')}</div>`;
+  container.innerHTML = `<div class="empty-state"><div class="ic">${ic('heart',44)}</div>${t('loading')}</div>`;
   try{
     const snap = await db.collection('users').doc(currentUser.uid).collection('favorites').orderBy('savedAt','desc').get();
-    if(snap.empty){ container.innerHTML = `<div class="empty-state"><div class="ic">♡</div><div class="title">${t('favEmpty')}</div><div class="sub">${t('favEmptySub')}</div></div>`; return; }
+    if(snap.empty){ container.innerHTML = `<div class="empty-state"><div class="ic">${ic('heart',44)}</div><div class="title">${t('favEmpty')}</div><div class="sub">${t('favEmptySub')}</div></div>`; return; }
     const ids = []; snap.forEach(doc=>ids.push(doc.id));
     const docs = await Promise.all(ids.map(id=>db.collection('listings').doc(id).get()));
     container.innerHTML=''; let any=false;
     docs.forEach(d=>{ if(d.exists){ any=true; container.appendChild(renderListingCard({ id:d.id, ...d.data() })); } });
-    if(!any) container.innerHTML = `<div class="empty-state"><div class="ic">♡</div><div class="title">${t('favEmpty')}</div><div class="sub">${t('favEmptySub')}</div></div>`;
-  }catch(err){ console.error(err); container.innerHTML = `<div class="empty-state"><div class="ic">⚠️</div><div class="sub">${t('loadError')}${esc(err.message)}</div></div>`; }
+    if(!any) container.innerHTML = `<div class="empty-state"><div class="ic">${ic('heart',44)}</div><div class="title">${t('favEmpty')}</div><div class="sub">${t('favEmptySub')}</div></div>`;
+  }catch(err){ console.error(err); container.innerHTML = `<div class="empty-state"><div class="ic">${ic('warning',44)}</div><div class="sub">${t('loadError')}${esc(err.message)}</div></div>`; }
 }
 
 /* ============ PROFILE ============ */
@@ -3099,8 +3184,8 @@ function refreshAgentScreen(){
   if(isAgent){
     const st = (userDoc.verification && userDoc.verification.status) || 'pending';
     const badge = $('agentStatusBadge');
-    if(st==='verified'){ badge.textContent = '✓ '+t('verified'); badge.className='badge badge-verified'; $('agentPanelStatusText').textContent = t('agentPanelVerifiedText'); }
-    else{ badge.textContent = '⏳ '+t('verifyPending'); badge.className='badge badge-pending'; $('agentPanelStatusText').textContent = t('agentPanelPendingText'); }
+    if(st==='verified'){ badge.innerHTML = ic('check',13)+' '+esc(t('verified')); badge.className='badge badge-verified'; $('agentPanelStatusText').textContent = t('agentPanelVerifiedText'); }
+    else{ badge.innerHTML = ic('clock',13)+' '+esc(t('verifyPending')); badge.className='badge badge-pending'; $('agentPanelStatusText').textContent = t('agentPanelPendingText'); }
     renderBrokerWallet();
     loadBrokerRatingSummary();
     loadAgentRequests();
@@ -3186,15 +3271,15 @@ async function loadMyListings(){
     mine.forEach(l=>{
       const photo = (l.photos && l.photos[0]) ? `<img src="${esc(l.photos[0])}" alt="">` : `<div class="noimg">${propIcon(l.propertyType)}</div>`;
       const et = effTier(l);
-      const tierTag = et==='vip' ? `<span class="badge badge-vip" style="margin-left:6px;">💎 VIP</span>`
-        : et==='top' ? `<span class="badge badge-top" style="margin-left:6px;">🔝 TOP</span>` : '';
-      const urgTag = effUrgent(l) ? `<span class="badge badge-urgent" style="margin-left:6px;">⚡</span>` : '';
+      const tierTag = et==='vip' ? `<span class="badge badge-vip" style="margin-left:6px;">${ic('diamond',12)} VIP</span>`
+        : et==='top' ? `<span class="badge badge-top" style="margin-left:6px;">${ic('top',12)} TOP</span>` : '';
+      const urgTag = effUrgent(l) ? `<span class="badge badge-urgent" style="margin-left:6px;">${ic('bolt',12)}</span>` : '';
       const row = document.createElement('div'); row.className='mini-listing';
       row.innerHTML = `${photo}
         <div class="minfo"><div class="mp">${fmtPrice(l.price)}${tierTag}${urgTag}</div>
-          <div class="ml">📍 ${esc(l.region)}, ${esc(l.district)} · 👁 ${l.views||0}</div>
-          <div class="promo-actions"><button class="btn btn-outline pr"><span class="btn-label">🚀 ${t('promoteBtn')}</span></button></div></div>
-        <div class="mini-actions"><button class="ed" title="edit">✏️</button><button class="dl" title="delete">🗑</button></div>`;
+          <div class="ml">${ic('pin',13)} ${esc(l.region)}, ${esc(l.district)} · ${ic('eye',13)} ${l.views||0}</div>
+          <div class="promo-actions"><button class="btn btn-outline pr"><span class="btn-label">${ic('rocket',15)} ${t('promoteBtn')}</span></button></div></div>
+        <div class="mini-actions"><button class="ed" title="edit">${ic('edit',15)}</button><button class="dl" title="delete">${ic('trash',15)}</button></div>`;
       row.querySelector('.ed').addEventListener('click', ()=>startEditListing(l));
       row.querySelector('.dl').addEventListener('click', ()=>deleteListing(l));
       row.querySelector('.pr').addEventListener('click', ()=>openPromote(l));
@@ -3210,16 +3295,16 @@ function openPromote(l){
   const et = effTier(l);
   $('promoteBalance').innerHTML = t('promoteBalance').replace('{n}', `<b>${userCredits()}</b>`);
   const opts = [
-    { type:'top',    label:'🔝 '+t('tierTop'),      cost:TOP_COST,    disabled: (et==='top'||et==='vip') },
-    { type:'vip',    label:'💎 '+t('tierVip'),      cost:VIP_COST,    disabled: (et==='vip') },
-    { type:'urgent', label:'⚡ '+t('urgentBadge'),  cost:URGENT_COST, disabled: effUrgent(l) },
-    { type:'bump',   label:'🔄 '+t('promoBump'),    cost:BUMP_COST,   disabled: false }
+    { type:'top',    label:ic('top',16)+' '+t('tierTop'),      cost:TOP_COST,    disabled: (et==='top'||et==='vip') },
+    { type:'vip',    label:ic('diamond',16)+' '+t('tierVip'),  cost:VIP_COST,    disabled: (et==='vip') },
+    { type:'urgent', label:ic('bolt',16)+' '+t('urgentBadge'), cost:URGENT_COST, disabled: effUrgent(l) },
+    { type:'bump',   label:ic('refresh',16)+' '+t('promoBump'),cost:BUMP_COST,   disabled: false }
   ];
   const box = $('promoteOptions'); box.innerHTML = '';
   opts.forEach(o=>{
     const b = document.createElement('button');
     b.className = 'btn btn-secondary'; b.style.cssText = 'margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;';
-    b.innerHTML = `<span class="btn-label">${o.label}${o.disabled?' ✓':''}</span><span style="font-weight:700;">${o.cost} 💳</span>`;
+    b.innerHTML = `<span class="btn-label">${o.label}${o.disabled?' '+ic('check',15):''}</span><span style="font-weight:700;display:inline-flex;align-items:center;gap:4px;">${o.cost} ${ic('card',14)}</span>`;
     if(o.disabled){ b.disabled = true; }
     else b.addEventListener('click', ()=>promoteListing(o.type, o.cost, b));
     box.appendChild(b);
@@ -3295,9 +3380,9 @@ async function openBrokerProfile(agentUid){
     const verified = a.verified===true;
     card.innerHTML = `
       <div style="display:flex;align-items:center;gap:14px;">
-        <div class="avatar" style="font-size:26px;">👔</div>
+        <div class="avatar">${ic('briefcase',26)}</div>
         <div style="min-width:0;">
-          <div style="font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${esc(a.name||t('ownerAgent'))} ${verified?`<span class="badge badge-verified">✓ ${t('verified')}</span>`:''}</div>
+          <div style="font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${esc(a.name||t('ownerAgent'))} ${verified?`<span class="badge badge-verified">${ic('check',13)} ${t('verified')}</span>`:''}</div>
           <div style="margin-top:4px;">${renderStars(avg)} <span style="font-size:13px;color:var(--text-dim);">${avg.toFixed(1)} · ${cnt} ${t('reviewsCount')}</span></div>
         </div>
       </div>
@@ -3305,7 +3390,7 @@ async function openBrokerProfile(agentUid){
         <div class="stat-box"><b>${a.dealsCount||0}</b><small>${t('dealsLabel')}</small></div>
         <div class="stat-box"><b>${esc(a.district||'—')}</b><small>${t('agentDistrictLabel')}</small></div>
       </div>
-      ${a.phone ? `<button class="btn btn-secondary" id="brokerCallBtn" style="margin-top:14px;"><span class="btn-label">📞 ${t('contactBtn')}</span></button>` : ''}`;
+      ${a.phone ? `<button class="btn btn-secondary" id="brokerCallBtn" style="margin-top:14px;"><span class="btn-label">${ic('phone',16)} ${t('contactBtn')}</span></button>` : ''}`;
     const cb = $('brokerCallBtn');
     if(cb) cb.addEventListener('click', ()=>{ contactPhone=a.phone||''; contactListing=null; showContactDefault(); $('contactPhoneDisplay').textContent=contactPhone; openSheet('contactSheet'); });
     const rbox = $('brokerReviews');
@@ -3452,8 +3537,8 @@ async function loadPendingVerifications(){
       const card = document.createElement('div'); card.className='req-card';
       card.innerHTML = `
         <div style="font-weight:600;">${esc(u.agentName || u.email || u.uid)}</div>
-        <div class="rc-meta">📍 ${esc(u.agentDistrict||'—')} · 📞 ${esc(u.phone||'—')}</div>
-        <div class="rc-note">🪪 ${esc(v.passport||'—')} · ${esc(v.address||'—')}</div>
+        <div class="rc-meta">${ic('pin',13)} ${esc(u.agentDistrict||'—')} · ${ic('phone',13)} ${esc(u.phone||'—')}</div>
+        <div class="rc-note">${ic('card',14)} ${esc(v.passport||'—')} · ${esc(v.address||'—')}</div>
         <div class="rc-actions" style="display:flex;gap:8px;">
           <button class="btn btn-primary btn-sm adm-approve"><span class="btn-label">${t('admApprove')}</span></button>
           <button class="btn btn-outline btn-sm adm-reject"><span class="btn-label">${t('admReject')}</span></button>
@@ -3546,7 +3631,7 @@ async function loadAdminTopups(){
     if(items.length===0){ el.innerHTML = `<div class="center-note">${t('admNoTopups')}</div>`; return; }
     el.innerHTML = '';
     items.forEach(u=>{
-      const label = u.premium ? ('⭐ '+t('brokerPlanPremium')) : (u.credits+' '+t('creditsUnit'));
+      const label = u.premium ? (ic('star',13)+' '+t('brokerPlanPremium')) : (u.credits+' '+t('creditsUnit'));
       const card = document.createElement('div'); card.className='req-card';
       card.innerHTML = `
         <div style="font-weight:600;">${esc(u.brokerName||u.brokerUid)}</div>
@@ -3591,7 +3676,7 @@ async function loadAdminCancellations(){
       card.innerHTML = `
         <div style="font-weight:600;">${esc(c.brokerName||c.brokerUid)}</div>
         <div class="rc-meta">${esc(c.requestSummary||'—')}</div>
-        <div class="rc-note">💬 ${esc(c.reason||'')}</div>
+        <div class="rc-note">${ic('message',14)} ${esc(c.reason||'')}</div>
         <div class="rc-actions" style="display:flex;gap:8px;">
           <button class="btn btn-primary btn-sm ac-approve"><span class="btn-label">${t('admCancelApprove')}</span></button>
           <button class="btn btn-outline btn-sm ac-reject"><span class="btn-label">${t('admReject')}</span></button>
@@ -3695,19 +3780,19 @@ function notifyNewCancellation(d){
   if(document.hidden && 'Notification' in window && Notification.permission==='granted'){
     try{ new Notification('🚫 '+t('admCancelsTitle'), { body: msg, icon:'icon.svg', tag:'nm-cancel' }); }catch(e){}
   }else{
-    toast('🚫 '+msg, 'error');
+    toast(msg, 'error');
   }
 }
 
 function notifyNewTopup(d){
   const who = d.brokerName || t('admTopupsTitle');
-  const what = d.premium ? ('⭐ '+t('brokerPlanPremium')) : ((d.credits||0)+' '+t('creditsUnit'));
+  const what = d.premium ? t('brokerPlanPremium') : ((d.credits||0)+' '+t('creditsUnit'));
   const amount = d.amount ? (' · '+d.amount+' '+t('priceSom')) : '';
   playPing();
   if(document.hidden && 'Notification' in window && Notification.permission==='granted'){
     try{ new Notification('💳 '+t('admTopupsTitle'), { body: who+' — '+what+amount, icon:'icon.svg', tag:'nm-topup' }); }catch(e){}
   }else{
-    toast('💳 '+who+' — '+what+amount, 'success');
+    toast(who+' — '+what+amount, 'success');
   }
 }
 
@@ -3760,7 +3845,7 @@ async function initAdminPush(){
     messaging.onMessage((payload)=>{
       const n = (payload && (payload.notification||payload.data)) || {};
       playPing();
-      toast('💳 ' + (n.title||t('admTopupsTitle')) + (n.body?(' — '+n.body):''), 'success');
+      toast((n.title||t('admTopupsTitle')) + (n.body?(' — '+n.body):''), 'success');
       const adm = $('screen-admin');
       if(adm && adm.classList.contains('active')) loadAdminTopups();
     });
@@ -3776,7 +3861,7 @@ function renderPostLocReadout(){
   const el = $('postLocReadout');
   const btnLabel = $('postPickLocationBtn').querySelector('.btn-label');
   if(pickedLat!=null && pickedLng!=null){
-    el.innerHTML = `<span class="loc-chip">📍 ${pickedLat.toFixed(5)}, ${pickedLng.toFixed(5)}</span>`;
+    el.innerHTML = `<span class="loc-chip">${ic('pin',13)} ${pickedLat.toFixed(5)}, ${pickedLng.toFixed(5)}</span>`;
     btnLabel.textContent = t('mapChange');
   }else{
     el.innerHTML = '';
@@ -3939,7 +4024,7 @@ function notifyNewMessage(c){
   if(document.hidden && 'Notification' in window && Notification.permission==='granted'){
     try{ new Notification(t('notifNewMsg'), { body, icon:'icon.svg' }); }catch(e){}
   }else if(!$('chatThreadModal').classList.contains('active')){
-    toast('💬 ' + t('notifNewMsg') + (body?(': '+body.slice(0,40)):''));
+    toast(t('notifNewMsg') + (body?(': '+body.slice(0,40)):''));
   }
 }
 
@@ -3958,15 +4043,15 @@ function otherOf(c){
   return { uid:oid, label: info.label || '—', kind: info.kind };
 }
 function avatarFor(other){
-  if(other.kind==='agent') return '👔';
-  if(other.kind==='owner') return '🔑';
-  return (other.label||'?').charAt(0).toUpperCase();
+  if(other.kind==='agent') return ic('briefcase',22);
+  if(other.kind==='owner') return ic('key',22);
+  return esc((other.label||'?').charAt(0).toUpperCase());
 }
 
 function renderConversationList(convs){
   const container = $('chatListContainer');
   if(!convs || convs.length===0){
-    container.innerHTML = `<div class="empty-state"><div class="ic">💬</div><div class="title">${t('chatEmpty')}</div><div class="sub">${t('chatEmptySub')}</div></div>`;
+    container.innerHTML = `<div class="empty-state"><div class="ic">${ic('message',44)}</div><div class="title">${t('chatEmpty')}</div><div class="sub">${t('chatEmptySub')}</div></div>`;
     return;
   }
   container.innerHTML = '';
@@ -3993,7 +4078,7 @@ async function openThread(cid){
   if(!c){ try{ const d = await db.collection('chats').doc(cid).get(); if(d.exists) c={id:d.id,...d.data()}; }catch(e){} }
   if(!c){ toast(t('error')); return; }
   const other = otherOf(c);
-  $('chatHeadAvatar').textContent = avatarFor(other);
+  $('chatHeadAvatar').innerHTML = avatarFor(other);
   $('chatHeadName').textContent = other.label;
   $('chatHeadSub').textContent = c.listingSnapshot ? (c.listingSnapshot.region+', '+c.listingSnapshot.district) : '';
 
@@ -4002,8 +4087,8 @@ async function openThread(cid){
   if(s){
     ref.style.display='flex';
     ref.innerHTML = `${s.photo?`<img src="${esc(s.photo)}" alt="">`:`<div class="noimg">${propIcon(s.propertyType)}</div>`}
-      <div class="cr-info"><div class="cr-price">${fmtPrice(s.price)}</div><div class="cr-loc">📍 ${esc(s.region)}, ${esc(s.district)}</div></div>
-      <span style="color:var(--text-faint);font-size:18px;">›</span>`;
+      <div class="cr-info"><div class="cr-price">${fmtPrice(s.price)}</div><div class="cr-loc">${ic('pin',13)} ${esc(s.region)}, ${esc(s.district)}</div></div>
+      <span style="color:var(--text-faint);display:inline-flex;">${ic('chevron-right',18)}</span>`;
     ref.onclick = ()=>openListingById(c.listingId);
   }else{ ref.style.display='none'; }
 
@@ -4022,7 +4107,7 @@ async function openThread(cid){
 
 function renderMessages(msgs){
   const box = $('chatMsgs');
-  if(!msgs.length){ box.innerHTML = `<div class="empty-state" style="padding:30px;"><div class="ic">💬</div><div class="sub">${t('msgEmpty')}</div></div>`; return; }
+  if(!msgs.length){ box.innerHTML = `<div class="empty-state" style="padding:30px;"><div class="ic">${ic('message',40)}</div><div class="sub">${t('msgEmpty')}</div></div>`; return; }
   let html=''; let lastDay='';
   msgs.forEach(m=>{
     const out = m.senderUid===currentUser.uid;
@@ -4242,7 +4327,7 @@ function renderBrokerWallet(){
   const c = $('brokerCredits'); if(c) c.textContent = brokerCredits();
   const badge = $('brokerPlanBadge');
   if(badge){
-    if(brokerIsPremium()){ badge.textContent = '⭐ '+t('brokerPlanPremium'); badge.className='badge badge-verified'; }
+    if(brokerIsPremium()){ badge.innerHTML = ic('star',13)+' '+esc(t('brokerPlanPremium')); badge.className='badge badge-verified'; }
     else{ badge.textContent = t('brokerPlanFree'); badge.className='badge badge-owner'; }
   }
 }
@@ -4301,38 +4386,38 @@ async function loadAgentRequests(){
       let actionHtml;
       if(matchedToMe){
         const cancelHtml = pendingCancels.has(r.id)
-          ? `<div class="rc-cancel-pending" style="flex:1;text-align:center;color:#e6a23c;font-size:12.5px;font-weight:600;">⏳ ${t('cancelPending')}</div>`
-          : `<button class="btn btn-outline btn-sm rq-cancel" style="flex:1;"><span class="btn-label">🚫 ${t('cancelReqBtn')}</span></button>`;
-        actionHtml = `<div class="rc-accepted">✅ ${t('offerMatchedBroker')}${r.agreedFeePct?(' · '+r.agreedFeePct+'%'):''}</div>
+          ? `<div class="rc-cancel-pending" style="flex:1;text-align:center;color:#e6a23c;font-size:12.5px;font-weight:600;">${ic('clock',13)} ${t('cancelPending')}</div>`
+          : `<button class="btn btn-outline btn-sm rq-cancel" style="flex:1;"><span class="btn-label">${ic('ban',15)} ${t('cancelReqBtn')}</span></button>`;
+        actionHtml = `<div class="rc-accepted">${ic('check',14)} ${t('offerMatchedBroker')}${r.agreedFeePct?(' · '+r.agreedFeePct+'%'):''}</div>
           <div style="display:flex;gap:8px;align-items:center;">
-            <button class="btn btn-secondary btn-sm rq-call" style="flex:1;"><span class="btn-label">📞 ${t('contactBtn')}</span></button>
+            <button class="btn btn-secondary btn-sm rq-call" style="flex:1;"><span class="btn-label">${ic('phone',16)} ${t('contactBtn')}</span></button>
             ${cancelHtml}
           </div>`;
       }else if(r._iAccepted){
         const cancelHtml = pendingCancels.has(r.id)
-          ? `<div class="rc-cancel-pending" style="color:#e6a23c;font-size:12.5px;font-weight:600;">⏳ ${t('cancelPending')}</div>`
-          : `<button class="btn btn-outline btn-sm rq-cancel"><span class="btn-label">🚫 ${t('cancelReqBtn')}</span></button>`;
-        actionHtml = `<div class="rc-accepted rc-pending-offer">⏳ ${t('offerPending')}</div>
+          ? `<div class="rc-cancel-pending" style="color:#e6a23c;font-size:12.5px;font-weight:600;">${ic('clock',13)} ${t('cancelPending')}</div>`
+          : `<button class="btn btn-outline btn-sm rq-cancel"><span class="btn-label">${ic('ban',15)} ${t('cancelReqBtn')}</span></button>`;
+        actionHtml = `<div class="rc-accepted rc-pending-offer">${ic('clock',14)} ${t('offerPending')}</div>
           ${cancelHtml}`;
       }else if(matchedToOther){
         actionHtml = `<button class="btn btn-outline btn-sm" disabled><span class="btn-label">${t('offerClosed')}</span></button>`;
       }else if(full){
         actionHtml = `<button class="btn btn-outline btn-sm" disabled><span class="btn-label">${t('reqTaken')}</span></button>`;
       }else{
-        actionHtml = `<button class="btn btn-primary btn-sm rq-offer"><span class="btn-label">${t('reqSendOfferBtn')}</span></button>`;
+        actionHtml = `<button class="btn btn-primary btn-sm rq-offer"><span class="btn-label">${ic('briefcase',15)} ${t('reqSendOfferBtn')}</span></button>`;
       }
-      const countHtml = r._count>0 ? `<div class="rc-count">👤 ${r._count} ${t('reqBrokersJoined')}</div>` : '';
+      const countHtml = r._count>0 ? `<div class="rc-count">${ic('users',13)} ${r._count} ${t('reqBrokersJoined')}</div>` : '';
 
       card.innerHTML = `
         <div class="rc-top">
           <div class="rc-badges">
             <span class="badge ${r.dealType==='sale'?'badge-sale':'badge-rent'}">${dealLabel}</span>
-            <span class="badge badge-owner">${propIcon(r.propertyType)} ${t(propKey)}</span>
-            ${r._match?`<span class="badge badge-verified">📍 ${t('reqYourArea')}</span>`:''}
+            <span class="badge badge-owner">${propIcon(r.propertyType,13)} ${t(propKey)}</span>
+            ${r._match?`<span class="badge badge-verified">${ic('pin',13)} ${t('reqYourArea')}</span>`:''}
           </div>
           <span class="rc-budget">${budget}</span>
         </div>
-        <div class="rc-meta">📍 ${esc(r.region)} ${r.rooms?('· '+r.rooms+t('roomsSuffix')):''} · <span class="rc-time">${timeAgo(r.createdAt)}</span></div>
+        <div class="rc-meta">${ic('pin',13)} ${esc(r.region)} ${r.rooms?('· '+r.rooms+t('roomsSuffix')):''} · <span class="rc-time">${timeAgo(r.createdAt)}</span></div>
         ${r.note ? `<div class="rc-note">${esc(r.note)}</div>` : ''}
         ${countHtml}
         <div class="rc-actions">${actionHtml}</div>`;
@@ -4403,7 +4488,7 @@ async function loadAgentCancellations(){
           <div style="font-weight:600;">${esc(c.requestSummary||'—')}</div>
           <span class="badge ${stCls}">${t(stKey)}</span>
         </div>
-        <div class="rc-note">💬 ${esc(c.reason||'')}</div>
+        <div class="rc-note">${ic('message',14)} ${esc(c.reason||'')}</div>
         <div class="rc-meta">${timeAgo(c.createdAt)}</div>`;
       box.appendChild(card);
     });
@@ -4445,7 +4530,7 @@ function openOfferSheet(r){
       <div class="rc-badges"><span class="badge ${r.dealType==='sale'?'badge-sale':'badge-rent'}">${dealLabel}</span></div>
       <span class="rc-budget">${budget}</span>
     </div>
-    <div class="rc-meta">📍 ${esc(r.region||'')}</div>`;
+    <div class="rc-meta">${ic('pin',13)} ${esc(r.region||'')}</div>`;
   $('offerCapNote').innerHTML = t('offerMaxNote').replace('{pct}', maxP);
   const inp = $('offerPct');
   inp.max = maxP; inp.value = maxP;
@@ -4553,9 +4638,9 @@ async function loadMyRequests(){
       let offersHtml;
       if(matched){
         offersHtml = `<div class="offer-row offer-matched">
-          <div><b>✅ ${t('myReqMatched')}</b>
+          <div><b>${ic('check',14)} ${t('myReqMatched')}</b>
             <div class="rc-meta">${t('myReqAgreedFee')}: ${r.agreedFeePct||'—'}%${r.agreedFeeAmount?(' · '+fmtPrice(r.agreedFeeAmount)):''}</div></div>
-          <button class="btn btn-secondary btn-sm mr-contact" data-broker="${esc(r.matchedBroker)}"><span class="btn-label">📞 ${t('contactBtn')}</span></button>
+          <button class="btn btn-secondary btn-sm mr-contact" data-broker="${esc(r.matchedBroker)}"><span class="btn-label">${ic('phone',16)} ${t('contactBtn')}</span></button>
         </div>`;
       }else{
         let offers = [];
@@ -4565,13 +4650,13 @@ async function loadMyRequests(){
         }catch(e){}
         offers.sort((a,b)=> (a.feePct||0) - (b.feePct||0));   // arzon taklif yuqorida
         if(offers.length === 0){
-          offersHtml = `<div class="center-note" style="text-align:left;margin-top:8px;">⏳ ${t('myReqWaiting')}</div>`;
+          offersHtml = `<div class="center-note" style="text-align:left;margin-top:8px;">${ic('clock',14)} ${t('myReqWaiting')}</div>`;
         }else{
           offersHtml = offers.map(o=>`
             <div class="offer-row">
               <div>
                 <b>${esc(o.brokerName||t('ownerAgent'))}</b>
-                <div class="rc-meta">💼 ${o.feePct}%${o.feeAmount?(' · '+fmtPrice(o.feeAmount)):''}${o.brokerDistrict?(' · 📍 '+esc(o.brokerDistrict)):''}</div>
+                <div class="rc-meta">${ic('briefcase',13)} ${o.feePct}%${o.feeAmount?(' · '+fmtPrice(o.feeAmount)):''}${o.brokerDistrict?(' · '+ic('pin',13)+' '+esc(o.brokerDistrict)):''}</div>
                 ${o.note?`<div class="rc-note">${esc(o.note)}</div>`:''}
               </div>
               <button class="btn btn-primary btn-sm mr-approve" data-broker="${esc(o.brokerUid)}" data-pct="${o.feePct}" data-amt="${o.feeAmount!=null?o.feeAmount:''}"><span class="btn-label">${t('myReqApproveBtn')}</span></button>
@@ -4587,7 +4672,7 @@ async function loadMyRequests(){
           </div>
           <span class="rc-budget">${budget}</span>
         </div>
-        <div class="rc-meta">📍 ${esc(r.region||'')} ${r.rooms?('· '+r.rooms+t('roomsSuffix')):''} · <span class="rc-time">${timeAgo(r.createdAt)}</span></div>
+        <div class="rc-meta">${ic('pin',13)} ${esc(r.region||'')} ${r.rooms?('· '+r.rooms+t('roomsSuffix')):''} · <span class="rc-time">${timeAgo(r.createdAt)}</span></div>
         ${r.note?`<div class="rc-note">${esc(r.note)}</div>`:''}
         <div class="mr-offers">${offersHtml}</div>`;
       card.querySelectorAll('.mr-approve').forEach(b=>{
@@ -4771,6 +4856,7 @@ async function deleteDemoListings(btn){
 }
 
 /* ============ INIT ============ */
+hydrateIcons();
 applyLanguage(currentLang);
 setCurrency(currentCurrency);
 renderPostLocReadout();
