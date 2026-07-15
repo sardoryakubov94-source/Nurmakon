@@ -15,9 +15,9 @@
   <!-- Maskable ikonka: fon chekka-chekkasiga qadar to'liq (OS o'zi doira/boshqa shaklga kesadi) -->
   <rect width="160" height="160" fill="url(#bg)"/>
 
-  <!-- Uycha + lupa logotipi, markazda, xavfsiz zonada (kesilmaydigan hudud) -->
-  <g transform="translate(10,17)" fill="none" stroke="url(#hg)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M40 100 L40 64 L54 64 L54 80 L40 80 L40 64 L40 60 Q40 54 46 54 L86 54 Q92 54 92 60 L92 100 Q92 106 86 106 L46 106 Q40 106 40 100 Z"/>
+  <!-- Uycha + lupa logotipi, kattalashtirilgan va derazasiz -->
+  <g transform="translate(-4,4) scale(1.16)" fill="none" stroke="url(#hg)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 60 Q40 54 46 54 L86 54 Q92 54 92 60 L92 100 Q92 106 86 106 L46 106 Q40 106 40 100 Z"/>
     <path d="M66 30 L26 58"/>
     <path d="M66 30 L106 58"/>
     <path d="M86 68 A16 16 0 1 1 85.99 68"/>
