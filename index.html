@@ -8321,10 +8321,19 @@ async function initAdminPush(){
     let perm = Notification.permission;
     if(perm === 'default') perm = await Notification.requestPermission();
     if(perm !== 'granted') return;
-    // Firebase 'firebase-messaging-sw.js' ni o'z maxsus scope'ida avtomatik
-    // ro'yxatdan o'tkazadi (asosiy sw.js bilan to'qnashmaydi).
+    // MUHIM TUZATISH: avval bu yerda alohida 'firebase-messaging-sw.js'
+    // avtomatik ro'yxatdan o'tkazilar edi — lekin u aslida asosiy sw.js bilan
+    // BIR XIL '/' scope'da ro'yxatdan o'tar edi (Firebase buni "maxsus scope"
+    // deb hujjatlashtirmagan, bu noto'g'ri taxmin edi). Ikkita Service Worker
+    // bitta scope uchun kurashganda, FCM SW faollashgan payt 'controllerchange'
+    // hodisasi qayta otilib, sahifa kutilmagan vaqtda (masalan foydalanuvchi
+    // formani to'ldirayotganda) qayta yuklanib, forma tozalanib qolardi.
+    // Endi FCM logikasi sw.js ichiga birlashtirilgan (importScripts orqali),
+    // shuning uchun bu yerda YANGI SW ro'yxatga olinmaydi — mavjud sw.js
+    // registration'ining o'zi ishlatiladi.
+    const swReg = await navigator.serviceWorker.ready;
     const messaging = firebase.messaging();
-    const token = await messaging.getToken({ vapidKey: PUSH_VAPID_KEY });
+    const token = await messaging.getToken({ vapidKey: PUSH_VAPID_KEY, serviceWorkerRegistration: swReg });
     if(token){
       await db.collection('adminConfig').doc('push').set({
         tokens: firebase.firestore.FieldValue.arrayUnion(token),
