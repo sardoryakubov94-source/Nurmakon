@@ -2,7 +2,7 @@
    NurMakon — Service Worker (PWA offline support)
    v2: HTML uchun network-first (yangilanishlar darhol ko'rinadi)
    ============================================================ */
-const CACHE = 'nurmakon-v2';
+const CACHE = 'nurmakon-v3';
 const APP_SHELL = [
   './',
   './index.html',
