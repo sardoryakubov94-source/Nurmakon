@@ -1,0 +1,367 @@
+rules_version = '2';
+
+// ==========================================================
+// NurMakon — Firestore Security Rules
+// Deploy: Firebase Console → Firestore Database → Rules → Publish
+// Yoki CLI: firebase deploy --only firestore:rules
+// ============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---- Helper functions ----
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+    // Admin: users/{uid} hujjatida isAdmin == true bo'lsa.
+    // Buni faqat Firebase Console orqali qo'lda o'rnatasiz.
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // ---- User self-update guards (tekin himoya; to'liq himoya keyin Cloud Functions) ----
+    // Egasi o'zining balansini (credits) OSHIRA olmaydi — faqat kamaytira oladi
+    // (spendCredits). Ikkita QATTIQ BELGILANGAN istisno bor, ikkalasi ham bir
+    // martalik bayroq orqali himoyalangan (bayroq false/yo'qdan true'ga o'tayotgan
+    // aynan shu yozuvdagina ishlaydi, va faqat aniq miqdorga oshishga ruxsat beradi):
+    //   1) welcomeBonusGiven: false→true  =>  credits +3  (ro'yxatdan o'tish bonusi)
+    //   2) agentBonusGiven:   false→true  =>  credits +2  (makler bo'lish bonusi, 3+2=5)
+    // Boshqa har qanday holatda credits FAQAT kamayishi yoki teng qolishi mumkin.
+    // MUHIM: credits FieldValue.increment() bilan yozilsa, u request.resource.data
+    // ichida ko'rinmaydi. Shuning uchun egasi uchun credits DOIM oddiy son bo'lishi
+    // shart qilinadi — bu increment orqali chetlab o'tishni ham bloklaydi.
+    // (Ilovada spendCredits() endi absolyut son yozadi, increment emas.)
+    function ownerCreditsOk() {
+      let hadCredits = 'credits' in resource.data;
+      let prevCredits = hadCredits ? resource.data.credits : 0;
+      let hasNewCredits = 'credits' in request.resource.data;
+      let newCredits = hasNewCredits ? request.resource.data.credits : prevCredits;
+
+      let hadWelcome = ('welcomeBonusGiven' in resource.data) && resource.data.welcomeBonusGiven == true;
+      let setsWelcome = ('welcomeBonusGiven' in request.resource.data) && request.resource.data.welcomeBonusGiven == true;
+      let isWelcomeBonus = !hadWelcome && setsWelcome && newCredits == prevCredits + 3;
+
+      let hadAgentBonus = ('agentBonusGiven' in resource.data) && resource.data.agentBonusGiven == true;
+      let setsAgentBonus = ('agentBonusGiven' in request.resource.data) && request.resource.data.agentBonusGiven == true;
+      let isAgentBonus = !hadAgentBonus && setsAgentBonus && newCredits == prevCredits + 2;
+
+      return newCredits is number
+        && (isWelcomeBonus || isAgentBonus || newCredits <= prevCredits);
+    }
+    // Bonus bayroqlari (welcomeBonusGiven / agentBonusGiven) bir marta true bo'lgach,
+    // egasi ularni orqaga (false'ga yoki yo'qqa) qaytara olmaydi — aks holda bayroqni
+    // qayta-qayta false↔true qilib, bonusni cheksiz olish mumkin bo'lardi.
+    function ownerBonusFlagsOk() {
+      return (
+        !(('welcomeBonusGiven' in resource.data) && resource.data.welcomeBonusGiven == true)
+        || (('welcomeBonusGiven' in request.resource.data) && request.resource.data.welcomeBonusGiven == true)
+      ) && (
+        !(('agentBonusGiven' in resource.data) && resource.data.agentBonusGiven == true)
+        || (('agentBonusGiven' in request.resource.data) && request.resource.data.agentBonusGiven == true)
+      );
+    }
+    // Egasi o'zini 'premium' qila olmaydi — buni faqat admin (to'lov tasdiqlangach) qiladi.
+    function ownerPlanOk() {
+      return !('plan' in request.resource.data)
+        || request.resource.data.plan != 'premium'
+        || ('plan' in resource.data && resource.data.plan == 'premium');
+    }
+    // Egasi o'zini admin qila olmaydi (imtiyoz oshirishni bloklaymiz).
+    function ownerAdminOk() {
+      return (('isAdmin' in resource.data) ? resource.data.isAdmin : false)
+          == (('isAdmin' in request.resource.data) ? request.resource.data.isAdmin : false);
+    }
+
+    // Basic listing payload validation
+    // MUHIM TUZATISH: status enum ro'yxatiga 'pending' va 'rejected' qo'shildi.
+    // Ilova yangi e'lon yaratganda status='pending' yozadi (moderatsiyaga tushadi),
+    // admin esa uni 'active' yoki 'rejected' qiladi. Avvalgi qoidada faqat
+    // ['active','archived','sold'] ruxsat etilgan edi — shu sabab yangi e'lonlar
+    // yaratilganda create rad etilib, e'lon saqlanmasdi.
+    function validListing() {
+      let d = request.resource.data;
+      return d.price is number && d.price >= 0
+        && d.region is string && d.region.size() > 0
+        && d.district is string && d.district.size() > 0
+        && d.dealType in ['sale', 'rent', 'daily', 'hotel']
+        && d.status in ['pending', 'active', 'archived', 'sold', 'rejected'];
+    }
+
+    // ---- Users ----
+    // Har bir foydalanuvchi faqat o'z hujjatini o'qiy/yozadi.
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      // Admin hamma narsani o'zgartiradi. Egasi esa o'z hujjatini o'zgartiradi,
+      // LEKIN balans (credits), reja (plan) va admin huquqini (isAdmin) o'zi
+      // ko'tara olmaydi — bu firibgarlik va imtiyoz oshirishning oldini oladi.
+      // Bonus bayroqlari ham (ownerBonusFlagsOk) qayta ishlatib bo'lmaydigan
+      // qilib himoyalangan.
+      allow create: if isOwner(userId);
+      allow update: if isAdmin() || (
+        isOwner(userId)
+        && ownerCreditsOk()
+        && ownerBonusFlagsOk()
+        && ownerPlanOk()
+        && ownerAdminOk()
+      );
+      allow delete: if false;
+
+      // Sevimlilar: faqat egasiga tegishli.
+      match /favorites/{favId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // ---- Listings ----
+    // Barcha (mehmonlar ham) faol e'lonlarni o'qiy oladi.
+    // Faqat muallif yaratadi/tahrirlaydi/o'chiradi.
+    match /listings/{listingId} {
+      allow read: if true;
+
+      allow create: if isSignedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && validListing();
+
+      // Muallif to'liq tahrirlashi mumkin.
+      // Boshqalar faqat 'views' hisoblagichini +1 oshira oladi.
+      // Admin listing holatini (status: active/rejected — moderatsiya) o'zgartira oladi.
+      allow update: if
+        (isOwner(resource.data.ownerUid) && validListing())
+        || (
+          isSignedIn()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views'])
+          && request.resource.data.views == resource.data.views + 1
+        )
+        || (
+          isAdmin()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        );
+
+      allow delete: if isOwner(resource.data.ownerUid) || isAdmin();
+    }
+
+    // ---- Agents ----
+    match /agents/{agentId} {
+      allow read: if true;
+      allow create: if isOwner(agentId);
+      // Egasi tahrirlaydi (verified'dan tashqari); admin verified'ni o'rnatadi;
+      // baholovchi faqat rating yig'indisini (ratingSum/ratingCount) yangilaydi.
+      allow update: if
+        (isOwner(agentId) && request.resource.data.verified == resource.data.verified)
+        || isAdmin()
+        || (
+          isSignedIn()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ratingSum','ratingCount'])
+          && request.resource.data.verified == resource.data.verified
+        );
+      allow delete: if isOwner(agentId) || isAdmin();
+
+      // Sharhlar: har foydalanuvchi bitta sharh (hujjat IDsi = baholovchi uid).
+      match /reviews/{reviewerId} {
+        allow read: if true;
+        allow create, update: if isSignedIn() && request.auth.uid == reviewerId;
+        allow delete: if isSignedIn() && (request.auth.uid == reviewerId || isAdmin());
+      }
+    }
+
+    // ---- Config (ishonch telefoni va boshqa umumiy sozlamalar) ----
+    // Hamma o'qiy oladi (masalan, ishonch telefoni); faqat admin yozadi.
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---- Admin config (push bildirishnoma tokenlari va h.k.) ----
+    // Faqat admin o'qiydi/yozadi. Push yuboruvchi server (Cloudflare Worker)
+    // bu hujjatni service account orqali o'qiydi (qoidalarni chetlab o'tadi).
+    match /adminConfig/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    // ---- Stories (Bosh sahifa istoriyalari — Telegram uslubidagi dumaloq rasm/video) ----
+    // Hamma (mehmonlar ham) faol istoriyalarni o'qiy oladi (bosh sahifada ko'rinishi uchun);
+    // qo'shish, faollashtirish/o'chirish (active toggle) va o'chirish faqat admin ixtiyorida.
+    match /stories/{storyId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ---- Notifications (foydalanuvchiga yuboriladigan bildirishnomalar) ----
+    // Admin (masalan, e'lon tasdiqlanganda/rad etilganda) VA egasining o'zi
+    // (masalan, ro'yxatdan o'tish/kredit bonusi, "ko'rib chiqilmoqda", TOP/VIP
+    // muddati tugashi kabi ilova-ichi hodisalarda o'ziga bildirishnoma yozganda)
+    // yaratishi mumkin — lekin faqat o'z uid'i nomidan.
+    match /notifications/{notifId} {
+      allow create: if isAdmin() || (
+        isSignedIn() && request.resource.data.uid == request.auth.uid
+      );
+      allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
+      // Egasi faqat 'read' bayrog'ini o'zgartira oladi (boshqa maydonlarga tegmaydi).
+      allow update: if isAdmin() || (
+        isSignedIn()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read'])
+      );
+      allow delete: if isAdmin();
+    }
+
+    // ---- Support messages (foydalanuvchi murojaatlari) ----
+    // Kirgan foydalanuvchi o'z nomidan yozadi; faqat admin o'qiydi/boshqaradi.
+    match /supportMessages/{msgId} {
+      allow create: if isSignedIn()
+        && request.resource.data.senderUid == request.auth.uid;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ---- Top-ups (balans to'ldirish so'rovlari) ----
+    // Makler o'z nomidan so'rov yaratadi ('pending'); tasdiqlashni faqat admin bajaradi.
+    // Eslatma: balansni o'zi oshirishning oldi 'users' qoidalari (ownerCreditsOk)
+    // orqali olindi. To'liq server-side himoya uchun kelajakda Cloud Functions mumkin.
+    match /topups/{topupId} {
+      allow create: if isSignedIn()
+        && request.resource.data.brokerUid == request.auth.uid
+        && request.resource.data.status == 'pending';
+      allow read: if isSignedIn()
+        && (resource.data.brokerUid == request.auth.uid || isAdmin());
+      allow update, delete: if isAdmin();
+    }
+
+    // ---- Cancellations (makler so'rovni bekor qilish so'rovlari) ----
+    // Makler o'z nomidan bekor qilish so'rovi yaratadi ('pending') + sabab majburiy.
+    // Tasdiqlashni FAQAT admin bajaradi (u so'rovni qayta ochadi va reytingga jarima qo'yadi).
+    match /cancellations/{cid} {
+      allow create: if isSignedIn()
+        && request.resource.data.brokerUid == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.reason is string
+        && request.resource.data.reason.size() >= 3;
+      allow read: if isSignedIn()
+        && (resource.data.brokerUid == request.auth.uid || isAdmin());
+      allow update, delete: if isAdmin();
+    }
+
+    // ---- Chats ----
+    // Faqat suhbat ishtirokchilari kira oladi.
+    // Ishtirokchilar suhbatni o'zi uchun ro'yxatdan yashira oladi (hiddenFor maydoni
+    // orqali arrayUnion/arrayRemove) — bu ham 'update' huquqi doirasida, chunki
+    // yozuvchi baribir ishtirokchilardan biri bo'lishi shart.
+    match /chats/{chatId} {
+      allow read: if isSignedIn() && request.auth.uid in resource.data.participants;
+      allow create: if isSignedIn()
+        && request.auth.uid in request.resource.data.participants
+        && request.resource.data.participants.size() == 2;
+      allow update: if isSignedIn() && request.auth.uid in resource.data.participants;
+      allow delete: if false;
+
+      // Xabarlar: faqat ishtirokchilar o'qiydi; yuboruvchi o'zi yozadi.
+      match /messages/{messageId} {
+        allow read: if isSignedIn()
+          && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
+        allow create: if isSignedIn()
+          && request.resource.data.senderUid == request.auth.uid
+          && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
+        allow update, delete: if false;
+      }
+    }
+
+    // ---- Contact logs (analitika) ----
+    // Faqat kirgan foydalanuvchi o'z nomidan yozadi; hech kim o'qiy olmaydi.
+    match /contactLogs/{logId} {
+      allow create: if isSignedIn()
+        && request.resource.data.viewerUid == request.auth.uid;
+      allow read, update, delete: if false;
+    }
+
+    // ---- Client requests (mijoz so'rovlari / broker leads) ----
+    // Mijoz "makler yordamida" rejimida so'rov qoldiradi.
+    // O'qish: so'rov egasi yoki ro'yxatdan o'tgan makler (isAgent==true).
+    function isAgentUser() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAgent == true;
+    }
+    match /requests/{reqId} {
+      allow create: if isSignedIn()
+        && request.resource.data.requesterUid == request.auth.uid;
+      allow read: if isSignedIn()
+        && (resource.data.requesterUid == request.auth.uid || isAgentUser() || isAdmin());
+      // So'rov egasi (yoki admin) to'liq tahrirlaydi — jumladan mijoz maklerni
+      // tanlagach: matchedBroker/agreedFeePct/agreedFeeAmount/status='matched'.
+      // Makler faqat o'zini "taklif yubordim" ro'yxatiga qo'sha oladi
+      // (acceptedBy/acceptCount/status), limit = 3, status faqat 'open'/'offered'.
+      allow update: if isSignedIn() && (
+        resource.data.requesterUid == request.auth.uid
+        || isAdmin()
+        || (
+          isAgentUser()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['acceptedBy','acceptCount','status'])
+          && request.auth.uid in request.resource.data.acceptedBy
+          && request.resource.data.acceptedBy.size() <= 3
+          && request.resource.data.status in ['open','offered']
+        )
+        || (
+          // Kredit hisob-kitobi: mijoz taklifni qabul qilib bo'lgach (matchedBroker
+          // allaqachon shu makler bo'lsa), makler O'ZI paneliga kirganda shu bitim
+          // uchun kreditini yechadi va faqat shu bayroqni (creditCharged) false'dan
+          // true'ga o'zgartiradi — boshqa hech qanday maydonga tegmaydi.
+          isAgentUser()
+          && resource.data.matchedBroker == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['creditCharged'])
+          && resource.data.creditCharged != true
+          && request.resource.data.creditCharged == true
+        )
+      );
+      allow delete: if isSignedIn()
+        && (resource.data.requesterUid == request.auth.uid || isAdmin());
+
+      // ---- Maxfiy kontakt (telefon raqami) ----
+      // Faqat so'rov egasi, mijoz TANLAGAN (kelishilgan) makler va admin ko'radi.
+      // Shu sabab boshqa maklerlar mijoz raqamini ko'ra olmaydi.
+      match /private/{docId} {
+        allow read: if isSignedIn() && (
+          get(/databases/$(database)/documents/requests/$(reqId)).data.requesterUid == request.auth.uid
+          || get(/databases/$(database)/documents/requests/$(reqId)).data.matchedBroker == request.auth.uid
+          || isAdmin()
+        );
+        allow write: if isSignedIn()
+          && get(/databases/$(database)/documents/requests/$(reqId)).data.requesterUid == request.auth.uid;
+      }
+
+      // ---- Makler takliflari (komissiya/ish haqi) ----
+      // Hujjat IDsi = makler uid (har makler bitta taklif). Foiz manfiy emas va
+      // absolyut yuqori chegara 40% dan oshmaydi (aniq cheklov ilovada summaga qarab).
+      match /offers/{brokerUid} {
+        allow read: if isSignedIn() && (
+          get(/databases/$(database)/documents/requests/$(reqId)).data.requesterUid == request.auth.uid
+          || request.auth.uid == brokerUid
+          || isAdmin()
+        );
+        allow create: if isSignedIn()
+          && request.auth.uid == brokerUid
+          && isAgentUser()
+          && request.resource.data.brokerUid == request.auth.uid
+          && request.resource.data.status == 'pending'
+          && request.resource.data.feePct is number
+          && request.resource.data.feePct > 0
+          && request.resource.data.feePct <= 40;
+        // Makler o'z taklifini (pending) tahrirlaydi; so'rov egasi statusni
+        // 'accepted'/'declined' qila oladi (rozilik/rad).
+        allow update: if isSignedIn() && (
+          (request.auth.uid == brokerUid && request.resource.data.status == 'pending')
+          || (
+            get(/databases/$(database)/documents/requests/$(reqId)).data.requesterUid == request.auth.uid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+            && request.resource.data.status in ['accepted','declined']
+          )
+          || isAdmin()
+        );
+        allow delete: if isSignedIn() && (request.auth.uid == brokerUid || isAdmin());
+      }
+    }
+  }
+}
