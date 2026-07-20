@@ -5129,9 +5129,9 @@ function extractBlurredFrame(videoUrl, atSeconds){
    yo'qotmaydi, lekin fayl hajmi odatda 3-8 baravar kichrayadi.
    Brauzer qo'llab-quvvatlamasa yoki video allaqachon kichik bo'lsa — asl fayl
    o'zgarishsiz qaytariladi (funksiya hech qachon ilovani sindirmaydi). */
-const VIDEO_COMPRESS_MAX_DIM = 640;          // uzun tomon max piksel — kartochka juda kichik, shuncha yetadi
-const VIDEO_COMPRESS_BITRATE = 900000;       // ~0.9 Mbps — kichik kartochka uchun yetarli sifat
-const VIDEO_COMPRESS_SKIP_UNDER_MB = 6;      // video shundan kichik bo'lsa — siqishga hojat yo'q
+const VIDEO_COMPRESS_MAX_DIM = 720;          // uzun tomon max piksel — 720p yaxshi sifat va tezlikni muvozanatlaydi
+const VIDEO_COMPRESS_BITRATE = 1500000;      // ~1.5 Mbps — yaxshi sifat, tezlik bilan muvozanatlangan
+const VIDEO_COMPRESS_SKIP_UNDER_MB = 8;      // video shundan kichik bo'lsa — siqishga hojat yo'q
 const VIDEO_COMPRESS_TIMEOUT_MS = 75000;     // xavfsizlik: abadiy osilib qolmasin (max video 60s + zaxira)
 function pickVideoRecorderMime(){
   if(!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
