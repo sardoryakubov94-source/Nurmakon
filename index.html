@@ -1859,7 +1859,7 @@ body.is-pwa-app .story-scroll-hint {
 @media (min-width:1024px){
   :root{ --sbw:268px; --tbh:68px; }
 
-  html,body{ overflow-x:hidden; }
+  html,body{ overflow-x:hidden; overflow-y:auto !important; overscroll-behavior-y:auto !important; }
   body{ padding-bottom:0 !important; padding-left:var(--sbw); }
 
   /* ---------- 1) CHAP SIDEBAR — bottomnav shu yerga aylantiriladi ---------- */
@@ -7797,10 +7797,18 @@ async function refreshFavoritesScreen(){
   const lock = $('favoritesLoggedOut'); const container = $('favoritesContainer');
   if(!currentUser){ lock.classList.remove('hidden'); container.classList.add('hidden'); return; }
   lock.classList.add('hidden'); container.classList.remove('hidden');
-  container.innerHTML = `<div class="empty-state"><div class="ic">${ic('heart',44)}</div>${t('loading')}</div>`;
+  if(!cachedFavorites){
+    container.innerHTML = `<div class="empty-state"><div class="ic">${ic('heart',44)}</div>${t('loading')}</div>`;
+  } else {
+    renderFavoritesUI(cachedFavorites);
+  }
   try{
     const snap = await db.collection('users').doc(currentUser.uid).collection('favorites').orderBy('savedAt','desc').get();
-    if(snap.empty){ container.innerHTML = `<div class="empty-state"><div class="ic">${ic('heart',44)}</div><div class="title">${t('favEmpty')}</div><div class="sub">${t('favEmptySub')}</div></div>`; return; }
+    if(snap.empty){
+      cachedFavorites = [];
+      renderFavoritesUI([]);
+      return;
+    }
     const ids = []; snap.forEach(doc=>ids.push(doc.id));
     // Perf: sevimlilar ko'pincha allaqachon xotiradagi allListings ichida bor —
     // shunday bo'lsa Firestore'ga qayta so'rov yubormasdan keshdan olamiz,
@@ -7812,13 +7820,32 @@ async function refreshFavoritesScreen(){
       : [];
     const fetchedMap = new Map();
     fetchedDocs.forEach(d=>{ if(d.exists) fetchedMap.set(d.id, { id:d.id, ...d.data() }); });
-    container.innerHTML=''; let any=false;
+    const newList = [];
     ids.forEach(id=>{
       const l = cacheMap.get(id) || fetchedMap.get(id);
-      if(l){ any=true; container.appendChild(renderListingCard(l)); }
+      if(l){ newList.push(l); }
     });
-    if(!any) container.innerHTML = `<div class="empty-state"><div class="ic">${ic('heart',44)}</div><div class="title">${t('favEmpty')}</div><div class="sub">${t('favEmptySub')}</div></div>`;
-  }catch(err){ console.error(err); container.innerHTML = `<div class="empty-state"><div class="ic">${ic('warning',44)}</div><div class="sub">${t('loadError')}${esc(err.message)}</div></div>`; }
+    cachedFavorites = newList;
+    renderFavoritesUI(newList);
+  }catch(err){
+    console.error(err);
+    if(!cachedFavorites){
+      container.innerHTML = `<div class="empty-state"><div class="ic">${ic('warning',44)}</div><div class="sub">${t('loadError')}${esc(err.message)}</div></div>`;
+    }
+  }
+}
+
+function renderFavoritesUI(list){
+  const container = $('favoritesContainer');
+  if(!container) return;
+  if(list.length === 0){
+    container.innerHTML = `<div class="empty-state"><div class="ic">${ic('heart',44)}</div><div class="title">${t('favEmpty')}</div><div class="sub">${t('favEmptySub')}</div></div>`;
+    return;
+  }
+  container.innerHTML='';
+  const frag = document.createDocumentFragment();
+  list.forEach(l=>frag.appendChild(renderListingCard(l)));
+  container.appendChild(frag);
 }
 
 /* ============ PROFILE ============ */
@@ -10864,12 +10891,16 @@ $('myReqBackBtn').addEventListener('click', ()=>{ showScreen('profile'); refresh
 // Mijozning o'z so'rovlari + kelgan takliflar
 async function loadMyRequests(){
   const box = $('myReqList'); if(!box || !currentUser) return;
-  box.innerHTML = `<div class="center-note">${t('loading')}</div>`;
+  if(!cachedMyRequests){
+    box.innerHTML = `<div class="center-note">${t('loading')}</div>`;
+  } else {
+    renderMyRequestsUI(cachedMyRequests);
+  }
   try{
     const snap = await db.collection('requests').where('requesterUid','==',currentUser.uid).limit(50).get();
     const reqs = []; snap.forEach(d=>reqs.push({ id:d.id, ...d.data() }));
     reqs.sort((a,b)=> ((b.createdAt&&b.createdAt.seconds)||0) - ((a.createdAt&&a.createdAt.seconds)||0));
-    if(reqs.length === 0){ box.innerHTML = `<div class="center-note">${t('myReqEmpty')}</div>`; return; }
+
     // Perf: har bir so'rov uchun takliflarni KETMA-KET (bittalab) so'rash — 10-15 ta
     // so'rov bo'lsa, sahifa 10-15 marta ketma-ket tarmoq javobini kutib "qotib qolganday"
     // tuyulardi. Endi BARCHASI PARALLEL (bir vaqtda) so'raladi.
@@ -10880,64 +10911,78 @@ async function loadMyRequests(){
         const arr = []; os.forEach(d=>arr.push({ id:d.id, ...d.data() })); return arr;
       }catch(e){ return []; }
     }));
-    box.innerHTML = '';
-    reqs.forEach((r, reqIdx)=>{
-      const dealLabel = dealTypeLabel(r.dealType);
-      const budget = r.budget ? fmtPrice(r.budget) : t('reqAnyBudget');
-      const matched = !!r.matchedBroker;
-      let offersHtml;
-      if(matched){
-        offersHtml = `<div class="offer-row offer-matched">
-          <div><b>${ic('check',14)} ${t('myReqMatched')}</b>
-            <div class="rc-meta">${t('myReqAgreedFee')}: ${r.agreedFeePct||'—'}%${r.agreedFeeAmount?(' · '+fmtPrice(r.agreedFeeAmount)):''}</div></div>
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-outline btn-sm mr-chat" data-broker="${esc(r.matchedBroker)}"><span class="btn-label">${ic('message',16)} ${t('chatBtn')}</span></button>
-            <button class="btn btn-secondary btn-sm mr-contact" data-broker="${esc(r.matchedBroker)}"><span class="btn-label">${ic('phone',16)} ${t('contactBtn')}</span></button>
-          </div>
-        </div>`;
-      }else{
-        const offers = offersByReq[reqIdx].slice().sort((a,b)=> (a.feePct||0) - (b.feePct||0));   // arzon taklif yuqorida
-        if(offers.length === 0){
-          offersHtml = `<div class="center-note" style="text-align:left;margin-top:8px;">${ic('clock',14)} ${t('myReqWaiting')}</div>`;
-        }else{
-          offersHtml = offers.map(o=>`
-            <div class="offer-row">
-              <div>
-                <b>${esc(o.brokerName||t('ownerAgent'))}</b>
-                <div class="rc-meta">${ic('briefcase',13)} ${o.feePct}%${o.feeAmount?(' · '+fmtPrice(o.feeAmount)):''}${o.brokerDistrict?(' · '+ic('pin',13)+' '+esc(o.brokerDistrict)):''}</div>
-                <div class="rc-meta"><span class="rc-time">${timeAgo(o.createdAt)} · ${fmtDateTime(o.createdAt)}</span></div>
-                ${o.note?`<div class="rc-note">${esc(o.note)}</div>`:''}
-              </div>
-              <button class="btn btn-primary btn-sm mr-approve" data-broker="${esc(o.brokerUid)}" data-pct="${o.feePct}" data-amt="${o.feeAmount!=null?o.feeAmount:''}"><span class="btn-label">${t('myReqApproveBtn')}</span></button>
-            </div>`).join('');
-        }
-      }
-      const card = document.createElement('div'); card.className='card'; card.style.marginBottom='12px';
-      card.innerHTML = `
-        <div class="rc-top">
-          <div class="rc-badges">
-            <span class="badge ${dealTypeBadgeClass(r.dealType)}">${dealLabel}</span>
-            ${matched?`<span class="badge badge-verified">${t('myReqStatusMatched')}</span>`:`<span class="badge badge-pending">${t('myReqStatusOpen')}</span>`}
-          </div>
-          <span class="rc-budget">${budget}</span>
+
+    cachedMyRequests = { reqs, offersByReq };
+    renderMyRequestsUI(cachedMyRequests);
+  }catch(err){
+    console.error(err);
+    if(!cachedMyRequests){
+      box.innerHTML = `<div class="center-note">${t('loadError')}${esc(err.message)}</div>`;
+    }
+  }
+}
+
+function renderMyRequestsUI(cachedData){
+  const box = $('myReqList'); if(!box) return;
+  const { reqs, offersByReq } = cachedData;
+  if(reqs.length === 0){ box.innerHTML = `<div class="center-note">${t('myReqEmpty')}</div>`; return; }
+  box.innerHTML = '';
+  reqs.forEach((r, reqIdx)=>{
+    const dealLabel = dealTypeLabel(r.dealType);
+    const budget = r.budget ? fmtPrice(r.budget) : t('reqAnyBudget');
+    const matched = !!r.matchedBroker;
+    let offersHtml;
+    if(matched){
+      offersHtml = `<div class="offer-row offer-matched">
+        <div><b>${ic('check',14)} ${t('myReqMatched')}</b>
+          <div class="rc-meta">${t('myReqAgreedFee')}: ${r.agreedFeePct||'—'}%${r.agreedFeeAmount?(' · '+fmtPrice(r.agreedFeeAmount)):''}</div></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm mr-chat" data-broker="${esc(r.matchedBroker)}"><span class="btn-label">${ic('message',16)} ${t('chatBtn')}</span></button>
+          <button class="btn btn-secondary btn-sm mr-contact" data-broker="${esc(r.matchedBroker)}"><span class="btn-label">${ic('phone',16)} ${t('contactBtn')}</span></button>
         </div>
-        <div class="rc-meta">${ic('pin',13)} ${esc(r.region||'')} ${r.rooms?('· '+r.rooms+t('roomsSuffix')):''} · <span class="rc-time">${timeAgo(r.createdAt)} · ${fmtDateTime(r.createdAt)}</span></div>
-        ${r.note?`<div class="rc-note">${esc(r.note)}</div>`:''}
-        <div class="mr-offers">${offersHtml}</div>`;
-      card.querySelectorAll('.mr-approve').forEach(b=>{
-        b.addEventListener('click', ()=>{
-          const brokerUid = b.dataset.broker;
-          const off = { feePct: parseFloat(b.dataset.pct)||0, feeAmount: b.dataset.amt!=='' ? (parseFloat(b.dataset.amt)||null) : null };
-          if(confirm(t('agreeConfirm').replace('{pct}', off.feePct))) confirmDeal(r.id, brokerUid, off, b);
-        });
+      </div>`;
+    }else{
+      const offers = (offersByReq[reqIdx] || []).slice().sort((a,b)=> (a.feePct||0) - (b.feePct||0));   // arzon taklif yuqorida
+      if(offers.length === 0){
+        offersHtml = `<div class="center-note" style="text-align:left;margin-top:8px;">${ic('clock',14)} ${t('myReqWaiting')}</div>`;
+      }else{
+        offersHtml = offers.map(o=>`
+          <div class="offer-row">
+            <div>
+              <b>${esc(o.brokerName||t('ownerAgent'))}</b>
+              <div class="rc-meta">${ic('briefcase',13)} ${o.feePct}%${o.feeAmount?(' · '+fmtPrice(o.feeAmount)):''}${o.brokerDistrict?(' · '+ic('pin',13)+' '+esc(o.brokerDistrict)):''}</div>
+              <div class="rc-meta"><span class="rc-time">${timeAgo(o.createdAt)} · ${fmtDateTime(o.createdAt)}</span></div>
+              ${o.note?`<div class="rc-note">${esc(o.note)}</div>`:''}
+            </div>
+            <button class="btn btn-primary btn-sm mr-approve" data-broker="${esc(o.brokerUid)}" data-pct="${o.feePct}" data-amt="${o.feeAmount!=null?o.feeAmount:''}"><span class="btn-label">${t('myReqApproveBtn')}</span></button>
+          </div>`).join('');
+      }
+    }
+    const card = document.createElement('div'); card.className='card'; card.style.marginBottom='12px';
+    card.innerHTML = `
+      <div class="rc-top">
+        <div class="rc-badges">
+          <span class="badge ${dealTypeBadgeClass(r.dealType)}">${dealLabel}</span>
+          ${matched?`<span class="badge badge-verified">${t('myReqStatusMatched')}</span>`:`<span class="badge badge-pending">${t('myReqStatusOpen')}</span>`}
+        </div>
+        <span class="rc-budget">${budget}</span>
+      </div>
+      <div class="rc-meta">${ic('pin',13)} ${esc(r.region||'')} ${r.rooms?('· '+r.rooms+t('roomsSuffix')):''} · <span class="rc-time">${timeAgo(r.createdAt)} · ${fmtDateTime(r.createdAt)}</span></div>
+      ${r.note?`<div class="rc-note">${esc(r.note)}</div>`:''}
+      <div class="mr-offers">${offersHtml}</div>`;
+    card.querySelectorAll('.mr-approve').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        const brokerUid = b.dataset.broker;
+        const off = { feePct: parseFloat(b.dataset.pct)||0, feeAmount: b.dataset.amt!=='' ? (parseFloat(b.dataset.amt)||null) : null };
+        if(confirm(t('agreeConfirm').replace('{pct}', off.feePct))) confirmDeal(r.id, brokerUid, off, b);
       });
-      const cb = card.querySelector('.mr-contact');
-      if(cb) cb.addEventListener('click', ()=> openBrokerContact(cb.dataset.broker));
-      const chatBtn = card.querySelector('.mr-chat');
-      if(chatBtn) chatBtn.addEventListener('click', ()=> startChatFromRequest(r, chatBtn.dataset.broker, t('ownerAgent'), 'agent'));
-      box.appendChild(card);
     });
-  }catch(err){ console.error(err); box.innerHTML = `<div class="center-note">${t('loadError')}${esc(err.message)}</div>`; }
+    const cb = card.querySelector('.mr-contact');
+    if(cb) cb.addEventListener('click', ()=> openBrokerContact(cb.dataset.broker));
+    const chatBtn = card.querySelector('.mr-chat');
+    if(chatBtn) chatBtn.addEventListener('click', ()=> startChatFromRequest(r, chatBtn.dataset.broker, t('ownerAgent'), 'agent'));
+    box.appendChild(card);
+  });
 }
 
 // Mijoz taklifga rozilik beradi — bitim tuziladi, bog'lanish ochiladi.
