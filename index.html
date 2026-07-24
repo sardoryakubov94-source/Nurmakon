@@ -95,8 +95,8 @@
   /* Kichik ekranlarda (telefonlar) yarim zarrachalar va yengilroq blur — bu qurilmalar
      ko'pincha eng ko'p "qotish" muammosini boshdan kechiradi */
   @media (max-width:600px){
-    .bg-fx .orb{filter:blur(32px);}
-    .bg-fx .motes i:nth-child(n+7){display:none;}
+    .bg-fx .orb{filter:none !important; animation:none !important; will-change:auto !important;}
+    .bg-fx .motes{display:none !important;}
   }
   @keyframes moteRise{
     0%{transform:translateY(0) translateX(0) scale(1);opacity:0;}
