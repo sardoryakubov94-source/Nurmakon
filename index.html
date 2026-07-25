@@ -3294,7 +3294,7 @@ body.is-pwa-app .story-scroll-hint {
   <label data-i18n="postVideoLabel">Video (ixtiyoriy, 1 daqiqagacha)</label>
   <label class="upload-drop video-upload-drop" for="postVideo" id="postVideoDrop">
     <span class="ic" data-ic="video" data-ic-size="26"></span>
-    <span data-i18n="uploadVideoHint">Video tanlash uchun bosing (max 60 soniya)</span>
+    <span data-i18n="uploadVideoHint">Video tanlash uchun bosing (max 60 soniya, 80MB dan oshmasin)</span>
     <input type="file" id="postVideo" accept="video/*">
   </label>
   <div id="videoPreviewWrap" class="hidden">
@@ -4580,7 +4580,7 @@ const I18N = {
     postDescLabel:"Tavsif", postDescPlaceholder:"Uy haqida qisqacha ma'lumot...",
     postPhoneLabel:"Bog'lanish uchun telefon", postPhoneHint:"O'zingizga tegishli, ishlaydigan (haqiqiy) raqamni kiriting. Masalan: +998 90 123 45 67", phoneWorkingHint:"O'zingizga tegishli, ishlaydigan (haqiqiy) raqam kiriting — sizga shu raqam orqali bog'lanishadi.", phoneOwnHint:"Faqat o'zingizga tegishli telefon raqamidan foydalaning.", postPhotosLabel:"Rasmlar (6 tagacha)",
     uploadHint:"Rasm tanlash uchun bosing",
-    postVideoLabel:"Video (ixtiyoriy, 1 daqiqagacha)", uploadVideoHint:"Video tanlash uchun bosing (max 60 soniya)", removeVideoBtn:"Videoni olib tashlash",
+    postVideoLabel:"Video (ixtiyoriy, 1 daqiqagacha)", uploadVideoHint:"Video tanlash uchun bosing (max 60 soniya, 80MB dan oshmasin)", removeVideoBtn:"Videoni olib tashlash",
     videoBgLabel:"Video foni", videoBgHint:"Video atrofidagi bo'sh joy uchun fon tanlang: o'zingiz rasm yuklang yoki videoning maqsadini yozing — fon avtomatik tayyorlanadi.",
     videoBgAuto:"Avtomatik fon", videoBgImage:"Rasm yuklash", videoPurposeLabel:"Video maqsadi (sarlavha sifatida chiqadi)", videoPurposePh:"Masalan: Yorug' 3 xonali kvartira sharhi",
     videoTooLong:"Video 1 daqiqadan oshmasligi kerak", videoReadError:"Videoni o'qib bo'lmadi, boshqa fayl tanlang", uploadingVideo:"Video yuklanmoqda...", preparingVideoBg:"Fon tayyorlanmoqda...", compressingVideo:"Video siqilmoqda...",
@@ -4715,7 +4715,7 @@ const I18N = {
     postDescLabel:"Описание", postDescPlaceholder:"Краткая информация о жилье...",
     postPhoneLabel:"Телефон для связи", postPhoneHint:"Укажите принадлежащий вам рабочий (действующий) номер. Например: +998 90 123 45 67", phoneWorkingHint:"Укажите принадлежащий вам рабочий (действующий) номер — с вами свяжутся по нему.", phoneOwnHint:"Используйте только номер телефона, принадлежащий вам.", postPhotosLabel:"Фотографии (до 6)",
     uploadHint:"Нажмите, чтобы выбрать фото",
-    postVideoLabel:"Видео (необязательно, до 1 минуты)", uploadVideoHint:"Нажмите, чтобы выбрать видео (макс. 60 сек)", removeVideoBtn:"Удалить видео",
+    postVideoLabel:"Видео (необязательно, до 1 минуты)", uploadVideoHint:"Нажмите, чтобы выбрать видео (макс. 60 сек, до 80МБ)", removeVideoBtn:"Удалить видео",
     videoBgLabel:"Фон видео", videoBgHint:"Выберите фон для пустого пространства вокруг видео: загрузите своё изображение или укажите цель видео — фон будет подготовлен автоматически.",
     videoBgAuto:"Автофон", videoBgImage:"Загрузить фото", videoPurposeLabel:"Цель видео (будет заголовком)", videoPurposePh:"Например: Обзор светлой 3-комнатной квартиры",
     videoTooLong:"Видео не должно превышать 1 минуту", videoReadError:"Не удалось прочитать видео, выберите другой файл", uploadingVideo:"Загрузка видео...", preparingVideoBg:"Подготовка фона...", compressingVideo:"Сжатие видео...",
@@ -4850,7 +4850,7 @@ const I18N = {
     postDescLabel:"Description", postDescPlaceholder:"Brief information about the property...",
     postPhoneLabel:"Contact phone", postPhoneHint:"Enter a working (real) number that belongs to you. E.g.: +998 90 123 45 67", phoneWorkingHint:"Enter a working (real) number that belongs to you — you will be contacted on it.", phoneOwnHint:"Use only a phone number that belongs to you.", postPhotosLabel:"Photos (up to 6)",
     uploadHint:"Tap to select photos",
-    postVideoLabel:"Video (optional, up to 1 minute)", uploadVideoHint:"Tap to select a video (max 60 sec)", removeVideoBtn:"Remove video",
+    postVideoLabel:"Video (optional, up to 1 minute)", uploadVideoHint:"Tap to select a video (max 60 sec, up to 80MB)", removeVideoBtn:"Remove video",
     videoBgLabel:"Video background", videoBgHint:"Choose a background for the empty space around the video: upload your own image, or write the video's purpose — a background will be prepared automatically.",
     videoBgAuto:"Auto background", videoBgImage:"Upload image", videoPurposeLabel:"Video purpose (shown as a caption)", videoPurposePh:"E.g.: Tour of a bright 3-room apartment",
     videoTooLong:"Video must not exceed 1 minute", videoReadError:"Could not read the video, choose another file", uploadingVideo:"Uploading video...", preparingVideoBg:"Preparing background...", compressingVideo:"Compressing video...",
@@ -5902,8 +5902,8 @@ function compressVideo(file, onProgress){
   });
 }
 
-const MAX_VIDEO_MB = 60;              // Supabase bepul bucket limitidan xavfsiz past
-const VIDEO_UPLOAD_TIMEOUT_MS = 90000; // 90 soniyadan ko'p osilib qolsa — xato beramiz, abadiy aylanmaydi
+const MAX_VIDEO_MB = 80;              // Supabase bepul bucket limitidan xavfsiz past
+const VIDEO_UPLOAD_TIMEOUT_MS = 120000; // 120 soniyadan ko'p osilib qolsa — xato beramiz, abadiy aylanmaydi (80MB limitga mos oshirildi)
 // ---- Serverda siqish (Firebase Cloud Function, ffmpeg) ----
 // Bu — asosiy yo'l: qaysi brauzer/qurilma bo'lishidan qat'iy nazar bir xil ishlaydi
 // (Chrome, Safari, ilova-ichidagi brauzerlar, App Store'ga chiqariladigan WebView'lar).
@@ -7016,11 +7016,32 @@ function storyViewerStep(dir){
   _storyViewerState.index = next;
   renderStoryViewerSlide();
 }
+// Perf: keyingi istoriya videosini foydalanuvchi hozirgisini tomosha qilib turganda
+// orqa fonda (ko'rinmas holda) oldindan yuklab qo'yamiz — shu bilan "Keyingi"ga
+// o'tilganda video darhol, to'xtalishsiz ishga tushadi (Instagram/TikTok kabi).
+function preloadNextStoryVideo(idx){
+  const next = activeStoryList[idx];
+  if(!next || next.mediaType !== 'video' || !next.mediaUrl) return;
+  let ph = document.getElementById('storyPreloadVideo');
+  if(!ph){
+    ph = document.createElement('video');
+    ph.id = 'storyPreloadVideo';
+    ph.muted = true; ph.playsInline = true; ph.preload = 'auto';
+    ph.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;';
+    document.body.appendChild(ph);
+  }
+  if(ph.dataset.src !== next.mediaUrl){
+    ph.dataset.src = next.mediaUrl;
+    ph.src = next.mediaUrl;
+    ph.load();
+  }
+}
 function renderStoryViewerSlide(){
   if(!_storyViewerState) return;
   const s = activeStoryList[_storyViewerState.index];
   if(!s){ closeStoryViewer(); return; }
   markStorySeen(s.id);
+  preloadNextStoryVideo(_storyViewerState.index + 1);
   const mediaEl = $('storyViewerMedia');
   const capEl = $('storyViewerCaptionBottom');
   if(!mediaEl) return;
@@ -7116,6 +7137,8 @@ function closeStoryViewer(){
   }
   _storyViewerState = null;
   if(ov) ov.remove();
+  const ph = document.getElementById('storyPreloadVideo');
+  if(ph) ph.remove(); // oldindan yuklangan video endi kerak emas, xotirani bo'shatamiz
   document.body.classList.remove('no-scroll');
   armNavGuard();
 }
@@ -7516,7 +7539,7 @@ async function openDetail(l){
   const isFav = favoriteIds.has(l.id);
   const videoSlide = l.videoUrl ? `<div class="slide" style="position:relative;background:#000;">
       ${l.videoBg?`<div style="position:absolute;inset:0;background-image:url('${esc(l.videoBg)}');background-size:cover;background-position:center;filter:blur(18px) brightness(0.55);transform:scale(1.25);"></div>`:''}
-      <video src="${esc(l.videoUrl)}" controls playsinline style="position:relative;width:100%;height:100%;object-fit:contain;"></video>
+      <video src="${esc(l.videoUrl)}" controls playsinline preload="auto" style="position:relative;width:100%;height:100%;object-fit:contain;"></video>
       ${l.videoPurpose?`<div class="hs-video-caption" style="border-radius:0;">${esc(l.videoPurpose)}</div>`:''}
     </div>` : '';
   if(galleryPhotos.length || videoSlide){
