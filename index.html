@@ -3434,68 +3434,31 @@ body.is-pwa-app .story-scroll-hint {
     <div class="promo-banner-art" aria-hidden="true">
       <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="pgTop" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#fff0c2"/><stop offset="0.55" stop-color="#ffd873"/><stop offset="1" stop-color="#f0b944"/>
+          <linearGradient id="pgBoxFace" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffd873"/><stop offset="1" stop-color="#f3b93e"/>
           </linearGradient>
-          <linearGradient id="pgLeft" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#d99423"/><stop offset="1" stop-color="#eeae3a"/>
+          <linearGradient id="pgLid" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffe29a"/><stop offset="1" stop-color="#f7c455"/>
           </linearGradient>
-          <linearGradient id="pgRight" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#ffdd8f"/><stop offset="1" stop-color="#f6bd4e"/>
-          </linearGradient>
-          <linearGradient id="pgRibTop" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#ff8fb3"/><stop offset="0.5" stop-color="#ff5b90"/><stop offset="1" stop-color="#e8437c"/>
-          </linearGradient>
-          <linearGradient id="pgRibL" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#d13d70"/><stop offset="1" stop-color="#ef5c8e"/>
-          </linearGradient>
-          <linearGradient id="pgRibR" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#ff9dbc"/><stop offset="1" stop-color="#f16590"/>
-          </linearGradient>
-          <linearGradient id="pgBow" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#ff9fbf"/><stop offset="1" stop-color="#e8437c"/>
-          </linearGradient>
-          <linearGradient id="pgTag" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#5be9cc"/><stop offset="1" stop-color="#22b998"/>
-          </linearGradient>
-          <filter id="pgSoft" x="-60%" y="-60%" width="220%" height="220%">
-            <feGaussianBlur stdDeviation="2.8"/>
-          </filter>
         </defs>
-        <circle cx="60" cy="66" r="46" fill="#ffffff" opacity="0.07"/>
+        <circle cx="60" cy="66" r="46" fill="#ffffff" opacity="0.08"/>
         <circle cx="18" cy="30" r="3" fill="#ffe9b8" opacity="0.8"/>
         <circle cx="30" cy="18" r="2" fill="#ffe9b8" opacity="0.6"/>
-        <circle cx="102" cy="94" r="2.4" fill="#a3e6d1" opacity="0.7"/>
-        <!-- Yer soyasi -->
-        <ellipse cx="61" cy="103" rx="34" ry="7" fill="#04231f" opacity="0.32" filter="url(#pgSoft)"/>
-        <!-- Quti: uch qirrali (isometrik) korinish -->
-        <g>
-          <path d="M61 40 L96 55 L61 70 L26 55 Z" fill="url(#pgTop)"/>
-          <path d="M26 55 L61 70 L61 100 L26 85 Z" fill="url(#pgLeft)"/>
-          <path d="M96 55 L61 70 L61 100 L96 85 Z" fill="url(#pgRight)"/>
-          <!-- Yaltirash chizig'i -->
-          <path d="M67 44 L88 54" stroke="#fff6dd" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
-          <path d="M30 87 L30 62" stroke="#00000022" stroke-width="3" stroke-linecap="round"/>
-        </g>
-        <!-- Lenta: uchala yuzda ham davom etadi -->
-        <path d="M52 46.5 L61 51.6 L70 46.5 L70 100 L61 105 L52 100 Z" fill="url(#pgRibTop)"/>
-        <path d="M45 59.5 L52 63.4 L52 100 L45 96 Z" fill="url(#pgRibL)"/>
-        <path d="M70 46.5 L77 50.5 L77 96 L70 100 Z" fill="url(#pgRibR)"/>
-        <path d="M61 51.6 L61 105" stroke="#c22f63" stroke-width="1" opacity="0.4"/>
-        <!-- Kamon -->
-        <path d="M61 43 C48 43 41 29 51 23 C58 19 61 30 61 38 C61 30 64 19 71 23 C81 29 74 43 61 43 Z" fill="url(#pgBow)"/>
-        <path d="M61 43 C53 41 49 33 54 27" stroke="#ffd0e0" stroke-width="1.4" fill="none" opacity="0.6" stroke-linecap="round"/>
-        <path d="M61 43 C69 41 73 33 68 27" stroke="#c22f63" stroke-width="1.4" fill="none" opacity="0.35" stroke-linecap="round"/>
-        <circle cx="61" cy="38" r="4.2" fill="#e8437c"/>
-        <circle cx="59.4" cy="36.4" r="1.3" fill="#ffd0e0" opacity="0.8"/>
+        <circle cx="100" cy="96" r="2.4" fill="#a3e6d1" opacity="0.7"/>
+        <!-- Quti tanasi -->
+        <rect x="27" y="58" width="66" height="46" rx="6" fill="url(#pgBoxFace)"/>
+        <!-- Quti qopqog'i -->
+        <rect x="22" y="46" width="76" height="18" rx="6" fill="url(#pgLid)"/>
+        <!-- Vertikal lenta -->
+        <rect x="52" y="46" width="16" height="58" fill="#ff6f9c"/>
+        <!-- Lenta kamoni -->
+        <path d="M60 46 C46 46 40 30 50 24 C57 20 60 32 60 40 C60 32 63 20 70 24 C80 30 74 46 60 46 Z" fill="#ff6f9c"/>
+        <circle cx="60" cy="40" r="4" fill="#ff4d85"/>
         <!-- Osilgan teg -->
-        <path d="M61 38 L88 53" stroke="#1c9a80" stroke-width="1.6"/>
-        <g transform="rotate(18 100 60)">
-          <rect x="83" y="49" width="34" height="22" rx="5" fill="url(#pgTag)"/>
-          <rect x="83" y="49" width="34" height="8" rx="4" fill="#ffffff" opacity="0.25"/>
-          <circle cx="89" cy="52" r="2.2" fill="#0f3d3a"/>
-          <text x="101" y="64" text-anchor="middle" font-size="9" font-weight="800" fill="#0f3d3a" font-family="Arial, sans-serif">100%</text>
-        </g>
+        <path d="M60 40 L87 54" stroke="#2fbfa0" stroke-width="1.6"/>
+        <rect x="82" y="50" width="34" height="22" rx="5" fill="#2fd6b5" transform="rotate(18 99 61)"/>
+        <circle cx="88" cy="53" r="2.2" fill="#0f3d3a" transform="rotate(18 99 61)"/>
+        <text x="99" y="65" text-anchor="middle" font-size="9" font-weight="800" fill="#0f3d3a" font-family="Arial, sans-serif" transform="rotate(18 99 61)">100%</text>
       </svg>
     </div>
   </div>
