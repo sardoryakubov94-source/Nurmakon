@@ -3434,32 +3434,31 @@ body.is-pwa-app .story-scroll-hint {
     <div class="promo-banner-art" aria-hidden="true">
       <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="pgBoxTop" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#ffe9b8"/><stop offset="1" stop-color="#f0b955"/>
+          <linearGradient id="pgBoxFace" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffd873"/><stop offset="1" stop-color="#f3b93e"/>
           </linearGradient>
-          <linearGradient id="pgBoxL" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#e2a53f"/><stop offset="1" stop-color="#c98a25"/>
-          </linearGradient>
-          <linearGradient id="pgBoxR" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#ffcf6e"/><stop offset="1" stop-color="#eda838"/>
+          <linearGradient id="pgLid" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffe29a"/><stop offset="1" stop-color="#f7c455"/>
           </linearGradient>
         </defs>
-        <circle cx="60" cy="64" r="46" fill="#ffffff" opacity="0.08"/>
-        <g>
-          <path d="M60 46 L96 62 L60 78 L24 62 Z" fill="url(#pgBoxTop)"/>
-          <path d="M24 62 L60 78 L60 104 L24 88 Z" fill="url(#pgBoxL)"/>
-          <path d="M96 62 L60 78 L60 104 L96 88 Z" fill="url(#pgBoxR)"/>
-          <path d="M60 46 L60 78 M60 78 L60 104" stroke="#a3e6d1" stroke-width="3" stroke-linecap="round"/>
-          <path d="M24 62 L60 78 L96 62" stroke="#a3e6d1" stroke-width="3" fill="none" stroke-linecap="round"/>
-        </g>
-        <g>
-          <circle cx="86" cy="34" r="20" fill="#ff6b6b"/>
-          <text x="86" y="30" text-anchor="middle" font-size="11" font-weight="800" fill="#fff" font-family="Arial, sans-serif">-100</text>
-          <text x="86" y="41" text-anchor="middle" font-size="8" font-weight="700" fill="#fff" font-family="Arial, sans-serif">%</text>
-        </g>
+        <circle cx="60" cy="66" r="46" fill="#ffffff" opacity="0.08"/>
         <circle cx="18" cy="30" r="3" fill="#ffe9b8" opacity="0.8"/>
         <circle cx="30" cy="18" r="2" fill="#ffe9b8" opacity="0.6"/>
         <circle cx="100" cy="96" r="2.4" fill="#a3e6d1" opacity="0.7"/>
+        <!-- Quti tanasi -->
+        <rect x="27" y="58" width="66" height="46" rx="6" fill="url(#pgBoxFace)"/>
+        <!-- Quti qopqog'i -->
+        <rect x="22" y="46" width="76" height="18" rx="6" fill="url(#pgLid)"/>
+        <!-- Vertikal lenta -->
+        <rect x="52" y="46" width="16" height="58" fill="#ff6f9c"/>
+        <!-- Lenta kamoni -->
+        <path d="M60 46 C46 46 40 30 50 24 C57 20 60 32 60 40 C60 32 63 20 70 24 C80 30 74 46 60 46 Z" fill="#ff6f9c"/>
+        <circle cx="60" cy="40" r="4" fill="#ff4d85"/>
+        <!-- Osilgan teg -->
+        <path d="M60 40 L87 54" stroke="#2fbfa0" stroke-width="1.6"/>
+        <rect x="82" y="50" width="34" height="22" rx="5" fill="#2fd6b5" transform="rotate(18 99 61)"/>
+        <circle cx="88" cy="53" r="2.2" fill="#0f3d3a" transform="rotate(18 99 61)"/>
+        <text x="99" y="65" text-anchor="middle" font-size="9" font-weight="800" fill="#0f3d3a" font-family="Arial, sans-serif" transform="rotate(18 99 61)">100%</text>
       </svg>
     </div>
   </div>
