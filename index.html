@@ -2075,6 +2075,7 @@ body.is-pwa-app .story-scroll-hint {
 
   /* O'rtacha (form/kartochka) ekranlar — o'qish qulay bo'lishi uchun torroq va markazda */
   #screen-post, #screen-profile, #screen-agent, #screen-agent-requests, #screen-agent-cancellations, #screen-myreq,
+  #screen-my-deals, #screen-completed-deals,
   #screen-support, #screen-topup, #screen-broker, #screen-chat{
     max-width:720px;
   }
@@ -3767,7 +3768,23 @@ body.is-pwa-app .story-scroll-hint {
       <div class="lock-chevron" data-ic="chevron-right" data-ic-size="20"></div>
     </div>
 
-    <!-- 4) Bekor qilingan so'rovlar -->
+    <!-- 4) Mening bitimlarim -->
+    <div class="lock-card" id="openMyDealsBtn" style="margin-top:0;position:relative;">
+      <div class="lock-ic" data-ic="briefcase" data-ic-size="20"></div>
+      <div class="lock-txt"><h3 data-i18n="myDealsEntryTitle">Mening bitimlarim</h3>
+        <p data-i18n="myDealsEntrySub">Mijoz siz bilan tuzgan faol bitimlar</p></div>
+      <div class="lock-chevron" data-ic="chevron-right" data-ic-size="20"></div>
+    </div>
+
+    <!-- 5) Yakunlangan bitimlar -->
+    <div class="lock-card" id="openCompletedDealsBtn" style="margin-top:0;position:relative;">
+      <div class="lock-ic" data-ic="check" data-ic-size="20"></div>
+      <div class="lock-txt"><h3 data-i18n="completedDealsEntryTitle">Yakunlangan bitimlar</h3>
+        <p data-i18n="completedDealsEntrySub">Muvaffaqiyatli yakunlagan bitimlaringiz</p></div>
+      <div class="lock-chevron" data-ic="chevron-right" data-ic-size="20"></div>
+    </div>
+
+    <!-- 6) Bekor qilingan so'rovlar -->
     <div class="lock-card" id="openAgentCancelBtn" style="margin-top:0;position:relative;">
       <div class="lock-ic" data-ic="ban" data-ic-size="20"></div>
       <div class="lock-txt"><h3 data-i18n="cancelTitle">Bekor qilingan so'rovlar</h3>
@@ -3793,6 +3810,25 @@ body.is-pwa-app .story-scroll-hint {
     <h2 class="section-title" style="margin:0;" data-i18n="cancelTitle">Bekor qilingan so'rovlar</h2>
   </div>
   <div id="agentCancellations"></div>
+</div>
+
+<!-- ===================== MENING BITIMLARIM (BROKER) SCREEN ===================== -->
+<div class="screen" id="screen-my-deals">
+  <div class="screen-head">
+    <button class="back-btn" id="myDealsBackBtn" type="button" data-ic="back" data-ic-size="22"></button>
+    <h2 class="section-title" style="margin:0;" data-i18n="myDealsTitle">Mening bitimlarim</h2>
+  </div>
+  <p class="center-note" style="text-align:left;" data-i18n="myDealsSub">Mijoz siz bilan tuzgan faol bitimlar. Ishni yakunlaganingizda "Yakunlandi" tugmasini bosing.</p>
+  <div id="myDealsList"></div>
+</div>
+
+<!-- ===================== YAKUNLANGAN BITIMLAR (BROKER) SCREEN ===================== -->
+<div class="screen" id="screen-completed-deals">
+  <div class="screen-head">
+    <button class="back-btn" id="completedDealsBackBtn" type="button" data-ic="back" data-ic-size="22"></button>
+    <h2 class="section-title" style="margin:0;" data-i18n="completedDealsTitle">Yakunlangan bitimlar</h2>
+  </div>
+  <div id="completedDealsList"></div>
 </div>
 
 <!-- ===================== MENING SO'ROVLARIM (CLIENT) SCREEN ===================== -->
@@ -4915,6 +4951,9 @@ const I18N = {
     reqRegionLabel:"Qaysi hudud", reqBudgetLabel:"Byudjet (gacha)", reqNoteLabel:"Qo'shimcha izoh", reqNotePh:"Masalan: metroga yaqin, ta'mirli...",
     reqSubmit:"So'rovni yuborish", reqSent:"So'rovingiz yuborildi! Maklerlar taklif yuboradi — 'Mening so'rovlarim'da ko'ring.", reqAnyBudget:"Byudjet ko'rsatilmagan",
     agentRequestsTitle:"Mijoz so'rovlari", agentRequestsSub:"Mijoz so'rovlari. Ish haqi foizingizni taklif qiling — mijoz rozi bo'lsagina telefon ochiladi.", noRequests:"Hozircha yangi so'rovlar yo'q",
+    myDealsEntryTitle:"Mening bitimlarim", myDealsEntrySub:"Mijoz siz bilan tuzgan faol bitimlar", myDealsTitle:"Mening bitimlarim", myDealsSub:"Mijoz siz bilan tuzgan faol bitimlar. Ishni yakunlaganingizda \"Yakunlandi\" tugmasini bosing.", noMyDeals:"Hozircha faol bitimlar yo'q",
+    completedDealsEntryTitle:"Yakunlangan bitimlar", completedDealsEntrySub:"Muvaffaqiyatli yakunlagan bitimlaringiz", completedDealsTitle:"Yakunlangan bitimlar", noCompletedDeals:"Hozircha yakunlangan bitimlar yo'q",
+    completeDealBtn:"Yakunlandi", completeDealConfirm:"Bu bitimni yakunlangan deb belgilaysizmi? U \"Yakunlangan bitimlar\" bo'limiga ko'chiriladi.", dealCompletedToast:"Bitim yakunlangan deb belgilandi!", dealCompletedLabel:"Bitim yakunlandi",
     reqAcceptBtn:"Qabul qilaman", reqAcceptedYou:"Siz qabul qildingiz", reqTaken:"So'rov to'ldi", reqYourArea:"Sizning hududingiz", reqAcceptedToast:"Qabul qilindi! Endi mijoz bilan bog'laning.", reqAcceptFullToast:"Bu so'rovga yetarlicha makler qabul qilgan.", reqBrokersJoined:"makler qabul qildi",
     reqSendOfferBtn:"Taklif yuborish", offerSheetTitle:"Mijozga taklif yuborish", offerSheetSub:"Ish haqi foizingizni belgilang. Mijoz rozi bo'lsagina bog'lanish ochiladi.", offerMaxNote:"Bu so'rov uchun ruxsat etilgan <b>maksimal ish haqi — {pct}%</b>. Undan past taklif qilsangiz, tanlanish ehtimoli oshadi.", offerPctLabel:"Ish haqi (%)", offerNoteLabel:"Izoh (ixtiyoriy)", offerNotePh:"Masalan: shartnoma tuzamiz, ko'rsatish xizmati...", offerSubmit:"Taklif yuborish", offerCreditNote:"Taklif yuborish — 1 lead krediti (premiumda bepul).", offerFeePreview:"Taxminiy ish haqi", offerPctRequired:"Iltimos, ish haqi foizini kiriting.", offerPctInvalid:"Ruxsat etilgan maksimal — {pct}%. Undan oshirib bo'lmaydi.", offerSentToast:"Taklif yuborildi! Mijoz javobini kuting.", offerPending:"Taklif yuborildi — mijoz javobini kuting", offerMatchedBroker:"Mijoz sizni tanladi! Bog'laning", offerClosed:"So'rov yopildi",
     myReqTitle:"Mening so'rovlarim", myReqEntrySub:"Maklerlar takliflarini ko'ring va rozilik bering", myReqSub:"Qoldirgan so'rovlaringizga maklerlar taklif yuboradi. Ish haqi foizini ko'rib, bittasiga rozilik bering — shundan keyingina bog'lanish ochiladi.", myReqEmpty:"Hali so'rov qoldirmagansiz.", myReqWaiting:"Takliflar kutilmoqda...", reqEscalatedNote:"So'rovingiz hududingizdagi maklerlarga yuborildi. Makler ma'lumotlari hozircha ko'rsatilmaydi — tez orada bir makler siz bilan bog'lanadi.", avatarNotImage:"Iltimos, rasm faylini tanlang", avatarUpdated:"Profil rasmi yangilandi", avatarPickerTitle:"Avatar tanlash", avatarUploadPhotoLabel:"📷 O'z rasmimni yuklash", avatarCartoonLabel:"Yoki tayyor avatarlardan birini tanlang:", avatarShuffleLabel:"Boshqalarini ko'rsatish", myReqStatusOpen:"Ochiq", myReqStatusMatched:"Kelishildi", myReqApproveBtn:"Rozi bo'lish", myReqMatched:"Makler tanlandi", myReqAgreedFee:"Kelishilgan ish haqi", offerFeeOfferedLabel:"Taklif qilingan ish haqi", agreeConfirm:"Ushbu maklerni {pct}% ish haqi bilan tanlaysizmi? Rozilik bergach, bog'lanish ochiladi.", dealDoneToast:"Kelishuv tuzildi! Endi makler bilan bog'lanishingiz mumkin.", dealAlready:"Bu so'rov bo'yicha allaqachon kelishuvga erishilgan.",
@@ -5058,6 +5097,9 @@ const I18N = {
     reqRegionLabel:"Район", reqBudgetLabel:"Бюджет (до)", reqNoteLabel:"Дополнительно", reqNotePh:"Например: рядом метро, с ремонтом...",
     reqSubmit:"Отправить запрос", reqSent:"Запрос отправлен! Риелторы пришлют предложения — смотрите в «Мои запросы».", reqAnyBudget:"Бюджет не указан",
     agentRequestsTitle:"Запросы клиентов", agentRequestsSub:"Запросы клиентов. Предложите свой процент вознаграждения — телефон откроется только после согласия клиента.", noRequests:"Пока нет новых запросов",
+    myDealsEntryTitle:"Мои сделки", myDealsEntrySub:"Активные сделки, заключённые с клиентами", myDealsTitle:"Мои сделки", myDealsSub:"Активные сделки, заключённые с клиентами. Когда работа завершена, нажмите «Завершено».", noMyDeals:"Пока нет активных сделок",
+    completedDealsEntryTitle:"Завершённые сделки", completedDealsEntrySub:"Ваши успешно завершённые сделки", completedDealsTitle:"Завершённые сделки", noCompletedDeals:"Пока нет завершённых сделок",
+    completeDealBtn:"Завершено", completeDealConfirm:"Отметить эту сделку как завершённую? Она переместится в раздел «Завершённые сделки».", dealCompletedToast:"Сделка отмечена как завершённая!", dealCompletedLabel:"Сделка завершена",
     reqAcceptBtn:"Принять", reqAcceptedYou:"Вы приняли", reqTaken:"Запрос заполнен", reqYourArea:"Ваш район", reqAcceptedToast:"Принято! Свяжитесь с клиентом.", reqAcceptFullToast:"Этот запрос уже приняли достаточно риелторов.", reqBrokersJoined:"риелтор(ов) приняли",
     reqSendOfferBtn:"Отправить предложение", offerSheetTitle:"Отправить предложение клиенту", offerSheetSub:"Укажите свой процент вознаграждения. Контакт откроется только после согласия клиента.", offerMaxNote:"Для этого запроса максимально допустимое <b>вознаграждение — {pct}%</b>. Предложив меньше, вы повысите шанс быть выбранным.", offerPctLabel:"Вознаграждение (%)", offerNoteLabel:"Комментарий (необязательно)", offerNotePh:"Например: заключим договор, услуга показа...", offerSubmit:"Отправить предложение", offerCreditNote:"Отправка предложения — 1 лид-кредит (в премиуме бесплатно).", offerFeePreview:"Примерное вознаграждение", offerPctRequired:"Пожалуйста, укажите процент вознаграждения.", offerPctInvalid:"Максимум — {pct}%. Больше нельзя.", offerSentToast:"Предложение отправлено! Ждите ответа клиента.", offerPending:"Предложение отправлено — ждите ответа клиента", offerMatchedBroker:"Клиент выбрал вас! Свяжитесь", offerClosed:"Запрос закрыт",
     myReqTitle:"Мои запросы", myReqEntrySub:"Смотрите предложения риелторов и подтверждайте", myReqSub:"Риелторы отправляют предложения на ваши запросы. Посмотрите процент вознаграждения и подтвердите одно — только после этого откроется контакт.", myReqEmpty:"Вы ещё не оставляли запросов.", myReqWaiting:"Ожидаются предложения...", reqEscalatedNote:"Ваш запрос отправлен риелторам в вашем районе. Данные риелтора пока не показываются — скоро он свяжется с вами.", avatarNotImage:"Пожалуйста, выберите файл изображения", avatarUpdated:"Фото профиля обновлено", avatarPickerTitle:"Выбор аватара", avatarUploadPhotoLabel:"📷 Загрузить своё фото", avatarCartoonLabel:"Или выберите готовый аватар:", avatarShuffleLabel:"Показать другие", myReqStatusOpen:"Открыт", myReqStatusMatched:"Согласовано", myReqApproveBtn:"Согласиться", myReqMatched:"Риелтор выбран", myReqAgreedFee:"Согласованное вознаграждение", offerFeeOfferedLabel:"Предложенное вознаграждение", agreeConfirm:"Выбрать этого риелтора с вознаграждением {pct}%? После согласия откроется контакт.", dealDoneToast:"Сделка заключена! Теперь вы можете связаться с риелтором.", dealAlready:"По этому запросу уже достигнута договорённость.",
@@ -5201,6 +5243,9 @@ const I18N = {
     reqRegionLabel:"Which area", reqBudgetLabel:"Budget (up to)", reqNoteLabel:"Extra note", reqNotePh:"e.g. near metro, renovated...",
     reqSubmit:"Send request", reqSent:"Request sent! Brokers will send offers — see them in 'My requests'.", reqAnyBudget:"Budget not specified",
     agentRequestsTitle:"Client requests", agentRequestsSub:"Client requests. Offer your commission — the phone opens only after the client agrees.", noRequests:"No new requests yet",
+    myDealsEntryTitle:"My deals", myDealsEntrySub:"Active deals made with clients", myDealsTitle:"My deals", myDealsSub:"Active deals made with clients. When the job is done, tap \"Completed\".", noMyDeals:"No active deals yet",
+    completedDealsEntryTitle:"Completed deals", completedDealsEntrySub:"Your successfully completed deals", completedDealsTitle:"Completed deals", noCompletedDeals:"No completed deals yet",
+    completeDealBtn:"Completed", completeDealConfirm:"Mark this deal as completed? It will move to the \"Completed deals\" section.", dealCompletedToast:"Deal marked as completed!", dealCompletedLabel:"Deal completed",
     reqAcceptBtn:"Accept", reqAcceptedYou:"You accepted", reqTaken:"Request full", reqYourArea:"Your area", reqAcceptedToast:"Accepted! Contact the client.", reqAcceptFullToast:"Enough brokers already accepted this request.", reqBrokersJoined:"broker(s) joined",
     reqSendOfferBtn:"Send offer", offerSheetTitle:"Send offer to client", offerSheetSub:"Set your commission percentage. Contact opens only after the client agrees.", offerMaxNote:"For this request the maximum allowed <b>commission is {pct}%</b>. Offering less increases your chance of being chosen.", offerPctLabel:"Commission (%)", offerNoteLabel:"Note (optional)", offerNotePh:"e.g. we'll sign a contract, viewing service...", offerSubmit:"Send offer", offerCreditNote:"Sending an offer costs 1 lead credit (free on Premium).", offerFeePreview:"Estimated commission", offerPctRequired:"Please enter your commission percentage.", offerPctInvalid:"Maximum is {pct}%. You can't exceed it.", offerSentToast:"Offer sent! Wait for the client's response.", offerPending:"Offer sent — waiting for client's response", offerMatchedBroker:"The client chose you! Get in touch", offerClosed:"Request closed",
     myReqTitle:"My requests", myReqEntrySub:"See broker offers and approve", myReqSub:"Brokers send offers to your requests. Review the commission and approve one — contact opens only after that.", myReqEmpty:"You haven't left any requests yet.", myReqWaiting:"Waiting for offers...", reqEscalatedNote:"Your request was sent to brokers in your area. Broker details aren't shown yet — one will contact you soon.", avatarNotImage:"Please choose an image file", avatarUpdated:"Profile photo updated", avatarPickerTitle:"Choose avatar", avatarUploadPhotoLabel:"📷 Upload my own photo", avatarCartoonLabel:"Or pick a ready-made avatar:", avatarShuffleLabel:"Show more", myReqStatusOpen:"Open", myReqStatusMatched:"Agreed", myReqApproveBtn:"Agree", myReqMatched:"Broker selected", myReqAgreedFee:"Agreed commission", offerFeeOfferedLabel:"Offered commission", agreeConfirm:"Choose this broker with a {pct}% commission? Contact opens after you agree.", dealDoneToast:"Deal made! You can now contact the broker.", dealAlready:"A deal has already been made for this request.",
@@ -8525,6 +8570,10 @@ $('openAgentReqBtn').addEventListener('click', ()=>{ showScreen('agent-requests'
 $('agentReqBackBtn').addEventListener('click', ()=>{ showScreen('agent'); refreshAgentScreen(); });
 $('openAgentCancelBtn').addEventListener('click', ()=>{ showScreen('agent-cancellations'); loadAgentCancellations(); });
 $('agentCancelBackBtn').addEventListener('click', ()=>{ showScreen('agent'); refreshAgentScreen(); });
+$('openMyDealsBtn').addEventListener('click', ()=>{ showScreen('my-deals'); loadMyDeals(); });
+$('myDealsBackBtn').addEventListener('click', ()=>{ showScreen('agent'); refreshAgentScreen(); });
+$('openCompletedDealsBtn').addEventListener('click', ()=>{ showScreen('completed-deals'); loadCompletedDeals(); });
+$('completedDealsBackBtn').addEventListener('click', ()=>{ showScreen('agent'); refreshAgentScreen(); });
 $('viewMyProfileBtn').addEventListener('click', ()=>{ if(currentUser) openBrokerProfile(currentUser.uid); });
 
 async function refreshAgentScreen(){
@@ -11496,6 +11545,10 @@ async function loadAgentRequests(){
       // (oxirgisi "band qilingan" belgisi bilan — boshqa maklerlar bilishi uchun).
       reqs.push({ ...r, _count:count, _iAccepted:iAccepted, _match:requestMatchesMyArea(r) });
     });
+    // Mijoz meni allaqachon tanlagan (faol bitim) so'rovlar bu ro'ydan olib
+    // tashlanadi — ular endi "Mening bitimlarim" bo'limida alohida ko'rsatiladi,
+    // shunda ular hali javob kutayotgan/ochiq so'rovlar bilan aralashib ketmaydi.
+    reqs = reqs.filter(r=> !(uid && r.matchedBroker === uid));
     // Mos hudud + men qabul qilganlar yuqorida; boshqaga band bo'lganlar eng pastda
     reqs.sort((a,b)=>{
       const aTaken = a.matchedBroker && a.matchedBroker !== uid;
@@ -11631,6 +11684,89 @@ async function loadAgentCancellations(){
       box.appendChild(card);
     });
   }catch(err){ box.innerHTML = `<div class="center-note">${t('error')}${esc(err.message)}</div>`; }
+}
+
+/* ============ MAKLER: MENING BITIMLARIM / YAKUNLANGAN BITIMLAR ============
+   Mijoz makler taklifini qabul qilib, so'rov "matchedBroker"ga ega bo'lgach,
+   bu so'rov endi "Mijoz so'rovlari" aralash ro'yxatida emas, balki shu yerda —
+   maklerning shaxsiy faol bitimlar ro'yxatida ko'rinadi. Ish tugagach, makler
+   "Yakunlandi" tugmasini bosadi — so'rov "completed" deb belgilanadi va
+   "Yakunlangan bitimlar" bo'limiga o'tadi. */
+function renderDealCard(r, opts){
+  const dealLabel = dealTypeLabel(r.dealType);
+  const propKey = 'prop'+(r.propertyType||'apartment').charAt(0).toUpperCase()+(r.propertyType||'apartment').slice(1);
+  const budget = r.budget ? fmtPrice(r.budget) : t('reqAnyBudget');
+  const card = document.createElement('div'); card.className='req-card';
+  const actionHtml = opts.completed
+    ? `<div class="rc-accepted">${ic('check',14)} ${t('dealCompletedLabel')}${r.agreedFeePct?(' · '+r.agreedFeePct+'%'):''}</div>`
+    : `<div class="rc-accepted">${ic('check',14)} ${t('offerMatchedBroker')}${r.agreedFeePct?(' · '+r.agreedFeePct+'%'):''}</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm dl-chat" style="flex:1;"><span class="btn-label">${ic('message',16)} ${t('chatBtn')}</span></button>
+          <button class="btn btn-secondary btn-sm dl-call" style="flex:1;"><span class="btn-label">${ic('phone',16)} ${t('contactBtn')}</span></button>
+        </div>
+        <button class="btn btn-primary btn-sm dl-complete" style="width:100%;margin-top:8px;"><span class="btn-label">${ic('check',15)} ${t('completeDealBtn')}</span></button>`;
+  card.innerHTML = `
+    <div class="rc-top">
+      <div class="rc-badges">
+        <span class="badge ${dealTypeBadgeClass(r.dealType)}">${dealLabel}</span>
+        <span class="badge badge-owner">${propIcon(r.propertyType,13)} ${t(propKey)}</span>
+      </div>
+      <span class="rc-budget">${budget}</span>
+    </div>
+    <div class="rc-meta">${ic('pin',13)} ${esc(r.region)} ${r.rooms?('· '+r.rooms+t('roomsSuffix')):''} · <span class="rc-time">${timeAgo(r.createdAt)} · ${fmtDateTime(r.createdAt)}</span></div>
+    ${r.note ? `<div class="rc-note">${esc(r.note)}</div>` : ''}
+    <div class="rc-actions">${actionHtml}</div>`;
+  if(!opts.completed){
+    const chatBtn = card.querySelector('.dl-chat');
+    if(chatBtn) chatBtn.addEventListener('click', ()=> startChatFromRequest(r, r.requesterUid, t('reqClientLabel'), 'buyer'));
+    const callBtn = card.querySelector('.dl-call');
+    if(callBtn) callBtn.addEventListener('click', ()=> openRequestContact(r));
+    const completeBtn = card.querySelector('.dl-complete');
+    if(completeBtn) completeBtn.addEventListener('click', e=> completeDeal(r, e.currentTarget));
+  }
+  return card;
+}
+
+async function loadMyDeals(){
+  const box = $('myDealsList'); if(!box || !currentUser) return;
+  box.innerHTML = `<div class="center-note">${t('loading')}</div>`;
+  try{
+    const snap = await db.collection('requests').where('matchedBroker','==',currentUser.uid).limit(100).get();
+    let items = []; snap.forEach(d=>{ const r={ id:d.id, ...d.data() }; if(!r.completed) items.push(r); });
+    items.sort((a,b)=> ((b.createdAt&&b.createdAt.seconds)||0) - ((a.createdAt&&a.createdAt.seconds)||0));
+    if(items.length === 0){ box.innerHTML = `<div class="center-note">${t('noMyDeals')}</div>`; return; }
+    box.innerHTML = '';
+    items.forEach(r=> box.appendChild(renderDealCard(r, { completed:false })));
+  }catch(err){ console.error(err); box.innerHTML = `<div class="center-note">${t('loadError')}${esc(err.message)}</div>`; }
+}
+
+async function loadCompletedDeals(){
+  const box = $('completedDealsList'); if(!box || !currentUser) return;
+  box.innerHTML = `<div class="center-note">${t('loading')}</div>`;
+  try{
+    const snap = await db.collection('requests').where('matchedBroker','==',currentUser.uid).limit(100).get();
+    let items = []; snap.forEach(d=>{ const r={ id:d.id, ...d.data() }; if(r.completed) items.push(r); });
+    items.sort((a,b)=> ((b.completedAt&&b.completedAt.seconds)||(b.createdAt&&b.createdAt.seconds)||0) - ((a.completedAt&&a.completedAt.seconds)||(a.createdAt&&a.createdAt.seconds)||0));
+    if(items.length === 0){ box.innerHTML = `<div class="center-note">${t('noCompletedDeals')}</div>`; return; }
+    box.innerHTML = '';
+    items.forEach(r=> box.appendChild(renderDealCard(r, { completed:true })));
+  }catch(err){ console.error(err); box.innerHTML = `<div class="center-note">${t('loadError')}${esc(err.message)}</div>`; }
+}
+
+function completeDeal(r, btn){
+  if(!currentUser) return;
+  showConfirm({ text:t('completeDealConfirm'), onYes: async ()=>{
+    setLoading(btn, true);
+    try{
+      await db.collection('requests').doc(r.id).update({
+        completed:true,
+        completedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      toast(t('dealCompletedToast'), 'success');
+      loadMyDeals();
+    }catch(err){ toast(t('error')+err.message, 'error'); }
+    finally{ setLoading(btn, false); }
+  }});
 }
 
 // Bekor qilish modali tugmalari
