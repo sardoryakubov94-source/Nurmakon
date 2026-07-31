@@ -4354,6 +4354,17 @@ body.is-pwa-app .story-scroll-hint {
   </div>
 </div>
 
+<!-- ===================== MAKLER: YANGI RAQAM / HAVOLA QO'SHISH OYNASI (alohida popup) ===================== -->
+<div class="modal-overlay" id="bkpAddValueModal">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <div class="modal-head"><h2 id="bkpAddValueTitle">Yangi raqam qo'shish</h2>
+      <button class="modal-close" id="bkpAddValueCloseX" type="button" data-ic="close" data-ic-size="15"></button></div>
+    <input type="text" id="bkpAddValueInput" placeholder="">
+    <button class="btn btn-primary" id="bkpAddValueConfirmBtn" style="margin-top:16px;"><span class="btn-label"></span></button>
+  </div>
+</div>
+
 <!-- ===================== PINNED STORY VIEWER (to'liq ekran) ===================== -->
 <div class="pinned-story-viewer-ov" id="pinnedStoryViewerOv">
   <div class="story-viewer-media" id="pinnedStoryViewerMedia"></div>
@@ -5002,7 +5013,8 @@ const I18N = {
     contactBtn:"Bog'lanish", contactTitle:"Bog'lanish", contactCall:"Qo'ng'iroq qilish", contactCopy:"Raqamni nusxalash",
     ownPhoneEditLabel:"Raqamni o'zgartirish", noPhoneSetLabel:"Telefon raqam kiritilmagan", phoneUpdated:"Telefon raqami yangilandi",
     bkpContactLabel:"Aloqa uchun", bkpPhonesLabel:"Telefon raqamlari", bkpAddPhoneBtn:"Raqam qo'shish",
-    bkpSocialLabel:"Ijtimoiy tarmoqlar", bkpAddSocialBtn:"Havola qo'shish", bkpSocialPh:"https://t.me/sizning_kanalingiz", removeBtn:"O'chirish",
+    bkpSocialLabel:"Ijtimoiy tarmoqlar", bkpAddSocialBtn:"Havola qo'shish", bkpSocialPh:"https://t.me/sizning_manzilingiz", removeBtn:"O'chirish",
+    bkpAddPhoneTitle:"Yangi raqam qo'shish", bkpAddSocialTitle:"Yangi havola qo'shish", bkpAddConfirmBtn:"Qo'shish",
     copied:"Raqam nusxalandi", shareBtn:"Ulashish", shareUnsupported:"Ulashish qo'llab-quvvatlanmaydi",
     modeAssisted:"Rejim: Makler yordamida", modeIndependent:"Rejim: Mustaqil qidiruv",
     modeIndepTitle:"Mustaqil", modeIndepDesc:"Komissiyasiz, to'g'ridan-to'g'ri",
@@ -5151,7 +5163,8 @@ const I18N = {
     contactBtn:"Связаться", contactTitle:"Связаться", contactCall:"Позвонить", contactCopy:"Скопировать номер",
     ownPhoneEditLabel:"Изменить номер", noPhoneSetLabel:"Номер телефона не указан", phoneUpdated:"Номер телефона обновлён",
     bkpContactLabel:"Для связи", bkpPhonesLabel:"Номера телефонов", bkpAddPhoneBtn:"Добавить номер",
-    bkpSocialLabel:"Социальные сети", bkpAddSocialBtn:"Добавить ссылку", bkpSocialPh:"https://t.me/ваш_канал", removeBtn:"Удалить",
+    bkpSocialLabel:"Социальные сети", bkpAddSocialBtn:"Добавить ссылку", bkpSocialPh:"https://t.me/ваш_адрес", removeBtn:"Удалить",
+    bkpAddPhoneTitle:"Новый номер", bkpAddSocialTitle:"Новая ссылка", bkpAddConfirmBtn:"Добавить",
     copied:"Номер скопирован", shareBtn:"Поделиться", shareUnsupported:"Поделиться не поддерживается",
     modeAssisted:"Режим: с помощью риелтора", modeIndependent:"Режим: самостоятельный поиск",
     modeIndepTitle:"Самостоятельно", modeIndepDesc:"Без комиссии, напрямую",
@@ -5300,7 +5313,8 @@ const I18N = {
     contactBtn:"Contact", contactTitle:"Contact", contactCall:"Call", contactCopy:"Copy number",
     ownPhoneEditLabel:"Edit number", noPhoneSetLabel:"No phone number set", phoneUpdated:"Phone number updated",
     bkpContactLabel:"Contact info", bkpPhonesLabel:"Phone numbers", bkpAddPhoneBtn:"Add number",
-    bkpSocialLabel:"Social links", bkpAddSocialBtn:"Add link", bkpSocialPh:"https://t.me/your_channel", removeBtn:"Remove",
+    bkpSocialLabel:"Social links", bkpAddSocialBtn:"Add link", bkpSocialPh:"https://t.me/your_address", removeBtn:"Remove",
+    bkpAddPhoneTitle:"Add new number", bkpAddSocialTitle:"Add new link", bkpAddConfirmBtn:"Add",
     copied:"Number copied", shareBtn:"Share", shareUnsupported:"Sharing not supported",
     modeAssisted:"Mode: With broker's help", modeIndependent:"Mode: Independent search",
     modeIndepTitle:"On my own", modeIndepDesc:"No commission, direct",
@@ -9333,8 +9347,12 @@ async function openBrokerProfile(agentUid){
           toggleBtn.classList.toggle('open', !panel.classList.contains('hidden'));
         });
       }
-      $('bkpAddPhoneBtn')?.addEventListener('click', ()=>{ bkpPhonesArr.push(''); paintPhoneRows(); const ins=phoneRowsBox.querySelectorAll('input'); ins[ins.length-1]?.focus(); });
-      $('bkpAddSocialBtn')?.addEventListener('click', ()=>{ bkpSocialArr.push(''); paintSocialRows(); const ins=socialRowsBox.querySelectorAll('input'); ins[ins.length-1]?.focus(); });
+      $('bkpAddPhoneBtn')?.addEventListener('click', ()=>{
+        openBkpAddValueModal('phone', (val)=>{ bkpPhonesArr.push(val); paintPhoneRows(); });
+      });
+      $('bkpAddSocialBtn')?.addEventListener('click', ()=>{
+        openBkpAddValueModal('social', (val)=>{ bkpSocialArr.push(val); paintSocialRows(); });
+      });
       phoneRowsBox.addEventListener('click', (e)=>{
         const rm = e.target.closest('[data-remove-phone]');
         if(rm){ bkpPhonesArr.splice(Number(rm.dataset.removePhone),1); paintPhoneRows(); }
@@ -9453,6 +9471,39 @@ $('brokerBackBtn').addEventListener('click', ()=>{ showScreen(brokerReturn||'fee
 $('rateBrokerBtn').addEventListener('click', openRateSheet);
 $('rateCloseX').addEventListener('click', ()=>closeSheet('rateSheet'));
 $('rateSubmitBtn').addEventListener('click', e=>submitRating(e.currentTarget));
+
+/* ============ MAKLER: yangi raqam/havola qo'shish popup oynasi ============
+   "+ Raqam qo'shish" yoki "+ Havola qo'shish" bosilganda panel ichida bo'sh
+   qator chiqarib joy siljitish o'rniga, alohida kichik oyna (modal) ochiladi;
+   foydalanuvchi shu yerda qiymatni kiritib tasdiqlagach, ro'yxatga qo'shiladi. */
+let bkpAddValueMode = null;      // 'phone' | 'social'
+let bkpAddValueOnAdd = null;     // (val)=>void — tasdiqlangач chaqiriladigan callback
+function openBkpAddValueModal(mode, onAdd){
+  bkpAddValueMode = mode; bkpAddValueOnAdd = onAdd;
+  const input = $('bkpAddValueInput');
+  input.value = '';
+  if(mode === 'phone'){
+    $('bkpAddValueTitle').textContent = t('bkpAddPhoneTitle');
+    input.type = 'tel'; input.placeholder = '+998901234567';
+  } else {
+    $('bkpAddValueTitle').textContent = t('bkpAddSocialTitle');
+    input.type = 'url'; input.placeholder = t('bkpSocialPh');
+  }
+  $('bkpAddValueConfirmBtn').querySelector('.btn-label').textContent = t('bkpAddConfirmBtn');
+  openSheet('bkpAddValueModal');
+  setTimeout(()=>input.focus(), 200);
+}
+$('bkpAddValueCloseX').addEventListener('click', ()=>closeSheet('bkpAddValueModal'));
+$('bkpAddValueConfirmBtn').addEventListener('click', ()=>{
+  let v = $('bkpAddValueInput').value.trim();
+  if(!v) return;
+  if(bkpAddValueMode === 'phone'){
+    if(!v.startsWith('+')) v = '+998' + v.replace(/\D/g,'').replace(/^998/,'');
+    if(v.length < 12){ toast(t('postPhoneLabel'),'error'); return; }
+  }
+  if(typeof bkpAddValueOnAdd === 'function') bkpAddValueOnAdd(v);
+  closeSheet('bkpAddValueModal');
+});
 
 /* ============ SUPPORT (yordam + ishonch telefoni) ============ */
 let hotlineNumber = '';
