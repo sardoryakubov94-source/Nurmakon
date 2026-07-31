@@ -4354,6 +4354,23 @@ body.is-pwa-app .story-scroll-hint {
   </div>
 </div>
 
+<!-- ===================== MAKLER: "ALOQA UCHUN" OYNASI (raqamlar + ijtimoiy tarmoqlar, pastdan alohida oyna) ===================== -->
+<div class="modal-overlay" id="bkpContactModal">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <div class="modal-head"><h2 data-i18n="bkpContactLabel">Aloqa uchun</h2>
+      <button class="modal-close" id="bkpContactModalCloseX" type="button" data-ic="close" data-ic-size="15"></button></div>
+    <div class="bkp-panel-label" data-i18n="bkpPhonesLabel">Telefon raqamlari</div>
+    <div id="bkpPhoneRows"></div>
+    <button type="button" class="bkp-add-row" id="bkpAddPhoneBtn"><span data-ic="plus" data-ic-size="14"></span><span data-i18n="bkpAddPhoneBtn">Raqam qo'shish</span></button>
+    <div class="bkp-panel-divider"></div>
+    <div class="bkp-panel-label" data-i18n="bkpSocialLabel">Ijtimoiy tarmoqlar</div>
+    <div id="bkpSocialRows"></div>
+    <button type="button" class="bkp-add-row" id="bkpAddSocialBtn"><span data-ic="plus" data-ic-size="14"></span><span data-i18n="bkpAddSocialBtn">Havola qo'shish</span></button>
+    <button class="btn btn-primary" id="bkpContactSaveBtn" style="margin-top:16px;"><span class="btn-label" data-i18n="saveBtn">Saqlash</span></button>
+  </div>
+</div>
+
 <!-- ===================== MAKLER: YANGI RAQAM / HAVOLA QO'SHISH OYNASI (alohida popup) ===================== -->
 <div class="modal-overlay" id="bkpAddValueModal">
   <div class="modal">
@@ -9309,23 +9326,11 @@ async function openBrokerProfile(agentUid){
         <div class="bkp-cert-chevron">${ic('chevron-right',18)}</div>
       </div>`:''}
       ${isOwn ? `
-      <div class="bkp-contact-section" style="margin-top:16px;">
-        <button type="button" class="bkp-contact-toggle" id="bkpContactToggleBtn">
-          <span class="bkp-contact-ic">${ic('phone',17)}</span>
-          <span class="bkp-contact-label">${t('bkpContactLabel')}</span>
-          <span class="bkp-contact-chevron">${ic('chevron-down',16)}</span>
-        </button>
-        <div class="bkp-contact-panel hidden" id="bkpContactPanel">
-          <div class="bkp-panel-label">${t('bkpPhonesLabel')}</div>
-          <div id="bkpPhoneRows"></div>
-          <button type="button" class="bkp-add-row" id="bkpAddPhoneBtn">${ic('plus',14)}<span>${t('bkpAddPhoneBtn')}</span></button>
-          <div class="bkp-panel-divider"></div>
-          <div class="bkp-panel-label">${t('bkpSocialLabel')}</div>
-          <div id="bkpSocialRows"></div>
-          <button type="button" class="bkp-add-row" id="bkpAddSocialBtn">${ic('plus',14)}<span>${t('bkpAddSocialBtn')}</span></button>
-          <button class="btn btn-primary btn-sm" id="bkpContactSaveBtn" style="width:100%;margin-top:14px;"><span class="btn-label">${t('saveBtn')}</span></button>
-        </div>
-      </div>` : `
+      <button type="button" class="bkp-contact-toggle" id="bkpContactToggleBtn" style="margin-top:16px;">
+        <span class="bkp-contact-ic">${ic('phone',17)}</span>
+        <span class="bkp-contact-label">${t('bkpContactLabel')}</span>
+        <span class="bkp-contact-chevron">${ic('chevron-right',16)}</span>
+      </button>` : `
       <div style="margin-top:16px;">
         ${a.phone ? `<button class="btn btn-secondary" id="brokerCallBtn"><span class="btn-label">${ic('phone',16)} ${t('contactBtn')}</span></button>` : ''}
         ${(Array.isArray(a.socialLinks) && a.socialLinks.length) ? `<div class="bkp-social-view-row">${a.socialLinks.map(u=>`<a href="${esc(normalizeExternalUrl(u))}" target="_blank" rel="noopener noreferrer" class="bkp-social-view-btn bkp-social-${bkpSocialPlatform(u)}" title="${esc(u)}">${bkpSocialIcon(u)}</a>`).join('')}</div>` : ''}
@@ -9334,64 +9339,10 @@ async function openBrokerProfile(agentUid){
     if(cb) cb.addEventListener('click', ()=>{ contactPhone=a.phone||''; contactListing=null; showContactDefault(); $('contactPhoneDisplay').textContent=contactPhone; openSheet('contactSheet'); });
     if(isOwn){
       // Eski bitta-raqamli 'phone' maydonidan yangi ko'p-raqamli 'phones' massiviga moslashtirish (orqaga qarab mos)
-      let bkpPhonesArr = Array.isArray(a.phones) && a.phones.length ? a.phones.slice() : (a.phone ? [a.phone] : []);
-      let bkpSocialArr = Array.isArray(a.socialLinks) ? a.socialLinks.slice() : [];
-      const toggleBtn = $('bkpContactToggleBtn'), panel = $('bkpContactPanel');
-      const phoneRowsBox = $('bkpPhoneRows'), socialRowsBox = $('bkpSocialRows');
-      function paintPhoneRows(){ phoneRowsBox.innerHTML = renderBkpPhoneRows(bkpPhonesArr); }
-      function paintSocialRows(){ socialRowsBox.innerHTML = renderBkpSocialRows(bkpSocialArr); }
-      paintPhoneRows(); paintSocialRows();
-      if(toggleBtn && panel){
-        toggleBtn.addEventListener('click', ()=>{
-          panel.classList.toggle('hidden');
-          toggleBtn.classList.toggle('open', !panel.classList.contains('hidden'));
-        });
-      }
-      $('bkpAddPhoneBtn')?.addEventListener('click', ()=>{
-        openBkpAddValueModal('phone', (val)=>{ bkpPhonesArr.push(val); paintPhoneRows(); });
-      });
-      $('bkpAddSocialBtn')?.addEventListener('click', ()=>{
-        openBkpAddValueModal('social', (val)=>{ bkpSocialArr.push(val); paintSocialRows(); });
-      });
-      phoneRowsBox.addEventListener('click', (e)=>{
-        const rm = e.target.closest('[data-remove-phone]');
-        if(rm){ bkpPhonesArr.splice(Number(rm.dataset.removePhone),1); paintPhoneRows(); }
-      });
-      socialRowsBox.addEventListener('click', (e)=>{
-        const rm = e.target.closest('[data-remove-social]');
-        if(rm){ bkpSocialArr.splice(Number(rm.dataset.removeSocial),1); paintSocialRows(); }
-      });
-      socialRowsBox.addEventListener('input', (e)=>{
-        const inp = e.target.closest('.bkp-social-input');
-        if(!inp) return;
-        const iconSpan = inp.closest('.bkp-num-row')?.querySelector('.bkp-row-ic');
-        if(iconSpan) iconSpan.innerHTML = bkpSocialIcon(inp.value);
-      });
-      $('bkpContactSaveBtn')?.addEventListener('click', async (e)=>{
-        const btn = e.currentTarget;
-        let phones = Array.from(phoneRowsBox.querySelectorAll('input')).map(inp=>{
-          let v = inp.value.trim();
-          if(!v) return '';
-          if(!v.startsWith('+')) v = '+998' + v.replace(/\D/g,'').replace(/^998/,'');
-          return v;
-        }).filter(Boolean);
-        phones = [...new Set(phones)];
-        if(!phones.length){ toast(t('postPhoneLabel'),'error'); return; }
-        for(const p of phones){ if(p.length < 12){ toast(t('postPhoneLabel'),'error'); return; } }
-        let links = Array.from(socialRowsBox.querySelectorAll('input')).map(inp=>inp.value.trim()).filter(Boolean);
-        links = [...new Set(links)];
-        setLoading(btn, true);
-        try{
-          await db.collection('agents').doc(agentUid).set({ phones, phone: phones[0], socialLinks: links }, { merge:true });
-          try{ await db.collection('users').doc(agentUid).update({ phone: phones[0] }); }catch(e){}
-          if(userDoc) userDoc.phone = phones[0];
-          a.phone = phones[0]; a.phones = phones; a.socialLinks = links;
-          bkpPhonesArr = phones.slice(); bkpSocialArr = links.slice();
-          paintPhoneRows(); paintSocialRows();
-          toast(t('phoneUpdated'), 'success');
-        }catch(err){ toast(t('error')+err.message, 'error'); }
-        finally{ setLoading(btn, false); }
-      });
+      bkpPhonesArr = Array.isArray(a.phones) && a.phones.length ? a.phones.slice() : (a.phone ? [a.phone] : []);
+      bkpSocialArr = Array.isArray(a.socialLinks) ? a.socialLinks.slice() : [];
+      bkpPaintPhoneRows(); bkpPaintSocialRows();
+      $('bkpContactToggleBtn')?.addEventListener('click', ()=> openSheet('bkpContactModal'));
     }
     const avEditBtn = $('bkpAvatarEditBtn'), avFileInput = $('bkpAvatarFileInput');
     if(avEditBtn && avFileInput){
@@ -9471,6 +9422,64 @@ $('brokerBackBtn').addEventListener('click', ()=>{ showScreen(brokerReturn||'fee
 $('rateBrokerBtn').addEventListener('click', openRateSheet);
 $('rateCloseX').addEventListener('click', ()=>closeSheet('rateSheet'));
 $('rateSubmitBtn').addEventListener('click', e=>submitRating(e.currentTarget));
+
+/* ============ MAKLER: "Aloqa uchun" oynasi — telefon raqamlari + ijtimoiy tarmoqlar ============
+   Bu bo'lim endi inline panel emas, balki pastdan chiqadigan alohida oyna (bottom-sheet)
+   bo'lgani uchun uning ichidagi tugmalar sahifada bir marta yaratiladi (statik HTML) va
+   shu sababli ularga listenerlar HAM faqat bir marta osiladi (har safar profil ochilganda
+   emas) — aks holda bosilganda amal bir necha marta bajarilib qolar edi. */
+let bkpPhonesArr = [];
+let bkpSocialArr = [];
+function bkpPaintPhoneRows(){ $('bkpPhoneRows').innerHTML = renderBkpPhoneRows(bkpPhonesArr); }
+function bkpPaintSocialRows(){ $('bkpSocialRows').innerHTML = renderBkpSocialRows(bkpSocialArr); }
+$('bkpContactModalCloseX').addEventListener('click', ()=>closeSheet('bkpContactModal'));
+$('bkpAddPhoneBtn').addEventListener('click', ()=>{
+  openBkpAddValueModal('phone', (val)=>{ bkpPhonesArr.push(val); bkpPaintPhoneRows(); });
+});
+$('bkpAddSocialBtn').addEventListener('click', ()=>{
+  openBkpAddValueModal('social', (val)=>{ bkpSocialArr.push(val); bkpPaintSocialRows(); });
+});
+$('bkpPhoneRows').addEventListener('click', (e)=>{
+  const rm = e.target.closest('[data-remove-phone]');
+  if(rm){ bkpPhonesArr.splice(Number(rm.dataset.removePhone),1); bkpPaintPhoneRows(); }
+});
+$('bkpSocialRows').addEventListener('click', (e)=>{
+  const rm = e.target.closest('[data-remove-social]');
+  if(rm){ bkpSocialArr.splice(Number(rm.dataset.removeSocial),1); bkpPaintSocialRows(); }
+});
+$('bkpSocialRows').addEventListener('input', (e)=>{
+  const inp = e.target.closest('.bkp-social-input');
+  if(!inp) return;
+  const iconSpan = inp.closest('.bkp-num-row')?.querySelector('.bkp-row-ic');
+  if(iconSpan) iconSpan.innerHTML = bkpSocialIcon(inp.value);
+});
+$('bkpContactSaveBtn').addEventListener('click', async (e)=>{
+  const btn = e.currentTarget;
+  const agentUid = currentBrokerUid;
+  if(!agentUid) return;
+  let phones = Array.from($('bkpPhoneRows').querySelectorAll('input')).map(inp=>{
+    let v = inp.value.trim();
+    if(!v) return '';
+    if(!v.startsWith('+')) v = '+998' + v.replace(/\D/g,'').replace(/^998/,'');
+    return v;
+  }).filter(Boolean);
+  phones = [...new Set(phones)];
+  if(!phones.length){ toast(t('postPhoneLabel'),'error'); return; }
+  for(const p of phones){ if(p.length < 12){ toast(t('postPhoneLabel'),'error'); return; } }
+  let links = Array.from($('bkpSocialRows').querySelectorAll('input')).map(inp=>inp.value.trim()).filter(Boolean);
+  links = [...new Set(links)];
+  setLoading(btn, true);
+  try{
+    await db.collection('agents').doc(agentUid).set({ phones, phone: phones[0], socialLinks: links }, { merge:true });
+    try{ await db.collection('users').doc(agentUid).update({ phone: phones[0] }); }catch(e){}
+    if(userDoc) userDoc.phone = phones[0];
+    bkpPhonesArr = phones.slice(); bkpSocialArr = links.slice();
+    bkpPaintPhoneRows(); bkpPaintSocialRows();
+    toast(t('phoneUpdated'), 'success');
+    closeSheet('bkpContactModal');
+  }catch(err){ toast(t('error')+err.message, 'error'); }
+  finally{ setLoading(btn, false); }
+});
 
 /* ============ MAKLER: yangi raqam/havola qo'shish popup oynasi ============
    "+ Raqam qo'shish" yoki "+ Havola qo'shish" bosilganda panel ichida bo'sh
